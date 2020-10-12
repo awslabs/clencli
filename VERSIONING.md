@@ -1,0 +1,1 @@
+This project has adopted [GitFlow](https://nvie.com/posts/a-successful-git-branching-model/) model. 

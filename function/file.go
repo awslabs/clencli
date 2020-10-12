@@ -1,0 +1,57 @@
+package function
+
+import (
+	"io/ioutil"
+
+	"io"
+	"log"
+	"net/http"
+	"os"
+)
+
+// WriteFile writes a file and return true if successful
+func WriteFile(filename string, data []byte) bool {
+	err := ioutil.WriteFile(filename, data, os.ModePerm)
+
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	return true
+}
+
+// DownloadFile downloads a file and saves into downloads/ folder
+// It creates the downloads/ folder if it doesn't exists
+func DownloadFile(url string, dirPath string, fileName string) error {
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if CreateDir(dirPath) {
+		// Create the file
+		out, err := os.Create(dirPath + "/" + fileName)
+		if err != nil {
+			return err
+		}
+		defer out.Close()
+
+		// Write the body to file
+		_, err = io.Copy(out, resp.Body)
+		return err
+	}
+	return err
+}
+
+// FileExists checks if a file exists and is not a directory before we
+// try using it to prevent further errors.
+func FileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
