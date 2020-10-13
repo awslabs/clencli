@@ -11,7 +11,7 @@
 
 -->
 
-![Logo](https://images.unsplash.com/photo-1420310414923-bf3651a89816?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
+![Logo](https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
 
@@ -56,25 +56,28 @@ CLENCLI enables you to quickly and predictably create, change, and improve your 
       ├── readme.tmpl
       └── readme.yaml
 ```
+
 ### Create a new CloudFormation project
+You can see a CloudFormation stack generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-cloudformation-project/examples/a-cloudformation-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-cloudformation-project/examples/a-cloudformation-project/HLD.md).
 ```
 $ clencli init project --name sun --type cloudformation
 $ tree -a sun/
   sun/
   ├── .gitignore
   ├── clencli
-  │   ├── hld.tmpl
-  │   ├── hld.yaml
-  │   ├── readme.tmpl
-  │   └── readme.yaml
+  │   ├── hld.tmpl
+  │   ├── hld.yaml
+  │   ├── readme.tmpl
+  │   └── readme.yaml
   └── cloudformation
       ├── environments
-      │   ├── dev
-      │   └── prod
+      │   ├── dev
+      │   └── prod
       └── templates
 ```
+
 ### Create a new Terraform project
-You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-simple-terraform-project/examples/a-terraform-project).
+You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-terraform-project/examples/a-terraform-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-terraform-project/examples/a-terraform-project/HLD.md).
 ```
 $ clencli init project --name mars --type terraform
 $ tree -a mars/
@@ -83,17 +86,18 @@ mars/
 ├── LICENSE
 ├── Makefile
 ├── clencli
-│   ├── hld.tmpl
-│   ├── hld.yaml
-│   ├── readme.tmpl
-│   └── readme.yaml
+│   ├── hld.tmpl
+│   ├── hld.yaml
+│   ├── readme.tmpl
+│   └── readme.yaml
 ├── environments
-│   ├── dev.tf
-│   └── prod.tf
+│   ├── dev.tf
+│   └── prod.tf
 ├── main.tf
 ├── outputs.tf
 └── variables.tf
 ```
+
 ## Renders a template
 ```
 clencli init project --name jupiter
@@ -101,7 +105,8 @@ cd jupiter/
 clencli render template
 Template readme.tmpl rendered as README.md.
 ```
-This `README.md` was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details.
+
+This `README.md` was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
 </details>
 
 

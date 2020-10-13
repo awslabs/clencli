@@ -1,7 +1,7 @@
 logo:
   label: Logo
   theme: work
-  url: https://images.unsplash.com/photo-1420310414923-bf3651a89816?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
+  url: https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
 shields:
   badges:
   - description: GitHub issues
@@ -36,25 +36,28 @@ usage: |-
         ├── readme.tmpl
         └── readme.yaml
   ```
+
   ### Create a new CloudFormation project
+  You can see a CloudFormation stack generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-cloudformation-project/examples/a-cloudformation-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-cloudformation-project/examples/a-cloudformation-project/HLD.md).
   ```
   $ clencli init project --name sun --type cloudformation
   $ tree -a sun/
     sun/
     ├── .gitignore
     ├── clencli
-    │   ├── hld.tmpl
-    │   ├── hld.yaml
-    │   ├── readme.tmpl
-    │   └── readme.yaml
+    │   ├── hld.tmpl
+    │   ├── hld.yaml
+    │   ├── readme.tmpl
+    │   └── readme.yaml
     └── cloudformation
         ├── environments
-        │   ├── dev
-        │   └── prod
+        │   ├── dev
+        │   └── prod
         └── templates
   ```
+
   ### Create a new Terraform project
-  You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-simple-terraform-project/examples/a-terraform-project).
+  You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-terraform-project/examples/a-terraform-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-terraform-project/examples/a-terraform-project/HLD.md).
   ```
   $ clencli init project --name mars --type terraform
   $ tree -a mars/
@@ -63,17 +66,18 @@ usage: |-
   ├── LICENSE
   ├── Makefile
   ├── clencli
-  │   ├── hld.tmpl
-  │   ├── hld.yaml
-  │   ├── readme.tmpl
-  │   └── readme.yaml
+  │   ├── hld.tmpl
+  │   ├── hld.yaml
+  │   ├── readme.tmpl
+  │   └── readme.yaml
   ├── environments
-  │   ├── dev.tf
-  │   └── prod.tf
+  │   ├── dev.tf
+  │   └── prod.tf
   ├── main.tf
   ├── outputs.tf
   └── variables.tf
   ```
+
   ## Renders a template
   ```
   clencli init project --name jupiter
@@ -81,7 +85,8 @@ usage: |-
   clencli render template
   Template readme.tmpl rendered as README.md.
   ```
-  This `README.md` was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details.
+
+  This `README.md` was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
 installing: Download the latest version [released](https://github.com/awslabs/clencli/releases)
   according to your platform and execute it directly. I recommend placing the binary
   into your `$PATH`, so it's easily accessible.
