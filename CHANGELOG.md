@@ -2,7 +2,7 @@
 
 ## v1.0.0
 
-Hey everyone, I'm glad to release `clencli` with all of you. This moment has a very special taste, as I always wanted to give back to the community. A legion of anonymous people who always were supportive and kind enough to guide and teach me and many others. So, please accept this gift called `clencli` as a small token of appreciation, thank you!
+Hey everyone, I'm glad to release `clencli` with all of you. This moment has a very special taste, as I always wanted to give back to the community. A legion of anonymous people who always were supportive and kind enough to guide and teach me and many others. So, please accept this gift called `clencli` as a small token of appreciation, thank you everyone!
 
 ### Release notes
 
