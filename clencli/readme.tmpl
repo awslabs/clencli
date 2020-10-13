@@ -26,7 +26,7 @@
 {{ $db := ds "db" }}
 
 {{ if has (ds "db") "usage" }}{{ $usage := $db.usage }}{{ if ne $usage "" }} - [Usage](#usage) {{end}}{{end}}
-{{ if has (ds "db") "prerequisites" }}{{ $prerequisites := $db.prerequisites }}{{ if ne $prerequisites "" }} - [Prerequisites](#prerequisites) {{end}}{{end}}
+{{ if has (ds "db") "prerequisites" }}{{ $prerequisites := len $db.prerequisites }}{{ if gt $prerequisites 0 }} - [Prerequisites](#prerequisites) {{end}}{{end}}
 {{ if has (ds "db") "installing" }}{{ $installing := $db.installing }}{{ if ne $installing "" }} - [Installing](#installing) {{end}}{{end}}
 {{ if has (ds "db") "testing" }}{{ $testing := $db.testing }}{{ if ne $testing "" }} - [Testing](#testing) {{end}}{{end}}
 {{ if has (ds "db") "deployment" }}{{ $deployment := $db.deployment }}{{ if ne $deployment "" }} - [Deployment](#deployment) {{end}}{{end}}
