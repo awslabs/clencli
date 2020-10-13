@@ -11,7 +11,7 @@
 
 -->
 
-![Logo](https://images.unsplash.com/photo-1522202757859-7472b0973c69?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
+![Logo](https://images.unsplash.com/photo-1488998427799-e3362cec87c3?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
 
@@ -58,7 +58,7 @@ CLENCLI enables you to quickly and predictably create, change, and improve your 
 ```
 
 ### Create a new CloudFormation project
-You can see a CloudFormation stack generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-cloudformation-project/examples/a-cloudformation-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-cloudformation-project/examples/a-cloudformation-project/HLD.md).
+
 ```
 $ clencli init project --name sun --type cloudformation
 $ tree -a sun/
@@ -75,9 +75,10 @@ $ tree -a sun/
   ├── nested.yaml
   └── stack.yaml
 ```
+You can see a CloudFormation stack generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-cloudformation-project/examples/a-cloudformation-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-cloudformation-project/examples/a-cloudformation-project/HLD.md).
 
 ### Create a new Terraform project
-You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-terraform-project/examples/a-terraform-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-terraform-project/examples/a-terraform-project/HLD.md).
+
 ```
 $ clencli init project --name mars --type terraform
 $ tree -a mars/
@@ -97,6 +98,7 @@ mars/
 ├── outputs.tf
 └── variables.tf
 ```
+You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-terraform-project/examples/a-terraform-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-terraform-project/examples/a-terraform-project/HLD.md).
 
 ## Renders a template
 ```
