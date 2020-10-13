@@ -1,21 +1,21 @@
 logo:
   label: Logo
   theme: work
-  url: https://images.unsplash.com/photo-1432821579285-1b649e5b1ce3?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
+  url: https://images.unsplash.com/reserve/oIpwxeeSPy1cnwYpqJ1w_Dufer%20Collateral%20test.jpg?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
 shields:
   badges:
   - description: GitHub issues
-    image: ""
-    url: https://img.shields.io/github/issues/awslabs/clencli
+    image: https://img.shields.io/github/issues/awslabs/clencli
+    url: https://github.com/awslabs/clencli/issues
   - description: GitHub forks
-    image: ""
-    url: https://img.shields.io/github/forks/awslabs/clencli
+    image: https://img.shields.io/github/forks/awslabs/clencli
+    url: https://github.com/awslabs/clencli/network
   - description: GitHub stars
-    image: ""
-    url: https://img.shields.io/github/stars/awslabs/clencli
+    image: https://img.shields.io/github/stars/awslabs/clencli
+    url: https://github.com/awslabs/clencli/stargazers
   - description: GitHub license
-    image: ""
-    url: https://img.shields.io/github/license/awslabs/clencli
+    image: https://img.shields.io/github/license/awslabs/clencli
+    url: https://github.com/awslabs/clencli/blob/master/LICENSE
   - description: Twitter
     image: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli
     url: https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli
