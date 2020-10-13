@@ -1,7 +1,7 @@
 logo:
   label: Logo
   theme: work
-  url: https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
+  url: https://images.unsplash.com/photo-1522202757859-7472b0973c69?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
 shields:
   badges:
   - description: GitHub issues
@@ -43,17 +43,17 @@ usage: |-
   $ clencli init project --name sun --type cloudformation
   $ tree -a sun/
     sun/
-    ├── .gitignore
+    ├── README.md
     ├── clencli
-    │   ├── hld.tmpl
-    │   ├── hld.yaml
-    │   ├── readme.tmpl
-    │   └── readme.yaml
-    └── cloudformation
-        ├── environments
-        │   ├── dev
-        │   └── prod
-        └── templates
+    │   ├── hld.tmpl
+    │   ├── hld.yaml
+    │   ├── readme.tmpl
+    │   └── readme.yaml
+    ├── environments
+    │   ├── dev
+    │   └── prod
+    ├── nested.yaml
+    └── stack.yaml
   ```
 
   ### Create a new Terraform project

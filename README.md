@@ -11,7 +11,7 @@
 
 -->
 
-![Logo](https://images.unsplash.com/photo-1563986768609-322da13575f3?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
+![Logo](https://images.unsplash.com/photo-1522202757859-7472b0973c69?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
 
@@ -63,17 +63,17 @@ You can see a CloudFormation stack generated as an example [here](https://github
 $ clencli init project --name sun --type cloudformation
 $ tree -a sun/
   sun/
-  ├── .gitignore
+  ├── README.md
   ├── clencli
-  │   ├── hld.tmpl
-  │   ├── hld.yaml
-  │   ├── readme.tmpl
-  │   └── readme.yaml
-  └── cloudformation
-      ├── environments
-      │   ├── dev
-      │   └── prod
-      └── templates
+  │   ├── hld.tmpl
+  │   ├── hld.yaml
+  │   ├── readme.tmpl
+  │   └── readme.yaml
+  ├── environments
+  │   ├── dev
+  │   └── prod
+  ├── nested.yaml
+  └── stack.yaml
 ```
 
 ### Create a new Terraform project
