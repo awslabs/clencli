@@ -77,18 +77,16 @@ func init() {
 
 func initCloudFormation(cmd *cobra.Command, name string) {
 
-	function.CreateDir("cloudformation/environments")
-	function.CreateDir("cloudformation/environments/dev")
-	function.CreateDir("cloudformation/environments/prod")
-	function.CreateDir("cloudformation/templates")
+	function.CreateDir("environments")
+	function.CreateDir("environments/dev")
+	function.CreateDir("environments/prod")
 
-	initCFStack := "cloudformation/templates/stack.yaml"
-
-	blobCFStack, _ := box.Get("/init/type/clouformation/templates/stack.yaml")
+	initCFStack := "stack.yaml"
+	blobCFStack, _ := box.Get("/init/type/clouformation/stack.yaml")
 	function.WriteFile(initCFStack, blobCFStack)
 
-	initCFNested := "cloudformation/templates/nested.yaml"
-	blobCFNested, _ := box.Get("/init/type/clouformation/templates/nested.yaml")
+	initCFNested := "nested.yaml"
+	blobCFNested, _ := box.Get("/init/type/clouformation/nested.yaml")
 	function.WriteFile(initCFNested, blobCFNested)
 
 }
