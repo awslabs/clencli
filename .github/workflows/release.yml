@@ -14,7 +14,7 @@ jobs:
           go-version: '^1.15.2' # The Go version to download (if necessary) and use.
       - run: go version
       - run: go get ./...
-      - run: ls -ltha ./ && make clencli/compile
+      - run: make clencli/compile
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
