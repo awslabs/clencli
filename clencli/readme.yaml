@@ -1,7 +1,7 @@
 logo:
   label: Logo
   theme: work
-  url: https://images.unsplash.com/photo-1473181488821-2d23949a045a?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
+  url: https://images.unsplash.com/photo-1420310414923-bf3651a89816?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
 shields:
   badges:
   - description: GitHub issues
@@ -54,6 +54,7 @@ usage: |-
         └── templates
   ```
   ### Create a new Terraform project
+  You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-simple-terraform-project/examples/a-terraform-project).
   ```
   $ clencli init project --name mars --type terraform
   $ tree -a mars/
