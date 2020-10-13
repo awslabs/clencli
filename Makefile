@@ -55,11 +55,14 @@ clencli/clean: ## Removes unnecessary files and directories
 
 .PHONY: clencli/update-readme
 clencli/update-readme: ## Renders template readme.tmpl with additional documents
+	@echo "Updating README.tmpl to the latest version"
 	@cp box/resources/init/clencli/readme.tmpl clencli/readme.tmpl
+	@echo "Generate COMMANDS.md"
 	@echo "## Commands" > COMMANDS.md
 	@echo '```' >> COMMANDS.md
 	@clencli --help >> COMMANDS.md
 	@echo '```' >> COMMANDS.md
+	@echo "COMMANDS.md generated successfully"
 	@clencli render template --name readme
 
 .PHONY: clencli/release
