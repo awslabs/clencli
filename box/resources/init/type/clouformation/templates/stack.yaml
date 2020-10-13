@@ -2,14 +2,10 @@ AWSTemplateFormatVersion: 2010-09-09
 Description:
 
 Parameters:
-
   Name:
     Type:
     Description:
     Default: 
-
-Conditions:
-  HasCondition: !Not [ !Equals [ !Ref Parameter001, "" ]]
 
 Resources:
   Resource001:
