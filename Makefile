@@ -42,7 +42,7 @@ clencli/compile: ## Compile to multiple architectures
 .PHONY: clencli/tag
 clencli/tag: ## Tag a version
 ifdef version
-	git tag -a $(version) -m 'Release version $(version)'
+	git tag -a v$(version) -m 'Release version v$(version)'
 else
 	@echo "version not specified"
 endif
