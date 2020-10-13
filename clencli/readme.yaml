@@ -1,12 +1,9 @@
 logo:
   label: Logo
   theme: work
-  url: https://images.unsplash.com/photo-1573166364971-d70fb4913897?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
+  url: https://images.unsplash.com/photo-1432821579285-1b649e5b1ce3?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
 shields:
   badges:
-  - description: GitHub Super-Linter
-    image: https://github.com/awslabs/clencli/workflows/Lint%20Code%20Base/badge.svg
-    url: https://github.com/marketplace/actions/super-linter
   - description: GitHub issues
     image: ""
     url: https://img.shields.io/github/issues/awslabs/clencli
@@ -20,8 +17,8 @@ shields:
     image: ""
     url: https://img.shields.io/github/license/awslabs/clencli
   - description: Twitter
-    image: ""
-    url: https://img.shields.io/twitter/url?url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli
+    image: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli
+    url: https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli
 app:
   name: Cloud Engineer CLI
   function: A CLI built to assist Cloud Engineers.
