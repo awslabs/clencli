@@ -1,0 +1,16 @@
+app:
+  function: A CLI built to assist Cloud Engineers.
+  id: clencli
+  name: Cloud Engineer CLI
+  owner: Valter Silva <valterh@amazon.com>
+logo:
+  label: Logo
+  theme: cloud
+  url: https://images.unsplash.com/photo-1564870546039-574b2d0c9fd1?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
+screenshots:
+- caption: How to build
+  label: how-to-build
+  url: https://via.placeholder.com/512x256.png
+- caption: How to run
+  label: how-to-run
+  url: https://via.placeholder.com/512x256.png

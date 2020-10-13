@@ -1,0 +1,41 @@
+# Mention the tools and projects that you have used to build your project
+references:
+  - description: Cobra is both a library for creating powerful modern CLI applications as well as a program to generate applications and command files.
+    name: cobra
+    url: https://github.com/spf13/cobra
+
+  - description: Viper is a complete configuration solution for Go applications including 12-Factor apps.
+    name: viper
+    url: https://github.com/spf13/viper
+
+  - description: The Twelve-Factor App
+    name: twelve-factor-app
+    url: https://12factor.net
+
+  - description: gomplate is a template renderer which supports a growing list of datasources, such as JSON (including EJSON - encrypted JSON), YAML, AWS EC2 metadata, BoltDB, Hashicorp Consul and Hashicorp Vault secrets.
+    name: gomplate
+    url: https://github.com/hairyhenderson/gomplate
+
+  - description: The most powerful photo engine in the world.
+    name: unsplash
+    url: https://unsplash.com
+
+  - description: The Free Image Placeholder Service Favoured By Designers
+    name: placeholder
+    url: https://placeholder.com
+
+  - description: The best Lorem Ipsum Generator in all the sea
+    name: pirate-ipsum
+    url: https://pirateipsum.me
+
+  - description: Record Fast Screencasts
+    name: recordit
+    url: https://recordit.co
+
+  - description: A terminal-to-gif recorder minus the headaches.
+    name: ttystudio
+    url: https://github.com/chjj/ttystudio
+
+license: This project is licensed under the Apache-2.0 License. For more details, please see [LICENSE](LICENSE).
+
+copyright: Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.

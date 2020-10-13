@@ -1,0 +1,158 @@
+name: Release
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15.2' # The Go version to download (if necessary) and use.
+      - run: go version
+      - run: go get ./...
+      - run: make clencli/compile
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body_path: CHANGELOG.md
+          draft: true # true to create a draft (unpublished) release, false to create a published one. Default: false
+          prerelease: true # true to identify the release as a prerelease. false to identify the release as a full release. Default: false
+      - name: Upload Release Asset (clencli-darwin-amd64)
+        id: upload-release-asset-clencli-darwin-amd64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-darwin-amd64
+          asset_name: clencli-darwin-amd64
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-solaris-amd64)
+        id: upload-release-asset-clencli-solaris-amd64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-solaris-amd64
+          asset_name: clencli-solaris-amd64
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-freebsd-386)
+        id: upload-release-asset-clencli-freebsd-386
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-freebsd-386
+          asset_name: clencli-freebsd-386
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-freebsd-amd64)
+        id: upload-release-asset-clencli-freebsd-amd64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-freebsd-amd64
+          asset_name: clencli-freebsd-amd64
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-freebsd-arm)
+        id: upload-release-asset-clencli-freebsd-arm
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-freebsd-arm
+          asset_name: clencli-freebsd-arm
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-openbsd-386)
+        id: upload-release-asset-clencli-openbsd-386
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-openbsd-386
+          asset_name: clencli-openbsd-386
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-openbsd-amd64)
+        id: upload-release-asset-clencli-openbsd-amd64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-openbsd-amd64
+          asset_name: clencli-openbsd-amd64
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-openbsd-arm)
+        id: upload-release-asset-clencli-openbsd-arm
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-openbsd-arm
+          asset_name: clencli-openbsd-arm
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-linux-386)
+        id: upload-release-asset-clencli-linux-386
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-linux-386
+          asset_name: clencli-linux-386
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-linux-amd64)
+        id: upload-release-asset-clencli-linux-amd64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-linux-amd64
+          asset_name: clencli-linux-amd64
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-linux-arm)
+        id: upload-release-asset-clencli-linux-arm
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-linux-arm
+          asset_name: clencli-linux-arm
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-windows-386)
+        id: upload-release-asset-clencli-windows-386
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-windows-386
+          asset_name: clencli-windows-386
+          asset_content_type: application/x-clencli
+      - name: Upload Release Asset (clencli-windows-amd64)
+        id: upload-release-asset-clencli-windows-amd64
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/clencli-windows-amd64
+          asset_name: clencli-windows-amd64
+          asset_content_type: application/x-clencli

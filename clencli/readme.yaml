@@ -1,0 +1,137 @@
+logo:
+  label: Logo
+  theme: work
+  url: https://images.unsplash.com/photo-1498409785966-ab341407de6e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
+shields:
+  badges:
+  - description: GitHub issues
+    image: https://img.shields.io/github/issues/awslabs/clencli
+    url: https://github.com/awslabs/clencli/issues
+  - description: GitHub forks
+    image: https://img.shields.io/github/forks/awslabs/clencli
+    url: https://github.com/awslabs/clencli/network
+  - description: GitHub stars
+    image: https://img.shields.io/github/stars/awslabs/clencli
+    url: https://github.com/awslabs/clencli/stargazers
+  - description: GitHub license
+    image: https://img.shields.io/github/license/awslabs/clencli
+    url: https://github.com/awslabs/clencli/blob/master/LICENSE
+  - description: Twitter
+    image: https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli
+    url: https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli
+app:
+  name: Cloud Engineer CLI
+  function: A CLI built to assist Cloud Engineers.
+  id: clencli
+usage: |-
+  CLENCLI enables you to quickly and predictably create, change, and improve your cloud projects by automating common tasks such as creating a new project, or updating its documentation.
+
+  ### Create a new project
+  ```
+    $ clencli init project --name moon
+    $ tree -a moon/
+    moon/
+    ├── .gitignore
+    └── clencli
+        ├── readme.tmpl
+        └── readme.yaml
+  ```
+  ### Create a new CloudFormation project
+  ```
+  $ clencli init project --name sun --type cloudformation
+  $ tree -a sun/
+    sun/
+    ├── .gitignore
+    ├── clencli
+    │   ├── hld.tmpl
+    │   ├── hld.yaml
+    │   ├── readme.tmpl
+    │   └── readme.yaml
+    └── cloudformation
+        ├── environments
+        │   ├── dev
+        │   └── prod
+        └── templates
+  ```
+  ### Create a new Terraform project
+  ```
+  $ clencli init project --name mars --type terraform
+  $ tree -a mars/
+  mars/
+  ├── .gitignore
+  ├── LICENSE
+  ├── Makefile
+  ├── clencli
+  │   ├── hld.tmpl
+  │   ├── hld.yaml
+  │   ├── readme.tmpl
+  │   └── readme.yaml
+  ├── environments
+  │   ├── dev.tf
+  │   └── prod.tf
+  ├── main.tf
+  ├── outputs.tf
+  └── variables.tf
+  ```
+  ## Renders a template
+  ```
+  clencli init project --name jupiter
+  cd jupiter/
+  clencli render template
+  Template readme.tmpl rendered as README.md.
+  ```
+  This `README.md` was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details.
+installing: Download the latest version [released](https://github.com/awslabs/clencli/releases)
+  according to your platform and execute it directly. I recommend placing the binary
+  into your `$PATH`, so it's easily accessible.
+include:
+- COMMANDS.md
+contributors:
+- name: Silva, Valter
+  role: AWS Professional Services - Cloud Architect
+  email: '-'
+acknowledgments:
+- name: Sia, William
+  role: AWS Professional Service - Senior Cloud Architect
+- name: Dhingra, Prashit
+  role: AWS Professional Service - Cloud Architect
+references:
+- description: Cobra is both a library for creating powerful modern CLI applications
+    as well as a program to generate applications and command files.
+  name: cobra
+  url: https://github.com/spf13/cobra
+- description: Viper is a complete configuration solution for Go applications including
+    12-Factor apps.
+  name: viper
+  url: https://github.com/spf13/viper
+- description: The Twelve-Factor App
+  name: twelve-factor-app
+  url: https://12factor.net
+- description: gomplate is a template renderer which supports a growing list of datasources,
+    such as JSON (including EJSON - encrypted JSON), YAML, AWS EC2 metadata, BoltDB,
+    Hashicorp Consul and Hashicorp Vault secrets.
+  name: gomplate
+  url: https://github.com/hairyhenderson/gomplate
+- description: The most powerful photo engine in the world.
+  name: unsplash
+  url: https://unsplash.com
+- description: The Free Image Placeholder Service Favoured By Designers
+  name: placeholder
+  url: https://placeholder.com
+- description: The best Lorem Ipsum Generator in all the sea
+  name: pirate-ipsum
+  url: https://pirateipsum.me
+- description: Record Fast Screencasts
+  name: recordit
+  url: https://recordit.co
+- description: A terminal-to-gif recorder minus the headaches.
+  name: ttystudio
+  url: https://github.com/chjj/ttystudio
+- description: GitHub Super Linter
+  name: gihub-super-linter
+  url: https://github.com/github/super-linter
+- description: GitHub Actions
+  name: github-actions
+  url: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions
+license: This project is licensed under the Apache License 2.0.
+copyright: Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
