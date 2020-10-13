@@ -77,22 +77,19 @@ func init() {
 
 func initCloudFormation(cmd *cobra.Command, name string) {
 
-	structure, _ := cmd.Flags().GetString("structure")
-
 	function.CreateDir("cloudformation/environments")
 	function.CreateDir("cloudformation/environments/dev")
 	function.CreateDir("cloudformation/environments/prod")
 	function.CreateDir("cloudformation/templates")
 
-	if structure == "single" {
-		initCFStack := "cloudformation/templates/stack.yaml"
-		blobCFStack, _ := box.Get("/init/aws/clouformation/templates/stack.yaml")
-		function.WriteFile(initCFStack, blobCFStack)
-	} else if structure == "nested" {
-		initCFNested := "cloudformation/templates/nested.yaml"
-		blobCFNested, _ := box.Get("/init/aws/clouformation/templates/nested.yaml")
-		function.WriteFile(initCFNested, blobCFNested)
-	}
+	initCFStack := "cloudformation/templates/stack.yaml"
+	blobCFStack, _ := box.Get("/init/aws/clouformation/templates/stack.yaml")
+	function.WriteFile(initCFStack, blobCFStack)
+
+	initCFNested := "cloudformation/templates/nested.yaml"
+	blobCFNested, _ := box.Get("/init/aws/clouformation/templates/nested.yaml")
+	function.WriteFile(initCFNested, blobCFNested)
+
 }
 
 func initTerraform(cmd *cobra.Command, name string) {
