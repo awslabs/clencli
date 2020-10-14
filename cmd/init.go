@@ -22,7 +22,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/awslabs/clencli/box"
 	"github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
 )
@@ -45,18 +44,35 @@ var initCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		n, _ := cmd.Flags().GetString("name")
 		t, _ := cmd.Flags().GetString("type")
+		s, _ := cmd.Flags().GetString("structure")
+		o, _ := cmd.Flags().GetBool("only-customized-structure")
 
 		switch t {
 		case "basic":
 			function.Init(n)
+			if !o {
+				function.InitBasic()
+			}
+			function.InitCustomProjectLayout(t, "default")
+			function.InitCustomProjectLayout(t, s)
 		case "cloudformation":
 			function.Init(n)
-			function.InitHLD(n)
-			initCloudFormation(cmd, n)
+			if !o {
+				function.InitBasic()
+				function.InitHLD(n)
+				function.InitCloudFormation()
+			}
+			function.InitCustomProjectLayout("basic", "default")
+			function.InitCustomProjectLayout(t, s)
 		case "terraform":
 			function.Init(n)
-			function.InitHLD(n)
-			initTerraform(cmd, n)
+			if !o {
+				function.InitBasic()
+				function.InitHLD(n)
+				function.InitTerraform()
+			}
+			function.InitCustomProjectLayout("basic", "default")
+			function.InitCustomProjectLayout(t, s)
 		default:
 			log.Fatal("Unknown project type")
 		}
@@ -70,56 +86,9 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
+	initCmd.Flags().StringP("structure", "s", "default", "The project structure name defined on main config.")
+	initCmd.Flags().BoolP("only-customized-structure", "o", false, "Only customized structure to be used when initializing the project")
 
 	initCmd.MarkFlagRequired("name")
 
-}
-
-func initCloudFormation(cmd *cobra.Command, name string) {
-
-	function.CreateDir("environments")
-	function.CreateDir("environments/dev")
-	function.CreateDir("environments/prod")
-
-	initCFStack := "stack.yaml"
-	blobCFStack, _ := box.Get("/init/type/clouformation/stack.yaml")
-	function.WriteFile(initCFStack, blobCFStack)
-
-	initCFNested := "nested.yaml"
-	blobCFNested, _ := box.Get("/init/type/clouformation/nested.yaml")
-	function.WriteFile(initCFNested, blobCFNested)
-
-}
-
-func initTerraform(cmd *cobra.Command, name string) {
-
-	initMakefile := "Makefile"
-	blobMakefile, _ := box.Get("/init/type/terraform/Makefile")
-	function.WriteFile(initMakefile, blobMakefile)
-
-	initLicense := "LICENSE"
-	blobLicense, _ := box.Get("/init/type/terraform/LICENSE")
-	function.WriteFile(initLicense, blobLicense)
-
-	function.CreateDir("environments")
-
-	initDevEnvironment := "environments/dev.tf"
-	blobDevEnvironment, _ := box.Get("/init/type/terraform/environments/dev.tf")
-	function.WriteFile(initDevEnvironment, blobDevEnvironment)
-
-	initProdEnvironment := "environments/prod.tf"
-	blobProdEnvironment, _ := box.Get("/init/type/terraform/environments/prod.tf")
-	function.WriteFile(initProdEnvironment, blobProdEnvironment)
-
-	initMainTF := "main.tf"
-	blobMainTF, _ := box.Get("/init/type/terraform/main.tf")
-	function.WriteFile(initMainTF, blobMainTF)
-
-	initVariablesTF := "variables.tf"
-	blobVariablesTF, _ := box.Get("/init/type/terraform/variables.tf")
-	function.WriteFile(initVariablesTF, blobVariablesTF)
-
-	initOutputsTF := "outputs.tf"
-	blobOutputsTF, _ := box.Get("/init/type/terraform/outputs.tf")
-	function.WriteFile(initOutputsTF, blobOutputsTF)
 }
