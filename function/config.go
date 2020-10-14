@@ -43,7 +43,7 @@ type ReadMe struct {
 	Shields struct {
 		Badges []struct {
 			Description string `yaml:"description"`
-			Image string `yaml:"image"`
+			Image       string `yaml:"image"`
 			URL         string `yaml:"url"`
 		} `yaml:"badges"`
 	} `yaml:"shields,omitempty"`
@@ -83,6 +83,36 @@ type ReadMe struct {
 	} `yaml:"references,omitempty"`
 	License   string `yaml:"license,omitempty"`
 	Copyright string `yaml:"copyright,omitempty"`
+}
+
+// GlobalConfig struct for the glogal config (~/.clencli.yaml)
+type GlobalConfig struct {
+	Unsplash struct {
+		AccessKey string `yaml:"access_key"`
+		SecretKey string `yaml:"secret_key"`
+	} `yaml:"unsplash,omitempty"`
+	Init struct {
+		Types []struct {
+			Type    string `yaml:"type"`
+			Name    string `yaml:"name"`
+			Enabled bool   `yaml:"enabled"`
+			Files   []struct {
+				File struct {
+					Path  string `yaml:"path"`
+					Src   string `yaml:"src"`
+					Dest  string `yaml:"dest"`
+					State string `yaml:"state"`
+				} `yaml:"file,omitempty"`
+			} `yaml:"files"`
+		} `yaml:"types"`
+	} `yaml:"init"`
+	Readme struct {
+		Logo struct {
+			Theme string `yaml:"theme"`
+		} `yaml:"logo"`
+		License   string `yaml:"license"`
+		Copyright string `yaml:"copyright"`
+	} `yaml:"readme,omitempty"`
 }
 
 // UpdateReadMe updates local configuration file with global configuration values
