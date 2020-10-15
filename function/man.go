@@ -15,8 +15,8 @@ type Manual struct {
 	Long  string `yaml:"long"`
 }
 
-// GetCmdManual retrieve information about the given command
-func GetCmdManual(command string) Manual {
+// GetManual retrieve information about the given command
+func GetManual(command string) Manual {
 	var man Manual
 	manualBlob, status := box.Get("/manual/" + command + ".yaml")
 	if status {
