@@ -11,5 +11,6 @@ jobs:
       - run: go version 
       - run: go env 
       - run: go generate ./...
+      - run: go test -v
       - name: Run go build
         run: mkdir bin/ && go build -o bin/clencli
