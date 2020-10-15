@@ -30,14 +30,6 @@ func executeCommandC(root *cobra.Command, args ...string) (c *cobra.Command, out
 	return c, buf.String(), err
 }
 
-func initRootCmd() *cobra.Command {
-	rootCmd := &cobra.Command{Use: "root", Args: cobra.NoArgs, Run: emptyRun}
-	cmd := InitCmd()
-	rootCmd.AddCommand(cmd)
-
-	return rootCmd
-}
-
 func initRootAndChildCmd() (*cobra.Command, *cobra.Command) {
 	rootCmd := &cobra.Command{Use: "root", Args: cobra.NoArgs, Run: emptyRun}
 	childCmd := InitCmd()
@@ -63,7 +55,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestInitWithNoArgAndNoFlags(t *testing.T) {
-	rootCmd := initRootCmd()
+	rootCmd, _ := initRootAndChildCmd()
 	output, err := executeCommand(rootCmd, "init")
 
 	assert.Contains(t, output, "Please provide an argument")
@@ -71,7 +63,7 @@ func TestInitWithNoArgAndNoFlags(t *testing.T) {
 }
 
 func TestInitWithInvalidArgAndNoFlags(t *testing.T) {
-	rootCmd := initRootCmd()
+	rootCmd, _ := initRootAndChildCmd()
 	output, err := executeCommand(rootCmd, "init", "null")
 
 	assert.Contains(t, output, "invalid argument")
@@ -80,7 +72,7 @@ func TestInitWithInvalidArgAndNoFlags(t *testing.T) {
 
 func TestInitWithValidArgAndNoFlags(t *testing.T) {
 
-	rootCmd := initRootCmd()
+	rootCmd, _ := initRootAndChildCmd()
 	output, err := executeCommand(rootCmd, "init", "project")
 
 	assert.Contains(t, output, "required flag name not set")
@@ -89,11 +81,12 @@ func TestInitWithValidArgAndNoFlags(t *testing.T) {
 
 func TestInitWithEmptyName(t *testing.T) {
 
-	rootCmd := initRootCmd()
+	rootCmd, initCmd := initRootAndChildCmd()
+	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	output, err := executeCommand(rootCmd, "init", "project", "--name")
 
-	assert.Contains(t, output, "required flag name not set")
-	assert.Contains(t, err.Error(), "required flag name not set")
+	assert.Contains(t, output, "flag needs an argument")
+	assert.Contains(t, err.Error(), "flag needs an argument")
 }
 
 func TestInitWithNameOnly(t *testing.T) {
@@ -102,6 +95,7 @@ func TestInitWithNameOnly(t *testing.T) {
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
 	output, err := executeCommand(rootCmd, "init", "project", "--name", "generated-project")
 
-	assert.Contains(t, output, "required flag name not set")
-	assert.Contains(t, err.Error(), "required flag name not set")
+	if err != nil {
+		log.Fatal("Something went wrong during project initialization: ", err, output)
+	}
 }
