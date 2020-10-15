@@ -42,10 +42,10 @@ func preRun(cmd *cobra.Command, args []string) error {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	n, err := cmd.Flags().GetString("name")
-	t, err := cmd.Flags().GetString("type")
-	s, err := cmd.Flags().GetString("structure")
-	o, err := cmd.Flags().GetBool("only-customized-structure")
+	n, _ := cmd.Flags().GetString("name")
+	t, _ := cmd.Flags().GetString("type")
+	s, _ := cmd.Flags().GetString("structure")
+	o, _ := cmd.Flags().GetBool("only-customized-structure")
 
 	switch t {
 	case "basic":
@@ -77,10 +77,10 @@ func run(cmd *cobra.Command, args []string) error {
 		fun.InitCustomProjectLayout(t, s)
 		fun.UpdateReadMe()
 	default:
-		err = errors.New("Unknow project type")
+		return errors.New("Unknow project type")
 	}
 
-	return err
+	return nil
 }
 
 // InitCmd command to initialize projects
