@@ -26,61 +26,72 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// initCmd represents the init command
-var initCmd = &cobra.Command{
-	// Use:       "init ",
-	Use: `init project --name <value> 
-	[ --type [basic|cloudformation|terraform] ]`,
-	Short:     "Initialize a project",
-	Long:      "Initialize a project with code structure",
-	ValidArgs: []string{"project"},
-	Args:      cobra.OnlyValidArgs,
-	PreRun: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Please provide an argument")
-			os.Exit(1)
-		}
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		n, _ := cmd.Flags().GetString("name")
-		t, _ := cmd.Flags().GetString("type")
-		s, _ := cmd.Flags().GetString("structure")
-		o, _ := cmd.Flags().GetBool("only-customized-structure")
+var validArgs = []string{"project"}
 
-		switch t {
-		case "basic":
-			function.Init(n)
-			if !o {
-				function.InitBasic()
-			}
-			function.InitCustomProjectLayout(t, "default")
-			function.InitCustomProjectLayout(t, s)
-		case "cloudformation":
-			function.Init(n)
-			if !o {
-				function.InitBasic()
-				function.InitHLD(n)
-				function.InitCloudFormation()
-			}
-			function.InitCustomProjectLayout("basic", "default")
-			function.InitCustomProjectLayout(t, s)
-		case "terraform":
-			function.Init(n)
-			if !o {
-				function.InitBasic()
-				function.InitHLD(n)
-				function.InitTerraform()
-			}
-			function.InitCustomProjectLayout("basic", "default")
-			function.InitCustomProjectLayout(t, s)
-		default:
-			log.Fatal("Unknown project type")
-		}
-
-		// Update clencli/*.yaml based on clencli's config
-		function.UpdateReadMe()
-	},
+func preRun(cmd *cobra.Command, args []string) {
+	if len(args) == 0 {
+		fmt.Println("Please provide an argument")
+		os.Exit(1)
+	}
 }
+
+func run(cmd *cobra.Command, args []string) {
+	n, _ := cmd.Flags().GetString("name")
+	t, _ := cmd.Flags().GetString("type")
+	s, _ := cmd.Flags().GetString("structure")
+	o, _ := cmd.Flags().GetBool("only-customized-structure")
+
+	switch t {
+	case "basic":
+		function.Init(n)
+		if !o {
+			function.InitBasic()
+		}
+		function.InitCustomProjectLayout(t, "default")
+		function.InitCustomProjectLayout(t, s)
+	case "cloudformation":
+		function.Init(n)
+		if !o {
+			function.InitBasic()
+			function.InitHLD(n)
+			function.InitCloudFormation()
+		}
+		function.InitCustomProjectLayout("basic", "default")
+		function.InitCustomProjectLayout(t, s)
+	case "terraform":
+		function.Init(n)
+		if !o {
+			function.InitBasic()
+			function.InitHLD(n)
+			function.InitTerraform()
+		}
+		function.InitCustomProjectLayout("basic", "default")
+		function.InitCustomProjectLayout(t, s)
+	default:
+		log.Fatal("Unknown project type")
+	}
+
+	// Update clencli/*.yaml based on clencli's config
+	function.UpdateReadMe()
+}
+
+// InitCmd command to initialize projects
+func InitCmd() *cobra.Command {
+	man := function.GetCmdManual("init")
+	return &cobra.Command{
+		// Use:       "init ",
+		Use:       man.Use,
+		Short:     man.Short,
+		Long:      man.Long,
+		ValidArgs: validArgs,
+		Args:      cobra.OnlyValidArgs,
+		PreRun:    preRun,
+		Run:       run,
+	}
+}
+
+// initCmd represents the init command
+var initCmd = InitCmd()
 
 func init() {
 	rootCmd.AddCommand(initCmd)
