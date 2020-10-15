@@ -22,7 +22,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/awslabs/clencli/function"
+	fun "github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
 )
 
@@ -43,41 +43,41 @@ func run(cmd *cobra.Command, args []string) {
 
 	switch t {
 	case "basic":
-		function.Init(n)
+		fun.Init(n)
 		if !o {
-			function.InitBasic()
+			fun.InitBasic()
 		}
-		function.InitCustomProjectLayout(t, "default")
-		function.InitCustomProjectLayout(t, s)
+		fun.InitCustomProjectLayout(t, "default")
+		fun.InitCustomProjectLayout(t, s)
 	case "cloudformation":
-		function.Init(n)
+		fun.Init(n)
 		if !o {
-			function.InitBasic()
-			function.InitHLD(n)
-			function.InitCloudFormation()
+			fun.InitBasic()
+			fun.InitHLD(n)
+			fun.InitCloudFormation()
 		}
-		function.InitCustomProjectLayout("basic", "default")
-		function.InitCustomProjectLayout(t, s)
+		fun.InitCustomProjectLayout("basic", "default")
+		fun.InitCustomProjectLayout(t, s)
 	case "terraform":
-		function.Init(n)
+		fun.Init(n)
 		if !o {
-			function.InitBasic()
-			function.InitHLD(n)
-			function.InitTerraform()
+			fun.InitBasic()
+			fun.InitHLD(n)
+			fun.InitTerraform()
 		}
-		function.InitCustomProjectLayout("basic", "default")
-		function.InitCustomProjectLayout(t, s)
+		fun.InitCustomProjectLayout("basic", "default")
+		fun.InitCustomProjectLayout(t, s)
 	default:
 		log.Fatal("Unknown project type")
 	}
 
 	// Update clencli/*.yaml based on clencli's config
-	function.UpdateReadMe()
+	fun.UpdateReadMe()
 }
 
 // InitCmd command to initialize projects
 func InitCmd() *cobra.Command {
-	man := function.GetCmdManual("init")
+	man := fun.GetManual("init")
 	return &cobra.Command{
 		// Use:       "init ",
 		Use:       man.Use,
