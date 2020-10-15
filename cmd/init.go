@@ -18,9 +18,7 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-	"log"
-	"os"
+	"errors"
 
 	fun "github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
@@ -28,18 +26,26 @@ import (
 
 var validArgs = []string{"project"}
 
-func preRun(cmd *cobra.Command, args []string) {
+func preRun(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		fmt.Println("Please provide an argument")
-		os.Exit(1)
+		return errors.New("Please provide an argument")
 	}
+
+	// https://github.com/spf13/cobra/issues/655
+	_, err := cmd.Flags().GetString("name")
+	// flag accessed but not defined
+	if err != nil {
+		return errors.New("required flag name not set")
+	}
+
+	return nil
 }
 
-func run(cmd *cobra.Command, args []string) {
-	n, _ := cmd.Flags().GetString("name")
-	t, _ := cmd.Flags().GetString("type")
-	s, _ := cmd.Flags().GetString("structure")
-	o, _ := cmd.Flags().GetBool("only-customized-structure")
+func run(cmd *cobra.Command, args []string) error {
+	n, err := cmd.Flags().GetString("name")
+	t, err := cmd.Flags().GetString("type")
+	s, err := cmd.Flags().GetString("structure")
+	o, err := cmd.Flags().GetBool("only-customized-structure")
 
 	switch t {
 	case "basic":
@@ -49,6 +55,7 @@ func run(cmd *cobra.Command, args []string) {
 		}
 		fun.InitCustomProjectLayout(t, "default")
 		fun.InitCustomProjectLayout(t, s)
+		fun.UpdateReadMe()
 	case "cloudformation":
 		fun.Init(n)
 		if !o {
@@ -58,6 +65,7 @@ func run(cmd *cobra.Command, args []string) {
 		}
 		fun.InitCustomProjectLayout("basic", "default")
 		fun.InitCustomProjectLayout(t, s)
+		fun.UpdateReadMe()
 	case "terraform":
 		fun.Init(n)
 		if !o {
@@ -67,26 +75,25 @@ func run(cmd *cobra.Command, args []string) {
 		}
 		fun.InitCustomProjectLayout("basic", "default")
 		fun.InitCustomProjectLayout(t, s)
+		fun.UpdateReadMe()
 	default:
-		log.Fatal("Unknown project type")
+		err = errors.New("Unknow project type")
 	}
 
-	// Update clencli/*.yaml based on clencli's config
-	fun.UpdateReadMe()
+	return err
 }
 
 // InitCmd command to initialize projects
 func InitCmd() *cobra.Command {
 	man := fun.GetManual("init")
 	return &cobra.Command{
-		// Use:       "init ",
 		Use:       man.Use,
 		Short:     man.Short,
 		Long:      man.Long,
 		ValidArgs: validArgs,
 		Args:      cobra.OnlyValidArgs,
-		PreRun:    preRun,
-		Run:       run,
+		PreRunE:   preRun,
+		RunE:      run,
 	}
 }
 
