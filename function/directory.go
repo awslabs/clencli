@@ -22,13 +22,13 @@ func CreateDir(name string) bool {
 
 // CreateDirectoryNamedPath creates a directory named path, along with any necessary parents, and returns nil, or else returns an error.
 // The permission bits perm (before umask) are used for all directories. If path is already a directory does nothing and returns nil.
-func CreateDirectoryNamedPath(path string) error {
+func CreateDirectoryNamedPath(path string) (string, error) {
 	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
 		log.Fatal("Unable to create directory (and its parents)", err)
 	}
 
-	return err
+	return path, err
 }
 
 // CreateTempDir creates a new temporary directory in the directory dir.
