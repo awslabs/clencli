@@ -50,4 +50,5 @@ go/env: ## Print Go environment information
 .PHONY: go/test
 go/test:
 	@echo "=== Testing commands"
+	@rm -rf test
 	@cd cmd && go test -v
