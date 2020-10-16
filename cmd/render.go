@@ -30,15 +30,37 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var renderValidArgs = []string{"template"}
+
 func renderPreRun(cmd *cobra.Command, args []string) error {
-	help := fun.GetHelp("root")
 	if len(args) == 0 {
-		return errors.New(help.Usage)
+		return fmt.Errorf("one the following arguments are required: %s", renderValidArgs)
 	}
 
-	// if len(args) == 0 {
-	// 	return errors.New("Please provide an argument, for example: clencli render template [options]")
-	// }
+	return nil
+}
+
+func renderRun(cmd *cobra.Command, args []string) error {
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		return errors.New("required flag name not set")
+	}
+
+	if !function.FileExists("clencli/" + name + ".yaml") {
+		return errors.New("Missing database at clencli/" + name + ".yaml")
+	}
+
+	if !function.FileExists("clencli/" + name + ".tmpl") {
+		return errors.New("Missing template at clencli/" + name + ".tmpl")
+	}
+
+	err = initGomplate(name)
+	if err == nil {
+		fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
+	} else {
+		log.Fatalf("Unexpected error: %v", err)
+	}
+
 	return nil
 }
 
@@ -49,30 +71,10 @@ func RenderCmd() *cobra.Command {
 		Use:       man.Use,
 		Short:     man.Short,
 		Long:      man.Long,
-		ValidArgs: []string{"template"},
+		ValidArgs: renderValidArgs,
 		Args:      cobra.OnlyValidArgs,
 		PreRunE:   renderPreRun,
-		Run: func(cmd *cobra.Command, args []string) {
-			name, err := cmd.Flags().GetString("name")
-			if err != nil {
-				log.Fatal("Error while getting the template name")
-			}
-
-			if !function.FileExists("clencli/" + name + ".yaml") {
-				fmt.Print("Missing database at clencli/" + name + ".yaml")
-				os.Exit(1)
-			}
-
-			if !function.FileExists("clencli/" + name + ".tmpl") {
-				fmt.Print("Missing template at clencli/" + name + ".tmpl")
-				os.Exit(1)
-			}
-
-			err = initGomplate(name)
-			if err == nil {
-				fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
-			}
-		},
+		RunE:      renderRun,
 	}
 }
 
