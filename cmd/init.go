@@ -26,10 +26,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var initValidArgs = []string{"project"}
+
 func initPreRun(cmd *cobra.Command, args []string) error {
-	help := fun.GetHelp("root")
 	if len(args) == 0 {
-		return errors.New(help.Usage)
+		return fmt.Errorf("one the following arguments are required: %s", initValidArgs)
 	}
 
 	// https://github.com/spf13/cobra/issues/655
@@ -44,7 +45,7 @@ func initPreRun(cmd *cobra.Command, args []string) error {
 		t, err := cmd.Flags().GetString("type")
 		// flag accessed but not defined
 		if err != nil {
-			return errors.New("When initializing a project")
+			return errors.New("Project type not provided")
 		}
 		if t == "" {
 			return errors.New("Project type cannot be empty")
@@ -134,7 +135,7 @@ func InitCmd() *cobra.Command {
 		Use:       man.Use,
 		Short:     man.Short,
 		Long:      man.Long,
-		ValidArgs: []string{"project"},
+		ValidArgs: initValidArgs,
 		Args:      cobra.OnlyValidArgs,
 		PreRunE:   initPreRun,
 		RunE:      initRun,
