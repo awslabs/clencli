@@ -32,10 +32,8 @@ func executeCommandC(root *cobra.Command, args ...string) (c *cobra.Command, out
 }
 
 // InitRootAndChildCmd does ...
-func InitRootAndChildCmd(childCmd *cobra.Command) (*cobra.Command, *cobra.Command) {
-	rootCmd := &cobra.Command{Use: "root", Args: cobra.NoArgs, Run: emptyRun}
+func InitRootAndChildCmd(rootCmd *cobra.Command, childCmd *cobra.Command) (*cobra.Command, *cobra.Command) {
 	rootCmd.AddCommand(childCmd)
-
 	return rootCmd, childCmd
 }
 
