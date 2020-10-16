@@ -11,8 +11,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-// randomUnsplash is a struct from Unsplash API Randm Request
-type randomUnsplash struct {
+// RandomUnsplash is a struct from Unsplash API Randm Request
+type RandomUnsplash struct {
 	ID             string      `json:"id"`
 	CreatedAt      string      `json:"created_at"`
 	UpdatedAt      string      `json:"updated_at"`
@@ -94,14 +94,14 @@ type randomUnsplash struct {
 }
 
 // GetRandomPhotoDefaults retrieves a single random photo with default values.
-func GetRandomPhotoDefaults(query string) randomUnsplash {
+func GetRandomPhotoDefaults(query string) RandomUnsplash {
 	// landscape orientation is better for README files
 	return GetRandomPhoto(query, "", "", "", "landscape", "low")
 }
 
 // GetRandomPhoto retrieves a single random photo, given optional filters.
-func GetRandomPhoto(query string, collections string, featured string, username string, orientation string, filter string) randomUnsplash {
-	var unsplash randomUnsplash
+func GetRandomPhoto(query string, collections string, featured string, username string, orientation string, filter string) RandomUnsplash {
+	var unsplash RandomUnsplash
 
 	clientID := viper.Get("unsplash.access_key")
 	url := fmt.Sprintf("https://api.unsplash.com/photos/random?client_id=%s&query=%s", clientID, query)
