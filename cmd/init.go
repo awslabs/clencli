@@ -20,6 +20,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	fun "github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
@@ -59,43 +60,69 @@ func preRun(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func run(cmd *cobra.Command, args []string) error {
-	n, _ := cmd.Flags().GetString("name")
-	t, _ := cmd.Flags().GetString("type")
-	s, _ := cmd.Flags().GetString("structure")
-	o, _ := cmd.Flags().GetBool("only-customized-structure")
+func getFlags(cmd *cobra.Command) (name string, typee string, structure string, onlyCustomizedStructure bool) {
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		log.Fatal("required flag name not set")
+	}
 
-	switch t {
-	case "basic":
-		fun.Init(n)
-		if !o {
-			fun.InitBasic()
+	typee, _ = cmd.Flags().GetString("type")
+	structure, _ = cmd.Flags().GetString("structure")
+	onlyCustomizedStructure, _ = cmd.Flags().GetBool("only-customized-structure")
+	return name, typee, structure, onlyCustomizedStructure
+}
+
+func initBasicProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+	fun.Init(name)
+	if !onlyCustomizedStructure {
+		fun.InitBasic()
+	}
+	fun.InitCustomProjectLayout(typee, "default")
+	fun.InitCustomProjectLayout(typee, structure)
+	fun.UpdateReadMe()
+}
+
+func initCloudFormationProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+	fun.Init(name)
+	if !onlyCustomizedStructure {
+		fun.InitBasic()
+		fun.InitHLD(name)
+		fun.InitCloudFormation()
+	}
+	fun.InitCustomProjectLayout(typee, "default")
+	fun.InitCustomProjectLayout(typee, structure)
+	fun.UpdateReadMe()
+}
+
+func initTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+	fun.Init(name)
+	if !onlyCustomizedStructure {
+		fun.InitBasic()
+		fun.InitHLD(name)
+		fun.InitTerraform()
+	}
+	fun.InitCustomProjectLayout(typee, "default")
+	fun.InitCustomProjectLayout(typee, structure)
+	fun.UpdateReadMe()
+}
+
+func run(cmd *cobra.Command, args []string) error {
+	name, typee, structure, onlyCustomizedStructure := getFlags(cmd)
+
+	if args[0] == "project" {
+		switch typee {
+		case "basic":
+			initBasicProject(name, typee, structure, onlyCustomizedStructure)
+		case "cloudformation":
+			initCloudFormationProject(name, typee, structure, onlyCustomizedStructure)
+		case "terraform":
+			initTerraformProject(name, typee, structure, onlyCustomizedStructure)
+
+		default:
+			return errors.New("Unknow project type")
 		}
-		fun.InitCustomProjectLayout(t, "default")
-		fun.InitCustomProjectLayout(t, s)
-		fun.UpdateReadMe()
-	case "cloudformation":
-		fun.Init(n)
-		if !o {
-			fun.InitBasic()
-			fun.InitHLD(n)
-			fun.InitCloudFormation()
-		}
-		fun.InitCustomProjectLayout("basic", "default")
-		fun.InitCustomProjectLayout(t, s)
-		fun.UpdateReadMe()
-	case "terraform":
-		fun.Init(n)
-		if !o {
-			fun.InitBasic()
-			fun.InitHLD(n)
-			fun.InitTerraform()
-		}
-		fun.InitCustomProjectLayout("basic", "default")
-		fun.InitCustomProjectLayout(t, s)
-		fun.UpdateReadMe()
-	default:
-		return errors.New("Unknow project type")
+	} else {
+		return errors.New("invalid argument")
 	}
 
 	return nil
