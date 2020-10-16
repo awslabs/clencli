@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"os"
 
+	fun "github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -29,15 +30,17 @@ import (
 
 var cfgFile string
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "clencli",
-	Short: "The Cloud Engineer CLI",
-	Long:  `A CLI built to assist Cloud Engineers.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+// RootCmd represents the base command when called without any subcommands
+func RootCmd() *cobra.Command {
+	man := fun.GetManual("root")
+	return &cobra.Command{
+		Use:   man.Use,
+		Short: man.Short,
+		Long:  man.Long,
+	}
 }
+
+var rootCmd = RootCmd()
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
