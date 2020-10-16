@@ -57,6 +57,16 @@ func FileExists(filename string) bool {
 	return !info.IsDir()
 }
 
+// DirOrFileExists an error is known to report that a file or directory does not exist.
+// It is satisfied by ErrNotExist as well as some syscall errors.
+func DirOrFileExists(path string) bool {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false
+	}
+
+	return true
+}
+
 // CopyFile copies a file from source into a given destination path
 // https://github.com/mactsouk/opensource.com/blob/master/cp2.go
 func CopyFile(sourceFile string, destinationFile string) {
