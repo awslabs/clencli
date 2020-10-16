@@ -46,3 +46,9 @@ go/version: ## Print Go version
 .PHONY: go/env
 go/env: ## Print Go environment information
 	go env
+
+.PHONY: go/test
+go/test:
+	@echo "=== Testing commands"
+	@rm -rf test
+	@cd cmd && go test -v

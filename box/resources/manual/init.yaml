@@ -1,0 +1,3 @@
+use: init project --name <value> [ --type [basic|cloudformation|terraform] ]
+short: Initialize a project
+long: Initialize a project with code structure

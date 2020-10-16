@@ -18,69 +18,132 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"log"
-	"os"
 
-	"github.com/awslabs/clencli/function"
+	fun "github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
 )
 
-// initCmd represents the init command
-var initCmd = &cobra.Command{
-	// Use:       "init ",
-	Use: `init project --name <value> 
-	[ --type [basic|cloudformation|terraform] ]`,
-	Short:     "Initialize a project",
-	Long:      "Initialize a project with code structure",
-	ValidArgs: []string{"project"},
-	Args:      cobra.OnlyValidArgs,
-	PreRun: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Please provide an argument")
-			os.Exit(1)
-		}
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		n, _ := cmd.Flags().GetString("name")
-		t, _ := cmd.Flags().GetString("type")
-		s, _ := cmd.Flags().GetString("structure")
-		o, _ := cmd.Flags().GetBool("only-customized-structure")
+var validArgs = []string{"project"}
 
-		switch t {
-		case "basic":
-			function.Init(n)
-			if !o {
-				function.InitBasic()
-			}
-			function.InitCustomProjectLayout(t, "default")
-			function.InitCustomProjectLayout(t, s)
-		case "cloudformation":
-			function.Init(n)
-			if !o {
-				function.InitBasic()
-				function.InitHLD(n)
-				function.InitCloudFormation()
-			}
-			function.InitCustomProjectLayout("basic", "default")
-			function.InitCustomProjectLayout(t, s)
-		case "terraform":
-			function.Init(n)
-			if !o {
-				function.InitBasic()
-				function.InitHLD(n)
-				function.InitTerraform()
-			}
-			function.InitCustomProjectLayout("basic", "default")
-			function.InitCustomProjectLayout(t, s)
-		default:
-			log.Fatal("Unknown project type")
+func preRun(cmd *cobra.Command, args []string) error {
+	if len(args) == 0 {
+		return errors.New("Please provide an argument")
+	}
+
+	// https://github.com/spf13/cobra/issues/655
+	_, err := cmd.Flags().GetString("name")
+	// flag accessed but not defined
+	if err != nil {
+		return errors.New("required flag name not set")
+	}
+
+	// ensure the project types
+	if args[0] == "project" {
+		t, err := cmd.Flags().GetString("type")
+		// flag accessed but not defined
+		if err != nil {
+			return errors.New("When initializing a project")
+		}
+		if t == "" {
+			return errors.New("Project type cannot be empty")
 		}
 
-		// Update clencli/*.yaml based on clencli's config
-		function.UpdateReadMe()
-	},
+		if t != "basic" && t != "cloudformation" && t != "terraform" {
+			return fmt.Errorf("Unknown project type provided: %s", t)
+		}
+
+	}
+
+	return nil
 }
+
+func getFlags(cmd *cobra.Command) (name string, typee string, structure string, onlyCustomizedStructure bool) {
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		log.Fatal("required flag name not set")
+	}
+
+	typee, _ = cmd.Flags().GetString("type")
+	structure, _ = cmd.Flags().GetString("structure")
+	onlyCustomizedStructure, _ = cmd.Flags().GetBool("only-customized-structure")
+	return name, typee, structure, onlyCustomizedStructure
+}
+
+func initBasicProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+	fun.Init(name)
+	if !onlyCustomizedStructure {
+		fun.InitBasic()
+	}
+	fun.InitCustomProjectLayout(typee, "default")
+	fun.InitCustomProjectLayout(typee, structure)
+	fun.UpdateReadMe()
+}
+
+func initCloudFormationProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+	fun.Init(name)
+	if !onlyCustomizedStructure {
+		fun.InitBasic()
+		fun.InitHLD(name)
+		fun.InitCloudFormation()
+	}
+	fun.InitCustomProjectLayout(typee, "default")
+	fun.InitCustomProjectLayout(typee, structure)
+	fun.UpdateReadMe()
+}
+
+func initTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+	fun.Init(name)
+	if !onlyCustomizedStructure {
+		fun.InitBasic()
+		fun.InitHLD(name)
+		fun.InitTerraform()
+	}
+	fun.InitCustomProjectLayout(typee, "default")
+	fun.InitCustomProjectLayout(typee, structure)
+	fun.UpdateReadMe()
+}
+
+func run(cmd *cobra.Command, args []string) error {
+	name, typee, structure, onlyCustomizedStructure := getFlags(cmd)
+
+	if args[0] == "project" {
+		switch typee {
+		case "basic":
+			initBasicProject(name, typee, structure, onlyCustomizedStructure)
+		case "cloudformation":
+			initCloudFormationProject(name, typee, structure, onlyCustomizedStructure)
+		case "terraform":
+			initTerraformProject(name, typee, structure, onlyCustomizedStructure)
+
+		default:
+			return errors.New("Unknow project type")
+		}
+	} else {
+		return errors.New("invalid argument")
+	}
+
+	return nil
+}
+
+// InitCmd command to initialize projects
+func InitCmd() *cobra.Command {
+	man := fun.GetManual("init")
+	return &cobra.Command{
+		Use:       man.Use,
+		Short:     man.Short,
+		Long:      man.Long,
+		ValidArgs: validArgs,
+		Args:      cobra.OnlyValidArgs,
+		PreRunE:   preRun,
+		RunE:      run,
+	}
+}
+
+// initCmd represents the init command
+var initCmd = InitCmd()
 
 func init() {
 	rootCmd.AddCommand(initCmd)

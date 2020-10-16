@@ -68,6 +68,9 @@ clencli/update-readme: ## Renders template readme.tmpl with additional documents
 .PHONY: clencli/release
 clencli/release: go/mod
 
+.PHONY: clencli/test
+clencli/test: go/test
+
 .DEFAULT_GOAL := clencli/help
 
 .PHONY: clencli/help

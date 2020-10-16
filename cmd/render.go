@@ -28,41 +28,46 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// renderCmd represents the render command
-var renderCmd = &cobra.Command{
-	Use:       "render template",
-	Short:     "Render template",
-	Long:      "Render template located at clencli/*.tmpl based on their respective clencli/*.yaml database.",
-	ValidArgs: []string{"template"},
-	Args:      cobra.OnlyValidArgs,
-	PreRun: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			fmt.Println("Please provide an argument, for example: clencli render template [options]")
-			os.Exit(1)
-		}
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-		name, err := cmd.Flags().GetString("name")
-		if err != nil {
-			log.Fatal("Error while getting the template name")
-		}
+// RenderCmd command to render templates
+func RenderCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:       "render template",
+		Short:     "Render template",
+		Long:      "Render template located at clencli/*.tmpl based on their respective clencli/*.yaml database.",
+		ValidArgs: []string{"template"},
+		Args:      cobra.OnlyValidArgs,
+		PreRun: func(cmd *cobra.Command, args []string) {
+			if len(args) == 0 {
+				fmt.Println("Please provide an argument, for example: clencli render template [options]")
+				os.Exit(1)
+			}
+		},
+		Run: func(cmd *cobra.Command, args []string) {
+			name, err := cmd.Flags().GetString("name")
+			if err != nil {
+				log.Fatal("Error while getting the template name")
+			}
 
-		if !function.FileExists("clencli/" + name + ".yaml") {
-			fmt.Print("Missing database at clencli/" + name + ".yaml")
-			os.Exit(1)
-		}
+			if !function.FileExists("clencli/" + name + ".yaml") {
+				fmt.Print("Missing database at clencli/" + name + ".yaml")
+				os.Exit(1)
+			}
 
-		if !function.FileExists("clencli/" + name + ".tmpl") {
-			fmt.Print("Missing template at clencli/" + name + ".tmpl")
-			os.Exit(1)
-		}
+			if !function.FileExists("clencli/" + name + ".tmpl") {
+				fmt.Print("Missing template at clencli/" + name + ".tmpl")
+				os.Exit(1)
+			}
 
-		err = initGomplate(name)
-		if err == nil {
-			fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
-		}
-	},
+			err = initGomplate(name)
+			if err == nil {
+				fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
+			}
+		},
+	}
 }
+
+// renderCmd represents the render command
+var renderCmd = RenderCmd()
 
 func init() {
 	rootCmd.AddCommand(renderCmd)

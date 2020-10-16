@@ -22,47 +22,52 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// unsplashCmd represents the unsplash command
-var unsplashCmd = &cobra.Command{
-	Use:   "unsplash",
-	Short: "Downloads pictures from Unsplash.com",
-	Long:  `Retrieve a single random photo, given optional filters.`,
-	Run: func(cmd *cobra.Command, args []string) {
+// UnsplashCmd command to download photos from Unsplash.com
+func UnsplashCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "unsplash",
+		Short: "Downloads pictures from Unsplash.com",
+		Long:  `Retrieve a single random photo, given optional filters.`,
+		Run: func(cmd *cobra.Command, args []string) {
 
-		query, _ := cmd.Flags().GetString("query")
-		collections, _ := cmd.Flags().GetString("collections")
-		featured, _ := cmd.Flags().GetString("featured")
-		username, _ := cmd.Flags().GetString("username")
-		orientation, _ := cmd.Flags().GetString("orientation")
-		filter, _ := cmd.Flags().GetString("filter")
-		size, _ := cmd.Flags().GetString("size")
+			query, _ := cmd.Flags().GetString("query")
+			collections, _ := cmd.Flags().GetString("collections")
+			featured, _ := cmd.Flags().GetString("featured")
+			username, _ := cmd.Flags().GetString("username")
+			orientation, _ := cmd.Flags().GetString("orientation")
+			filter, _ := cmd.Flags().GetString("filter")
+			size, _ := cmd.Flags().GetString("size")
 
-		unsplash := function.GetRandomPhoto(
-			query,
-			collections,
-			featured,
-			username,
-			orientation,
-			filter)
-		// size)
+			unsplash := function.GetRandomPhoto(
+				query,
+				collections,
+				featured,
+				username,
+				orientation,
+				filter)
+			// size)
 
-		if size == "thumb" || size == "all" {
-			function.DownloadPhoto(unsplash.Urls.Thumb, "thumb", query)
-		}
-		if size == "small" || size == "all" {
-			function.DownloadPhoto(unsplash.Urls.Small, "small", query)
-		}
-		if size == "regular" || size == "all" {
-			function.DownloadPhoto(unsplash.Urls.Regular, "regular", query)
-		}
-		if size == "full" || size == "all" {
-			function.DownloadPhoto(unsplash.Urls.Full, "full", query)
-		}
-		if size == "raw" || size == "all" {
-			function.DownloadPhoto(unsplash.Urls.Raw, "raw", query)
-		}
-	},
+			if size == "thumb" || size == "all" {
+				function.DownloadPhoto(unsplash.Urls.Thumb, "thumb", query)
+			}
+			if size == "small" || size == "all" {
+				function.DownloadPhoto(unsplash.Urls.Small, "small", query)
+			}
+			if size == "regular" || size == "all" {
+				function.DownloadPhoto(unsplash.Urls.Regular, "regular", query)
+			}
+			if size == "full" || size == "all" {
+				function.DownloadPhoto(unsplash.Urls.Full, "full", query)
+			}
+			if size == "raw" || size == "all" {
+				function.DownloadPhoto(unsplash.Urls.Raw, "raw", query)
+			}
+		},
+	}
 }
+
+// unsplashCmd represents the unsplash command
+var unsplashCmd = UnsplashCmd()
 
 func init() {
 	rootCmd.AddCommand(unsplashCmd)
