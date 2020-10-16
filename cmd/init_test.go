@@ -96,6 +96,113 @@ func TestInitWithNameOnly(t *testing.T) {
 	output, err := executeCommand(rootCmd, "init", "project", "--name", "generated-project")
 
 	if err != nil {
-		log.Fatal("Something went wrong during project initialization: ", err, output)
+		t.Errorf("Project wasn't able to initialize: %v", output)
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
+
+func TestInitWithValidTypeOnly(t *testing.T) {
+	rootCmd, initCmd := initRootAndChildCmd()
+	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
+	output, err := executeCommand(rootCmd, "init", "project", "--type", "basic")
+
+	assert.Contains(t, output, "required flag name not set")
+	assert.Contains(t, err.Error(), "required flag name not set")
+}
+
+func TestInitWithInvalidTypeOnly(t *testing.T) {
+	rootCmd, initCmd := initRootAndChildCmd()
+	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
+	output, err := executeCommand(rootCmd, "init", "project", "--type", "null")
+
+	assert.Contains(t, output, "required flag name not set")
+	assert.Contains(t, err.Error(), "required flag name not set")
+}
+
+func TestInitWithNameAndInvalidType(t *testing.T) {
+	rootCmd, initCmd := initRootAndChildCmd()
+	initCmd.Flags().StringP("name", "n", "", "The project name.")
+	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
+	output, err := executeCommand(rootCmd, "init", "project", "--name", "generated-project", "--type", "null")
+
+	assert.Contains(t, output, "Unknown project type provided")
+	assert.Contains(t, err.Error(), "Unknown project type provided")
+}
+
+func TestInitWithNameAndType(t *testing.T) {
+	rootCmd, initCmd := initRootAndChildCmd()
+	initCmd.Flags().StringP("name", "n", "", "The project name.")
+	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
+	output, err := executeCommand(rootCmd, "init", "project", "--name", "generated-project", "--type", "basic")
+
+	if err != nil {
+		t.Errorf("Project wasn't able to initialize: %v", output)
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	if !fun.DirOrFileExists("clencli") {
+		t.Errorf("CLENCLI directory missing")
+	}
+	if !fun.DirOrFileExists("clencli/readme.tmpl") {
+		t.Errorf("CLENCLI readme.tmpl is missing")
+	}
+	if !fun.DirOrFileExists("clencli/readme.yaml") {
+		t.Errorf("CLENCLI readme.yaml is missing")
+	}
+}
+
+func TestInitWithNameAndCloudFormationType(t *testing.T) {
+	rootCmd, initCmd := initRootAndChildCmd()
+	initCmd.Flags().StringP("name", "n", "", "The project name.")
+	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
+	output, err := executeCommand(rootCmd, "init", "project", "--name", "generated-project", "--type", "cloudformation")
+
+	if err != nil {
+		t.Errorf("Project wasn't able to initialize: %v", output)
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	if !fun.DirOrFileExists("clencli") {
+		t.Errorf("CLENCLI directory missing")
+	}
+	if !fun.DirOrFileExists("clencli/readme.tmpl") {
+		t.Errorf("CLENCLI readme.tmpl is missing")
+	}
+	if !fun.DirOrFileExists("clencli/readme.yaml") {
+		t.Errorf("CLENCLI readme.yaml is missing")
+	}
+	if !fun.DirOrFileExists("clencli/hld.tmpl") {
+		t.Errorf("CLENCLI hld.tmpl is missing")
+	}
+	if !fun.DirOrFileExists("clencli/hld.yaml") {
+		t.Errorf("CLENCLI hld.yaml is missing")
+	}
+}
+
+func TestInitWithNameAndTerraformType(t *testing.T) {
+	rootCmd, initCmd := initRootAndChildCmd()
+	initCmd.Flags().StringP("name", "n", "", "The project name.")
+	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
+	output, err := executeCommand(rootCmd, "init", "project", "--name", "generated-project", "--type", "terraform")
+
+	if err != nil {
+		t.Errorf("Project wasn't able to initialize: %v", output)
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	if !fun.DirOrFileExists("clencli") {
+		t.Errorf("CLENCLI directory missing")
+	}
+	if !fun.DirOrFileExists("clencli/readme.tmpl") {
+		t.Errorf("CLENCLI readme.tmpl is missing")
+	}
+	if !fun.DirOrFileExists("clencli/readme.yaml") {
+		t.Errorf("CLENCLI readme.yaml is missing")
+	}
+	if !fun.DirOrFileExists("clencli/hld.tmpl") {
+		t.Errorf("CLENCLI hld.tmpl is missing")
+	}
+	if !fun.DirOrFileExists("clencli/hld.yaml") {
+		t.Errorf("CLENCLI hld.yaml is missing")
 	}
 }

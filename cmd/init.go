@@ -19,6 +19,7 @@ package cmd
 
 import (
 	"errors"
+	"fmt"
 
 	fun "github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
@@ -36,6 +37,23 @@ func preRun(cmd *cobra.Command, args []string) error {
 	// flag accessed but not defined
 	if err != nil {
 		return errors.New("required flag name not set")
+	}
+
+	// ensure the project types
+	if args[0] == "project" {
+		t, err := cmd.Flags().GetString("type")
+		// flag accessed but not defined
+		if err != nil {
+			return errors.New("When initializing a project")
+		}
+		if t == "" {
+			return errors.New("Project type cannot be empty")
+		}
+
+		if t != "basic" && t != "cloudformation" && t != "terraform" {
+			return fmt.Errorf("Unknown project type provided: %s", t)
+		}
+
 	}
 
 	return nil
