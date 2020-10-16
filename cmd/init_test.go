@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -38,20 +39,61 @@ func initRootAndChildCmd() (*cobra.Command, *cobra.Command) {
 	return rootCmd, childCmd
 }
 
-func TestMain(m *testing.M) {
+func setup(t *testing.T) (pwd string, nwd string) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal("Unable to get the current directory path")
+	}
+
+	nwd, err = fun.CreateDirectoryNamedPath(t.Name())
+	os.Chdir(nwd)
+
+	return cwd, nwd
+}
+
+func setupAll() (pwd string, nwd string) {
 	format := "2006-01-02-15-04-05.000000000"
 	dt := time.Now().Format(format)
-	path := "../test/" + dt
 
-	err := fun.CreateDirectoryNamedPath(path)
-	if err == nil {
-		// dir created
-		os.Chdir(path)
-		code := m.Run()
-		os.Exit(code)
-	} else {
-		log.Fatal("Something went wrong", err)
+	cwd, err := os.Getwd()
+	path := cwd + "/../test/" + dt
+
+	if err != nil {
+		log.Fatal("Unable to get the current directory path")
 	}
+
+	nwd, err = fun.CreateDirectoryNamedPath(path)
+	if err == nil {
+		os.Chdir(nwd)
+	}
+
+	return cwd, nwd
+}
+
+func teardown(pwd string, nwd string) {
+	fmt.Println("Going back to ", pwd)
+	os.Chdir(pwd)
+	// err := os.RemoveAll(nwd)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+}
+
+func teardownAll(pwd string, nwd string) {
+	fmt.Println("About to delete ", nwd)
+	err := os.RemoveAll(nwd)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func TestMain(m *testing.M) {
+	// pwd, nwd := setupAll()
+	setupAll()
+	code := m.Run()
+	// comment the line below if you want to keep the test results
+	// teardownAll(pwd, nwd)
+	os.Exit(code)
 }
 
 func TestInitWithNoArgAndNoFlags(t *testing.T) {
@@ -90,6 +132,8 @@ func TestInitWithEmptyName(t *testing.T) {
 }
 
 func TestInitWithNameOnly(t *testing.T) {
+	pwd, nwd := setup(t)
+
 	rootCmd, initCmd := initRootAndChildCmd()
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
@@ -99,6 +143,8 @@ func TestInitWithNameOnly(t *testing.T) {
 		t.Errorf("Project wasn't able to initialize: %v", output)
 		t.Errorf("Unexpected error: %v", err)
 	}
+
+	teardown(pwd, nwd)
 }
 
 func TestInitWithValidTypeOnly(t *testing.T) {
@@ -130,6 +176,8 @@ func TestInitWithNameAndInvalidType(t *testing.T) {
 }
 
 func TestInitWithNameAndType(t *testing.T) {
+	pwd, nwd := setup(t)
+
 	rootCmd, initCmd := initRootAndChildCmd()
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
@@ -149,9 +197,13 @@ func TestInitWithNameAndType(t *testing.T) {
 	if !fun.DirOrFileExists("clencli/readme.yaml") {
 		t.Errorf("CLENCLI readme.yaml is missing")
 	}
+
+	teardown(pwd, nwd)
 }
 
 func TestInitWithNameAndCloudFormationType(t *testing.T) {
+	pwd, nwd := setup(t)
+
 	rootCmd, initCmd := initRootAndChildCmd()
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
@@ -177,9 +229,13 @@ func TestInitWithNameAndCloudFormationType(t *testing.T) {
 	if !fun.DirOrFileExists("clencli/hld.yaml") {
 		t.Errorf("CLENCLI hld.yaml is missing")
 	}
+
+	teardown(pwd, nwd)
 }
 
 func TestInitWithNameAndTerraformType(t *testing.T) {
+	pwd, nwd := setup(t)
+
 	rootCmd, initCmd := initRootAndChildCmd()
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
@@ -205,4 +261,6 @@ func TestInitWithNameAndTerraformType(t *testing.T) {
 	if !fun.DirOrFileExists("clencli/hld.yaml") {
 		t.Errorf("CLENCLI hld.yaml is missing")
 	}
+
+	teardown(pwd, nwd)
 }
