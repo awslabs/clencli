@@ -1,6 +1,7 @@
 package function
 
 import (
+	"fmt"
 	"io/ioutil"
 
 	"io"
@@ -54,4 +55,21 @@ func FileExists(filename string) bool {
 		return false
 	}
 	return !info.IsDir()
+}
+
+// CopyFile copies a file from source into a given destination path
+// https://github.com/mactsouk/opensource.com/blob/master/cp2.go
+func CopyFile(sourceFile string, destinationFile string) {
+	input, err := ioutil.ReadFile(sourceFile)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	err = ioutil.WriteFile(destinationFile, input, 0644)
+	if err != nil {
+		fmt.Println("Error creating", destinationFile)
+		fmt.Println(err)
+		return
+	}
 }
