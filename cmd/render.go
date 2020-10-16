@@ -18,30 +18,40 @@ package cmd
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/awslabs/clencli/function"
+	fun "github.com/awslabs/clencli/function"
 	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
 	"github.com/spf13/cobra"
 )
 
+func renderPreRun(cmd *cobra.Command, args []string) error {
+	help := fun.GetHelp("root")
+	if len(args) == 0 {
+		return errors.New(help.Usage)
+	}
+
+	// if len(args) == 0 {
+	// 	return errors.New("Please provide an argument, for example: clencli render template [options]")
+	// }
+	return nil
+}
+
 // RenderCmd command to render templates
 func RenderCmd() *cobra.Command {
+	man := fun.GetManual("render")
 	return &cobra.Command{
-		Use:       "render template",
-		Short:     "Render template",
-		Long:      "Render template located at clencli/*.tmpl based on their respective clencli/*.yaml database.",
+		Use:       man.Use,
+		Short:     man.Short,
+		Long:      man.Long,
 		ValidArgs: []string{"template"},
 		Args:      cobra.OnlyValidArgs,
-		PreRun: func(cmd *cobra.Command, args []string) {
-			if len(args) == 0 {
-				fmt.Println("Please provide an argument, for example: clencli render template [options]")
-				os.Exit(1)
-			}
-		},
+		PreRunE:   renderPreRun,
 		Run: func(cmd *cobra.Command, args []string) {
 			name, err := cmd.Flags().GetString("name")
 			if err != nil {
