@@ -11,7 +11,7 @@
 
 -->
 
-![Logo](https://images.unsplash.com/photo-1492551557933-34265f7af79e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
+![Logo](https://images.unsplash.com/photo-1443770760695-e1bfa3e62229?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
 
@@ -45,6 +45,9 @@ A CLI built to assist Cloud Engineers.
   <summary>Expand</summary>
 
 CLENCLI enables you to quickly and predictably create, change, and improve your cloud projects by automating common tasks such as creating a new project, or updating its documentation.
+Modern software projects are composed of many repositories, and often worked upon by many development teams. Keeping consistency across the project is key to enable productivity and efficiency.
+
+In a polyglot world where a team can choose it's programming language, often this flexibility can spill into chaos as every repo looks different. CLENCLI solves this issue by giving developers a quick and easy way to create a standardised repo structure and easily rendering documentation via a YAML file.
 
 ### Create a new project
 ```
