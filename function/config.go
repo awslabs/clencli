@@ -103,8 +103,8 @@ func UpdateReadMe() error {
 
 	updated := false
 
-	if g.Logo.Theme != "" {
-		l.Logo.Theme = g.Logo.Theme
+	if g.Logo.Unsplash.Query != "" {
+		l.Logo.Unsplash.Query = g.Logo.Unsplash.Query
 		updated = true
 	}
 
@@ -134,21 +134,35 @@ func UpdateReadMe() error {
 
 // UpdateReadMeLogoURL fetches random photo based readme.logo.theme from config
 func UpdateReadMeLogoURL() error {
+	// TODO: check if user has Unsplash access/secret key
+
 	l, err := GetLocalReadMeConfig()
 	if err != nil {
 		return fmt.Errorf("Unable to get local readme config \n%v", err)
 	}
 
-	if l.Logo.Theme != "" {
-		ru, err := GetRandomPhotoDefaults(l.Logo.Theme)
-		if err != nil {
-			return fmt.Errorf("Unexpected error while getting random photo from Unsplash with default values \n%v", err)
-		}
-		l.Logo.URL = ru.Urls.Regular
-		err = MarshallAndSaveReadMe(l)
-		if err != nil {
-			return fmt.Errorf("Unable to update cleancli/readme.yaml  \n%v", err)
-		}
+	u, err := GetRandomPhoto(
+		l.Logo.Unsplash.Query,
+		l.Logo.Unsplash.Collections,
+		l.Logo.Unsplash.Featured,
+		l.Logo.Unsplash.Username,
+		l.Logo.Unsplash.Orientation,
+		l.Logo.Unsplash.Filter)
+
+	if err != nil {
+		return fmt.Errorf("Unexpected error while getting a random photo from Unsplash \n%v", err)
+	}
+
+	url := GetPhotoURLBySize(l.Logo.Unsplash.Size, u)
+	// if err != nil {
+	// 	return fmt.Errorf("Unexpected error while getting random photo from Unsplash with default values \n%v", err)
+	// }
+
+	l.Logo.URL = url
+	err = MarshallAndSaveReadMe(l)
+	if err != nil {
+		return fmt.Errorf("Unable to update cleancli/readme.yaml  \n%v", err)
+
 	}
 
 	return nil
