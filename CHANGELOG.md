@@ -114,3 +114,12 @@ init:
             dest: nested-stack.yml
             state: file
 ```
+
+* Unit Testing
+
+Unit testing is very important, and I wanted to introduce (and improve existing commands and functions) them early in the project.
+I took me a while to understand how to mock and test `Cobra` commands. However, I was able to simplify the setup of the cobra commands for testing to ease future 
+
+#### Bugfixes
+
+* Unable to update readme.Logo.URL based on readme.Logo.Theme
