@@ -18,15 +18,15 @@ func TestMain(m *testing.M) {
 }
 
 func TestInitWithNoArgAndNoFlags(t *testing.T) {
-	rootCmd, _ := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, _ := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	output, err := fun.ExecuteCommand(rootCmd, "init")
 
-	assert.Contains(t, output, "Please provide an argument")
-	assert.Contains(t, err.Error(), "Please provide an argument")
+	assert.Contains(t, output, "one the following arguments are required")
+	assert.Contains(t, err.Error(), "one the following arguments are required")
 }
 
 func TestInitWithInvalidArgAndNoFlags(t *testing.T) {
-	rootCmd, _ := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, _ := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	output, err := fun.ExecuteCommand(rootCmd, "init", "null")
 
 	assert.Contains(t, output, "invalid argument")
@@ -35,7 +35,7 @@ func TestInitWithInvalidArgAndNoFlags(t *testing.T) {
 
 func TestInitWithValidArgAndNoFlags(t *testing.T) {
 
-	rootCmd, _ := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, _ := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project")
 
 	assert.Contains(t, output, "required flag name not set")
@@ -44,7 +44,7 @@ func TestInitWithValidArgAndNoFlags(t *testing.T) {
 
 func TestInitWithEmptyName(t *testing.T) {
 
-	rootCmd, initCmd := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, initCmd := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project", "--name")
 
@@ -55,7 +55,7 @@ func TestInitWithEmptyName(t *testing.T) {
 func TestInitWithNameOnly(t *testing.T) {
 	pwd, nwd := fun.Setup(t)
 
-	rootCmd, initCmd := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, initCmd := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project", "--name", "generated-project")
@@ -69,7 +69,7 @@ func TestInitWithNameOnly(t *testing.T) {
 }
 
 func TestInitWithValidTypeOnly(t *testing.T) {
-	rootCmd, initCmd := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, initCmd := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project", "--type", "basic")
 
@@ -78,7 +78,7 @@ func TestInitWithValidTypeOnly(t *testing.T) {
 }
 
 func TestInitWithInvalidTypeOnly(t *testing.T) {
-	rootCmd, initCmd := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, initCmd := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project", "--type", "null")
 
@@ -87,7 +87,7 @@ func TestInitWithInvalidTypeOnly(t *testing.T) {
 }
 
 func TestInitWithNameAndInvalidType(t *testing.T) {
-	rootCmd, initCmd := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, initCmd := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project", "--name", "generated-project", "--type", "null")
@@ -99,7 +99,7 @@ func TestInitWithNameAndInvalidType(t *testing.T) {
 func TestInitWithNameAndType(t *testing.T) {
 	pwd, nwd := fun.Setup(t)
 
-	rootCmd, initCmd := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, initCmd := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project", "--name", "generated-project", "--type", "basic")
@@ -125,7 +125,7 @@ func TestInitWithNameAndType(t *testing.T) {
 func TestInitWithNameAndCloudFormationType(t *testing.T) {
 	pwd, nwd := fun.Setup(t)
 
-	rootCmd, initCmd := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, initCmd := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project", "--name", "generated-project", "--type", "cloudformation")
@@ -157,7 +157,7 @@ func TestInitWithNameAndCloudFormationType(t *testing.T) {
 func TestInitWithNameAndTerraformType(t *testing.T) {
 	pwd, nwd := fun.Setup(t)
 
-	rootCmd, initCmd := fun.InitRootAndChildCmd(InitCmd())
+	rootCmd, initCmd := fun.InitRootAndChildCmd(RootCmd(), InitCmd())
 	initCmd.Flags().StringP("name", "n", "", "The project name.")
 	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
 	output, err := fun.ExecuteCommand(rootCmd, "init", "project", "--name", "generated-project", "--type", "terraform")

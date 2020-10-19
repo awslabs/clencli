@@ -1,8 +1,8 @@
 package function
 
 import (
+	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/spf13/viper"
@@ -10,166 +10,146 @@ import (
 )
 
 // getConfig returns a viper instance for the config YAML file
-func getConfig(name string) *viper.Viper {
-	config := viper.New()
-	config.AddConfigPath("clencli")
-	config.SetConfigName(name)
-	config.SetConfigType("yaml")
-	config.SetConfigPermissions(os.ModePerm)
+func getConfig(name string) (*viper.Viper, error) {
+	c := viper.New()
+	c.AddConfigPath("clencli")
+	c.SetConfigName(name)
+	c.SetConfigType("yaml")
+	c.SetConfigPermissions(os.ModePerm)
 
-	err := config.ReadInConfig() // Find and read the config file
-	if err != nil {              // Handle errors reading the config file
-		log.Fatalf("Fatal error config file: %v", err)
+	err := c.ReadInConfig() // Find and read the c file
+	if err != nil {         // Handle errors reading the c file
+		return c, fmt.Errorf("Unable to read c "+name+" via Viper"+"\n%v", err)
 	}
 
-	return config
+	return c, nil
 }
 
-func getHLD() *viper.Viper {
+func getHLD() (*viper.Viper, error) {
 	return getConfig("hld")
 }
 
-func getReadMeConfig() *viper.Viper {
+func getReadMeConfig() (*viper.Viper, error) {
 	return getConfig("readme")
 }
 
-// ReadMe struct for readme.yaml config
-type ReadMe struct {
-	Logo struct {
-		Label string `yaml:"label"`
-		Theme string `yaml:"theme"`
-		URL   string `yaml:"url"`
-	} `yaml:"logo,omitempty"`
-	Shields struct {
-		Badges []struct {
-			Description string `yaml:"description"`
-			Image       string `yaml:"image"`
-			URL         string `yaml:"url"`
-		} `yaml:"badges"`
-	} `yaml:"shields,omitempty"`
-	App struct {
-		Name     string `yaml:"name"`
-		Function string `yaml:"function"`
-		ID       string `yaml:"id"`
-	} `yaml:"app,omitempty"`
-	Screenshots []struct {
-		Caption string `yaml:"caption"`
-		Label   string `yaml:"label"`
-		URL     string `yaml:"url"`
-	} `yaml:"screenshots,omitempty"`
-	Usage         string `yaml:"usage"`
-	Prerequisites []struct {
-		Description string `yaml:"description"`
-		Name        string `yaml:"name"`
-		URL         string `yaml:"url"`
-	} `yaml:"prerequisites,omitempty"`
-	Installing   string   `yaml:"installing,omitempty"`
-	Testing      string   `yaml:"testing,omitempty"`
-	Deployment   string   `yaml:"deployment,omitempty"`
-	Include      []string `yaml:"include,omitempty"`
-	Contributors []struct {
-		Name  string `yaml:"name"`
-		Role  string `yaml:"role"`
-		Email string `yaml:"email"`
-	} `yaml:"contributors,omitempty"`
-	Acknowledgments []struct {
-		Name string `yaml:"name"`
-		Role string `yaml:"role"`
-	} `yaml:"acknowledgments,omitempty"`
-	References []struct {
-		Description string `yaml:"description"`
-		Name        string `yaml:"name"`
-		URL         string `yaml:"url"`
-	} `yaml:"references,omitempty"`
-	License   string `yaml:"license,omitempty"`
-	Copyright string `yaml:"copyright,omitempty"`
-}
+// GetGlobalConfig returns a GlobalConfig struct from the global config
+func GetGlobalConfig() (GlobalConfig, error) {
+	v := viper.GetViper()
+	c := GlobalConfig{}
 
-// GlobalConfig struct for the glogal config (~/.clencli.yaml)
-type GlobalConfig struct {
-	Unsplash struct {
-		AccessKey string `yaml:"access_key"`
-		SecretKey string `yaml:"secret_key"`
-	} `yaml:"unsplash,omitempty"`
-	Init struct {
-		Types []struct {
-			Type    string `yaml:"type"`
-			Name    string `yaml:"name"`
-			Enabled bool   `yaml:"enabled"`
-			Files   []struct {
-				File struct {
-					Path  string `yaml:"path"`
-					Src   string `yaml:"src"`
-					Dest  string `yaml:"dest"`
-					State string `yaml:"state"`
-				} `yaml:"file,omitempty"`
-			} `yaml:"files"`
-		} `yaml:"types"`
-	} `yaml:"init"`
-	Readme struct {
-		Logo struct {
-			Theme string `yaml:"theme"`
-		} `yaml:"logo"`
-		License   string `yaml:"license"`
-		Copyright string `yaml:"copyright"`
-	} `yaml:"readme,omitempty"`
-}
-
-// UpdateReadMe updates local configuration file with global configuration values
-func UpdateReadMe() {
-	readmeConfig := getReadMeConfig()
-
-	localReadMe := ReadMe{}
-	err := readmeConfig.Unmarshal(&localReadMe)
+	err := v.Unmarshal(&c)
 	if err != nil {
-		log.Fatalf("Unable to decode into struct, %v", err)
+		return c, fmt.Errorf("Unable to Unmarshall GlobalConfig struct \n%v", err)
 	}
 
-	// Get values from global config
-	url := viper.GetString("readme.logo.url")
-	theme := viper.GetString("readme.logo.theme")
-	license := viper.GetString("readme.license")
-	copyright := viper.GetString("readme.copyright")
+	return c, nil
+}
 
-	// Give logo.url precedence over logo.theme
-	if len(url) > 0 {
-		localReadMe.Logo.URL = url
-
-		// if readme.logo.url is set in config, should take precendece over theme
-		localReadMe.Logo.Theme = ""
-	} else if len(theme) > 0 {
-		localReadMe.Logo.Theme = theme
-
-		// replaces the current logo.url by Unsplash's random photo URL based on theme's value
-		unsplash := GetRandomPhotoDefaults(theme)
-		localReadMe.Logo.URL = unsplash.Urls.Regular
+// GetLocalReadMeConfig unmarshall local readme.yaml return as ReadMe struct
+func GetLocalReadMeConfig() (ReadMe, error) {
+	r := ReadMe{}
+	c, err := getReadMeConfig()
+	if err != nil {
+		return r, fmt.Errorf("Unable to get readme config with Viper \n%v", err)
 	}
 
-	if len(license) > 0 {
-		localReadMe.License = license
+	err = c.Unmarshal(&r)
+	if err != nil {
+		return r, fmt.Errorf("Unable to Unmarshall ReadMe struct \n%v", err)
 	}
 
-	if len(copyright) > 0 {
-		localReadMe.Copyright = copyright
+	return r, err
+}
+
+// GetGlobalReadMeConfig return the ReadMe section as struct from the global config
+func GetGlobalReadMeConfig() (ReadMe, error) {
+	c, err := GetGlobalConfig()
+	r := c.ReadMe
+	if err != nil {
+		return r, fmt.Errorf("Unable to get global config \n%v", err)
 	}
 
+	return r, err
+}
+
+// MarshallAndSaveReadMe receive a readme struct and saves it back as file
+func MarshallAndSaveReadMe(readme ReadMe) error {
 	// Marshal back into yaml
-	d, err := yaml.Marshal(&localReadMe)
+	r, err := yaml.Marshal(&readme)
 	if err != nil {
-		log.Fatalf("error: %v", err)
+		return fmt.Errorf("Unable to Marshall ReadMe struct %v", err)
 	}
 
-	err = ioutil.WriteFile("clencli/readme.yaml", d, 0644)
+	err = ioutil.WriteFile("clencli/readme.yaml", r, os.ModePerm)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("Unable to update clencli/readme.yaml file %v", err)
 	}
+
+	return nil
 }
 
-func currentdir() (cwd string) {
-	cwd, err := os.Getwd()
+// UpdateReadMe updates local config with global config
+func UpdateReadMe() error {
+	g, err := GetGlobalReadMeConfig()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("Unable to get global readme config \n%v", err)
 	}
 
-	return cwd
+	l, err := GetLocalReadMeConfig()
+	if err != nil {
+		return fmt.Errorf("Unable to get local readme config \n%v", err)
+	}
+
+	updated := false
+
+	if g.Logo.Theme != "" {
+		l.Logo.Theme = g.Logo.Theme
+		updated = true
+	}
+
+	if g.Logo.URL != "" {
+		l.Logo.URL = g.Logo.URL
+		updated = true
+	}
+
+	if g.License != "" {
+		l.License = g.License
+		updated = true
+	}
+
+	if g.Copyright != "" {
+		l.Copyright = g.Copyright
+		updated = true
+	}
+
+	if updated {
+		err = MarshallAndSaveReadMe(l)
+		if err != nil {
+			return fmt.Errorf("Unable to update cleancli/readme.yaml  \n%v", err)
+		}
+	}
+	return nil
+}
+
+// UpdateReadMeLogoURL fetches random photo based readme.logo.theme from config
+func UpdateReadMeLogoURL() error {
+	l, err := GetLocalReadMeConfig()
+	if err != nil {
+		return fmt.Errorf("Unable to get local readme config \n%v", err)
+	}
+
+	if l.Logo.Theme != "" {
+		ru, err := GetRandomPhotoDefaults(l.Logo.Theme)
+		if err != nil {
+			return fmt.Errorf("Unexpected error while getting random photo from Unsplash with default values \n%v", err)
+		}
+		l.Logo.URL = ru.Urls.Regular
+		err = MarshallAndSaveReadMe(l)
+		if err != nil {
+			return fmt.Errorf("Unable to update cleancli/readme.yaml  \n%v", err)
+		}
+	}
+
+	return nil
 }
