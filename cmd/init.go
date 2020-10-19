@@ -34,9 +34,9 @@ func initPreRun(cmd *cobra.Command, args []string) error {
 	}
 
 	// https://github.com/spf13/cobra/issues/655
-	_, err := cmd.Flags().GetString("name")
+	name, err := cmd.Flags().GetString("name")
 	// flag accessed but not defined
-	if err != nil {
+	if err != nil || len(name) == 0 {
 		return errors.New("required flag name not set")
 	}
 
