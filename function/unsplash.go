@@ -164,3 +164,22 @@ func DownloadPhoto(url string, size string, query string) error {
 
 	return DownloadFile(url, dirPath, fileName)
 }
+
+// GetPhotoURLBySize return the photo URL based on the given size
+func GetPhotoURLBySize(size string, u RandomUnsplash) string {
+	switch size {
+	case "thumb":
+		return u.Urls.Thumb
+	case "small":
+		return u.Urls.Small
+	case "regular":
+		return u.Urls.Regular
+	case "full":
+		return u.Urls.Full
+	case "raw":
+		return u.Urls.Raw
+	default:
+		return u.Urls.Small
+	}
+
+}
