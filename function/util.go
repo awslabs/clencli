@@ -24,7 +24,6 @@ func GetStringBetweenDoubleQuotes(str string) (result string, found bool) {
 	return GetStringInBetweenTwoString(str, "\"", "\"")
 }
 
-
 // GetStringTrimmed splits the string by the given separator and trims it by removing all spaces in between
 func GetStringTrimmed(s string, sep string) []string {
 	slc := strings.Split(s, sep)
@@ -32,4 +31,15 @@ func GetStringTrimmed(s string, sep string) []string {
 		slc[i] = strings.TrimSpace(slc[i])
 	}
 	return slc
+}
+
+// ContainsString return true if slice contains item
+func ContainsString(slice []string, item string) bool {
+	set := make(map[string]struct{}, len(slice))
+	for _, s := range slice {
+		set[s] = struct{}{}
+	}
+
+	_, ok := set[item]
+	return ok
 }

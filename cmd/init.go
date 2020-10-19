@@ -26,17 +26,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var validArgs = []string{"project"}
+var initValidArgs = []string{"project"}
 
-func preRun(cmd *cobra.Command, args []string) error {
+func initPreRun(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		return errors.New("Please provide an argument")
+		return fmt.Errorf("one the following arguments are required: %s", initValidArgs)
 	}
 
 	// https://github.com/spf13/cobra/issues/655
-	_, err := cmd.Flags().GetString("name")
+	name, err := cmd.Flags().GetString("name")
 	// flag accessed but not defined
-	if err != nil {
+	if err != nil || len(name) == 0 {
 		return errors.New("required flag name not set")
 	}
 
@@ -45,7 +45,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 		t, err := cmd.Flags().GetString("type")
 		// flag accessed but not defined
 		if err != nil {
-			return errors.New("When initializing a project")
+			return errors.New("Project type not provided")
 		}
 		if t == "" {
 			return errors.New("Project type cannot be empty")
@@ -60,7 +60,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func getFlags(cmd *cobra.Command) (name string, typee string, structure string, onlyCustomizedStructure bool) {
+func initGetFlags(cmd *cobra.Command) (name string, typee string, structure string, onlyCustomizedStructure bool) {
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
 		log.Fatal("required flag name not set")
@@ -72,7 +72,7 @@ func getFlags(cmd *cobra.Command) (name string, typee string, structure string, 
 	return name, typee, structure, onlyCustomizedStructure
 }
 
-func initBasicProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+func initCreateBasicProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
 	fun.Init(name)
 	if !onlyCustomizedStructure {
 		fun.InitBasic()
@@ -82,7 +82,7 @@ func initBasicProject(name string, typee string, structure string, onlyCustomize
 	fun.UpdateReadMe()
 }
 
-func initCloudFormationProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+func initCreateCloudFormationProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
 	fun.Init(name)
 	if !onlyCustomizedStructure {
 		fun.InitBasic()
@@ -94,7 +94,7 @@ func initCloudFormationProject(name string, typee string, structure string, only
 	fun.UpdateReadMe()
 }
 
-func initTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+func initCreateTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
 	fun.Init(name)
 	if !onlyCustomizedStructure {
 		fun.InitBasic()
@@ -106,17 +106,17 @@ func initTerraformProject(name string, typee string, structure string, onlyCusto
 	fun.UpdateReadMe()
 }
 
-func run(cmd *cobra.Command, args []string) error {
-	name, typee, structure, onlyCustomizedStructure := getFlags(cmd)
+func initRun(cmd *cobra.Command, args []string) error {
+	name, typee, structure, onlyCustomizedStructure := initGetFlags(cmd)
 
 	if args[0] == "project" {
 		switch typee {
 		case "basic":
-			initBasicProject(name, typee, structure, onlyCustomizedStructure)
+			initCreateBasicProject(name, typee, structure, onlyCustomizedStructure)
 		case "cloudformation":
-			initCloudFormationProject(name, typee, structure, onlyCustomizedStructure)
+			initCreateCloudFormationProject(name, typee, structure, onlyCustomizedStructure)
 		case "terraform":
-			initTerraformProject(name, typee, structure, onlyCustomizedStructure)
+			initCreateTerraformProject(name, typee, structure, onlyCustomizedStructure)
 
 		default:
 			return errors.New("Unknow project type")
@@ -135,10 +135,10 @@ func InitCmd() *cobra.Command {
 		Use:       man.Use,
 		Short:     man.Short,
 		Long:      man.Long,
-		ValidArgs: validArgs,
+		ValidArgs: initValidArgs,
 		Args:      cobra.OnlyValidArgs,
-		PreRunE:   preRun,
-		RunE:      run,
+		PreRunE:   initPreRun,
+		RunE:      initRun,
 	}
 }
 

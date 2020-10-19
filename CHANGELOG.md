@@ -1,30 +1,116 @@
 # CHANGELOG
 
-## v1.0.0
+## v1.1.0
 
-Hey everyone, I'm glad to release `clencli` with all of you. This moment has a very special taste, as I always wanted to give back to the community. A legion of anonymous people who always were supportive and kind enough to guide and teach me and many others. So, please accept this gift called `clencli` as a small token of appreciation, thank you everyone!
+A few bug fixes and a new features added.
 
 ### Release notes
 
 #### New features and changes
 
-* Create a command to initialize projects
+* Customize your project initialization
 
-By running `clencli init project --name <value>` you can easily initialize a project. Depending of `--type` value given, it will create the project with the necessary files for your cloud project. A folder `clencli` will be created containing templates and yaml files to ease the rendering of such templates. To know more, please run: `clencli init --help`.
-
-* Create a command to render templates
-
-When you run `clencli render template --name <value>`, `clencli` renders a template located at `clencli/*.tmpl` based on their respective `clencli/*.yaml` database. `clencli` uses [Gomplate](https://github.com/hairyhenderson/gomplate) as template renderer, you will find more about Gomplate docs [here](https://docs.gomplate.ca/).
-
-* Create a command to download pictures from Unsplash.com
-
-I wanted to personalize projects during initialization or when desired. Therefore, I've decided to use [unpslash](https://unsplash.com/) as source to fetch photos. You can download images by using the command `clencli unsplash`, or by defining the `theme` at the `clencli/readme.yaml` file. However, you first will need to create your [Unsplash Developer account](https://unsplash.com/documentation#creating-a-developer-account). After that, you can create a new application as `demo` and copy `Access key` and `Secret key` into your `clencli` config, usually at `$HOME/.clencli.yaml` ( you will need to create this file manually ):
+You can customize the structure of your projects by defining it into `clencli` config.
 
 ```
-unsplash:
-  access_key: "XXX"
-  secret_key: "XXX"
+init:
+  types:
+    - type: basic # clencli will always execute basic init
+      name: default # name of initialization, allow user to name different configs, will always execute init with name default
+      enabled: true # allow to keep the configuration but disable it in any moment
+      files: 
+        - file:
+            path: docs
+            state: directory # to create a directory
+        - file:
+            path: a/b/c/d/e/f/g/h # to create nested directories
+            state: directory
+        - file: 
+            src: /tmp/CODE_OF_CONDUCT.md # to copy a file locally
+            dest: CODE_OF_CONDUCT.md
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/valter-silva-au/company-master-template/main/LICENSE # to copy a file remotelly
+            dest: LICENSE
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/valter-silva-au/company-master-template/919a814bc44fa86a72a004fa99f2319a84838790/readme.tmpl # possible to use versioning capabilities such as commits, or tags
+            dest: clencli/readme.tmpl
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/valter-silva-au/company-master-template/ec22acd40123b413e05751b92c07d8fc244ea282/readme.yaml
+            dest: clencli/readme.yaml
+            state: file
 ```
 
-Now, commands can use `unsplash` to download photos in commands such as `clencli unsplash` or `clencli render`.
+You can combine different project types into `init` definition:
 
+```
+init:
+  types:
+    - type: terraform # https://www.hashicorp.com/resources/a-practitioner-s-guide-to-using-hashicorp-terraform-cloud-with-github
+      name: default
+      enabled: true
+      files:
+        - file:
+            src: https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/main.tf
+            dest: main.tf
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/outputs.tf
+            dest: outputs.tf
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/variables.tf
+            dest: variables.tf
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/.gitignore
+            dest: .gitignore
+            state: file
+    - type: cloudformation
+      name: default
+      enabled: true
+      files:
+        - file:
+            src: https://raw.githubusercontent.com/awslabs/aws-cloudformation-templates/master/aws/solutions/WordPress_Single_Instance.yaml
+            dest: stack.yml
+            state: file
+```
+
+You can also name you initializations and only execute them for the type of project you want:
+```
+init:
+  types:
+    - type: terraform # https://www.hashicorp.com/resources/a-practitioner-s-guide-to-using-hashicorp-terraform-cloud-with-github
+      name: module
+      enabled: true
+      files:
+        - file:
+            path: modules
+            state: directory
+        - file:
+            src: https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/main.tf
+            dest: modules/main.tf
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/outputs.tf
+            dest: modules/outputs.tf
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/variables.tf
+            dest: modules/variables.tf
+            state: file
+        - file:
+            src: https://raw.githubusercontent.com/hashicorp/learn-terraform-modules/master/.gitignore
+            dest: .gitignore
+            state: file
+    - type: cloudformation
+      name: nested
+      enabled: true
+      files:
+        - file:
+            src: https://raw.githubusercontent.com/valter-silva-au/company-master-template/main/cloudformation-nested-stack.yml
+            dest: nested-stack.yml
+            state: file
+```

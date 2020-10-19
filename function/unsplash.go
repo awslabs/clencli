@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/spf13/viper"
 )
 
-// randomUnsplash is a struct from Unsplash API Randm Request
-type randomUnsplash struct {
+// RandomUnsplash is a struct from Unsplash API Randm Request
+type RandomUnsplash struct {
 	ID             string      `json:"id"`
 	CreatedAt      string      `json:"created_at"`
 	UpdatedAt      string      `json:"updated_at"`
@@ -94,14 +93,14 @@ type randomUnsplash struct {
 }
 
 // GetRandomPhotoDefaults retrieves a single random photo with default values.
-func GetRandomPhotoDefaults(query string) randomUnsplash {
+func GetRandomPhotoDefaults(query string) (RandomUnsplash, error) {
 	// landscape orientation is better for README files
 	return GetRandomPhoto(query, "", "", "", "landscape", "low")
 }
 
 // GetRandomPhoto retrieves a single random photo, given optional filters.
-func GetRandomPhoto(query string, collections string, featured string, username string, orientation string, filter string) randomUnsplash {
-	var unsplash randomUnsplash
+func GetRandomPhoto(query string, collections string, featured string, username string, orientation string, filter string) (RandomUnsplash, error) {
+	var unsplash RandomUnsplash
 
 	clientID := viper.Get("unsplash.access_key")
 	url := fmt.Sprintf("https://api.unsplash.com/photos/random?client_id=%s&query=%s", clientID, query)
@@ -129,20 +128,20 @@ func GetRandomPhoto(query string, collections string, featured string, username 
 	var client http.Client
 	resp, err := client.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		return unsplash, fmt.Errorf("Unexpected error while performing GET on Unsplash API \n%v", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatal(err)
+			return unsplash, fmt.Errorf("Unexpected error while reading Unsplash response \n%v", err)
 		}
 
 		json.Unmarshal(bodyBytes, &unsplash)
 	}
 
-	return unsplash
+	return unsplash, err
 }
 
 // DownloadPhoto downloads a photo and saves into downloads/unsplash/ folder

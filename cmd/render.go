@@ -18,51 +18,78 @@ package cmd
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/awslabs/clencli/function"
+	fun "github.com/awslabs/clencli/function"
 	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
 	"github.com/spf13/cobra"
 )
 
+var renderValidArgs = []string{"template"}
+
+func renderPreRun(cmd *cobra.Command, args []string) error {
+	if len(args) == 0 {
+		return fmt.Errorf("one the following arguments are required: %s", renderValidArgs)
+	}
+
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		return errors.New("required flag name not set")
+	}
+
+	if !function.FileExists("clencli/" + name + ".yaml") {
+		return errors.New("Missing database at clencli/" + name + ".yaml")
+	}
+
+	if !function.FileExists("clencli/" + name + ".tmpl") {
+		return errors.New("Missing template at clencli/" + name + ".tmpl")
+	}
+
+	return nil
+}
+
+func renderRun(cmd *cobra.Command, args []string) error {
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		return fmt.Errorf("Unable to render template "+name+"\n%v", err)
+	}
+
+	err = fun.UpdateReadMe()
+	if err != nil {
+		return fmt.Errorf("Unable to update local config with global config values \n%v", err)
+	}
+
+	err = fun.UpdateReadMeLogoURL()
+	if err != nil {
+		return fmt.Errorf("Unable to update local config with new URL from Unsplash \n%v", err)
+	}
+
+	err = initGomplate(name)
+	if err == nil {
+		fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
+	} else {
+		log.Fatalf("Unexpected error: %v", err)
+	}
+
+	return nil
+}
+
 // RenderCmd command to render templates
 func RenderCmd() *cobra.Command {
+	man := fun.GetManual("render")
 	return &cobra.Command{
-		Use:       "render template",
-		Short:     "Render template",
-		Long:      "Render template located at clencli/*.tmpl based on their respective clencli/*.yaml database.",
-		ValidArgs: []string{"template"},
+		Use:       man.Use,
+		Short:     man.Short,
+		Long:      man.Long,
+		ValidArgs: renderValidArgs,
 		Args:      cobra.OnlyValidArgs,
-		PreRun: func(cmd *cobra.Command, args []string) {
-			if len(args) == 0 {
-				fmt.Println("Please provide an argument, for example: clencli render template [options]")
-				os.Exit(1)
-			}
-		},
-		Run: func(cmd *cobra.Command, args []string) {
-			name, err := cmd.Flags().GetString("name")
-			if err != nil {
-				log.Fatal("Error while getting the template name")
-			}
-
-			if !function.FileExists("clencli/" + name + ".yaml") {
-				fmt.Print("Missing database at clencli/" + name + ".yaml")
-				os.Exit(1)
-			}
-
-			if !function.FileExists("clencli/" + name + ".tmpl") {
-				fmt.Print("Missing template at clencli/" + name + ".tmpl")
-				os.Exit(1)
-			}
-
-			err = initGomplate(name)
-			if err == nil {
-				fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
-			}
-		},
+		PreRunE:   renderPreRun,
+		RunE:      renderRun,
 	}
 }
 
@@ -75,8 +102,6 @@ func init() {
 }
 
 func initGomplate(name string) error {
-	function.UpdateReadMe()
-
 	var inputFiles = []string{}
 	var outputFiles = []string{}
 
