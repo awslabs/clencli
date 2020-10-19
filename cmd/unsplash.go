@@ -18,6 +18,8 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
 )
@@ -28,7 +30,7 @@ func UnsplashCmd() *cobra.Command {
 		Use:   "unsplash",
 		Short: "Downloads pictures from Unsplash.com",
 		Long:  `Retrieve a single random photo, given optional filters.`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 
 			query, _ := cmd.Flags().GetString("query")
 			collections, _ := cmd.Flags().GetString("collections")
@@ -38,7 +40,7 @@ func UnsplashCmd() *cobra.Command {
 			filter, _ := cmd.Flags().GetString("filter")
 			size, _ := cmd.Flags().GetString("size")
 
-			unsplash := function.GetRandomPhoto(
+			unsplash, err := function.GetRandomPhoto(
 				query,
 				collections,
 				featured,
@@ -46,6 +48,9 @@ func UnsplashCmd() *cobra.Command {
 				orientation,
 				filter)
 			// size)
+			if err != nil {
+				return fmt.Errorf("Unexpected error while getting random photo from Unsplash \n%v", err)
+			}
 
 			if size == "thumb" || size == "all" {
 				function.DownloadPhoto(unsplash.Urls.Thumb, "thumb", query)
@@ -62,6 +67,7 @@ func UnsplashCmd() *cobra.Command {
 			if size == "raw" || size == "all" {
 				function.DownloadPhoto(unsplash.Urls.Raw, "raw", query)
 			}
+			return nil
 		},
 	}
 }
