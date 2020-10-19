@@ -3,8 +3,16 @@ package function
 // ReadMe struct for readme.yaml config
 type ReadMe struct {
 	Logo struct {
+		Unsplash struct {
+			Query       string `yaml:"query,omitempty"`
+			Collections string `yaml:"collections,omitempty"`
+			Featured    string `yaml:"featured,omitempty"`
+			Username    string `yaml:"username,omitempty"`
+			Orientation string `yaml:"orientation,omitempty"`
+			Filter      string `yaml:"filter,omitempty"`
+			Size        string `yaml:"size,omitempty"`
+		} `yaml:"unsplash"`
 		Label string `yaml:"label"`
-		Theme string `yaml:"theme"`
 		URL   string `yaml:"url"`
 	} `yaml:"logo,omitempty"`
 	Shields struct {
