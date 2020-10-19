@@ -19,9 +19,9 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
+	"log"
 
+	"github.com/awslabs/clencli/box"
 	"github.com/spf13/cobra"
 )
 
@@ -33,11 +33,11 @@ func VersionCmd() *cobra.Command {
 		Long:  `Returns the clencli tree's version string. It is either the commit hash and date at the time of the build or, when possible, a release tag like "clencli1.0".`,
 		Run: func(cmd *cobra.Command, args []string) {
 			// Get the version defined in the VERSION file
-			version, err := ioutil.ReadFile("VERSION")
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "[ERROR][cmd/version]: %v\n", err)
+			version, status := box.Get("/VERSION")
+			if status {
+				fmt.Printf("CLENCLI v%s", version)
 			} else {
-				fmt.Printf("CLENCLI %s\n", version)
+				log.Fatal("Version not available")
 			}
 		},
 	}
