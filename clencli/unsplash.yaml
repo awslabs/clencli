@@ -1,0 +1,79 @@
+randomPhotoParameters:
+  query: cats
+  collections: ""
+  featured: ""
+  username: ""
+  orientation: ""
+  filter: ""
+  size: ""
+randomphotoresponse:
+  id: ""
+  createdat: ""
+  updatedat: ""
+  promotedat: null
+  width: 0
+  height: 0
+  color: ""
+  description: ""
+  altdescription: ""
+  urls:
+    raw: ""
+    full: ""
+    regular: ""
+    small: ""
+    thumb: ""
+  links:
+    self: ""
+    html: ""
+    download: ""
+    downloadlocation: ""
+  categories: []
+  likes: 0
+  likedbyuser: false
+  currentusercollections: []
+  sponsorship: null
+  user:
+    id: ""
+    updatedat: ""
+    username: ""
+    name: ""
+    firstname: ""
+    lastname: ""
+    twitterusername: ""
+    portfoliourl: ""
+    bio: ""
+    location: ""
+    links:
+      self: ""
+      html: ""
+      photos: ""
+      likes: ""
+      portfolio: ""
+      following: ""
+      followers: ""
+    profileimage:
+      small: ""
+      medium: ""
+      large: ""
+    instagramusername: ""
+    totalcollections: 0
+    totallikes: 0
+    totalphotos: 0
+    acceptedtos: false
+  exif:
+    make: ""
+    model: ""
+    exposuretime: ""
+    aperture: ""
+    focallength: ""
+    iso: 0
+  location:
+    title: ""
+    name: ""
+    city: null
+    country: ""
+    position:
+      latitude: 0
+      longitude: 0
+  views: 0
+  downloads: 0
