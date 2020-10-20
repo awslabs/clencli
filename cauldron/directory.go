@@ -1,4 +1,4 @@
-package function
+package cauldron
 
 import (
 	"io/ioutil"

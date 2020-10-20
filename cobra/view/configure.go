@@ -18,15 +18,8 @@ package view
 
 import controller "github.com/awslabs/clencli/cobra/controller"
 
-var initCmd = controller.InitCmd()
+var configureCmd = controller.ConfigureCmd()
 
 func init() {
-	rootCmd.AddCommand(initCmd)
-	initCmd.Flags().StringP("name", "n", "", "The project name.")
-	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
-	initCmd.Flags().StringP("structure", "s", "default", "The project structure name defined on main config.")
-	initCmd.Flags().BoolP("only-customized-structure", "o", false, "Only customized structure to be used when initializing the project")
-
-	initCmd.MarkFlagRequired("name")
-
+	rootCmd.AddCommand(configureCmd)
 }

@@ -14,19 +14,19 @@ limitations under the License.
 
 */
 
-package view
+package controller
 
-import controller "github.com/awslabs/clencli/cobra/controller"
+import (
+	cau "github.com/awslabs/clencli/cauldron"
+	"github.com/spf13/cobra"
+)
 
-var initCmd = controller.InitCmd()
-
-func init() {
-	rootCmd.AddCommand(initCmd)
-	initCmd.Flags().StringP("name", "n", "", "The project name.")
-	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
-	initCmd.Flags().StringP("structure", "s", "default", "The project structure name defined on main config.")
-	initCmd.Flags().BoolP("only-customized-structure", "o", false, "Only customized structure to be used when initializing the project")
-
-	initCmd.MarkFlagRequired("name")
-
+// RootCmd represents the base command when called without any subcommands
+func RootCmd() *cobra.Command {
+	man := cau.GetManual("root")
+	return &cobra.Command{
+		Use:   man.Use,
+		Short: man.Short,
+		Long:  man.Long,
+	}
 }

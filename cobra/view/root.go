@@ -14,8 +14,7 @@ limitations under the License.
 
 */
 
-// Package cmd contains Cobra commands
-package cmd
+package view
 
 import (
 	"fmt"
@@ -23,25 +22,14 @@ import (
 
 	"github.com/spf13/cobra"
 
-	cau "github.com/awslabs/clencli/cauldron"
+	controller "github.com/awslabs/clencli/cobra/controller"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
 var profile string
-
-// RootCmd represents the base command when called without any subcommands
-func RootCmd() *cobra.Command {
-	man := cau.GetManual("root")
-	return &cobra.Command{
-		Use:   man.Use,
-		Short: man.Short,
-		Long:  man.Long,
-	}
-}
-
-var rootCmd = RootCmd()
+var rootCmd = controller.RootCmd()
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.

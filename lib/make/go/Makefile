@@ -16,8 +16,7 @@ endif
 
 .PHONY: go/fmt
 go/fmt: ## gofmt (reformat) package sources
-	go fmt main.go
-	go fmt cmd/*.go
+	go fmt github.com/awslabs/clencli/...
 
 .PHONY: go/generate
 go/generate: ## Generate Go files by processing source

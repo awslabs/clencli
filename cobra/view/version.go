@@ -14,37 +14,11 @@ limitations under the License.
 
 */
 
-// Package cmd contains Cobra commands
-package cmd
+package view
 
-import (
-	"fmt"
-	"log"
+import controller "github.com/awslabs/clencli/cobra/controller"
 
-	"github.com/awslabs/clencli/box"
-	"github.com/spf13/cobra"
-)
-
-// VersionCmd command to display CLENCLI current version
-func VersionCmd() *cobra.Command {
-	return &cobra.Command{
-		Use:   "version",
-		Short: "Show clencli version",
-		Long:  `Returns the clencli tree's version string. It is either the commit hash and date at the time of the build or, when possible, a release tag like "clencli1.0".`,
-		Run: func(cmd *cobra.Command, args []string) {
-			// Get the version defined in the VERSION file
-			version, status := box.Get("/VERSION")
-			if status {
-				fmt.Printf("CLENCLI v%s", version)
-			} else {
-				log.Fatal("Version not available")
-			}
-		},
-	}
-}
-
-// versionCmd represents the version command
-var versionCmd = VersionCmd()
+var versionCmd = controller.VersionCmd()
 
 func init() {
 	rootCmd.AddCommand(versionCmd)

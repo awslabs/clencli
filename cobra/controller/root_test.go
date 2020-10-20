@@ -14,19 +14,24 @@ limitations under the License.
 
 */
 
-package view
+package controller
 
-import controller "github.com/awslabs/clencli/cobra/controller"
+import (
+	"testing"
 
-var initCmd = controller.InitCmd()
+	cau "github.com/awslabs/clencli/cauldron"
 
-func init() {
-	rootCmd.AddCommand(initCmd)
-	initCmd.Flags().StringP("name", "n", "", "The project name.")
-	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
-	initCmd.Flags().StringP("structure", "s", "default", "The project structure name defined on main config.")
-	initCmd.Flags().BoolP("only-customized-structure", "o", false, "Only customized structure to be used when initializing the project")
+	"github.com/stretchr/testify/assert"
+)
 
-	initCmd.MarkFlagRequired("name")
+func TestRootWithNoArgAndNoFlags(t *testing.T) {
+	rootCmd := RootCmd()
+	output, err := cau.ExecuteCommand(rootCmd)
+
+	assert.NotEqual(t, rootCmd.Use, "")
+	assert.NotEqual(t, rootCmd.Short, "")
+	assert.NotEqual(t, rootCmd.Long, "")
+	assert.NotEqual(t, output, "")
+	assert.Equal(t, err, nil)
 
 }

@@ -9,6 +9,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var initValidArgs = []string{"project"}
+
+// InitCmd command to initialize projects
+func InitCmd() *cobra.Command {
+	man := cau.GetManual("init")
+	return &cobra.Command{
+		Use:       man.Use,
+		Short:     man.Short,
+		Long:      man.Long,
+		ValidArgs: initValidArgs,
+		Args:      cobra.OnlyValidArgs,
+		PreRunE:   initPreRun,
+		RunE:      initRun,
+	}
+}
+
 func initPreRun(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("one the following arguments are required: %s", initValidArgs)
@@ -35,6 +51,28 @@ func initPreRun(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("Unknown project type provided: %s", t)
 		}
 
+	}
+
+	return nil
+}
+
+func initRun(cmd *cobra.Command, args []string) error {
+	name, typee, structure, onlyCustomizedStructure := initGetFlags(cmd)
+
+	if args[0] == "project" {
+		switch typee {
+		case "basic":
+			initCreateBasicProject(name, typee, structure, onlyCustomizedStructure)
+		case "cloudformation":
+			initCreateCloudFormationProject(name, typee, structure, onlyCustomizedStructure)
+		case "terraform":
+			initCreateTerraformProject(name, typee, structure, onlyCustomizedStructure)
+
+		default:
+			return errors.New("Unknow project type")
+		}
+	} else {
+		return errors.New("invalid argument")
 	}
 
 	return nil
@@ -84,26 +122,4 @@ func initCreateTerraformProject(name string, typee string, structure string, onl
 	// cau.InitCustomProjectLayout(typee, "default")
 	// cau.InitCustomProjectLayout(typee, structure)
 	// cau.UpdateReadMe()
-}
-
-func initRun(cmd *cobra.Command, args []string) error {
-	name, typee, structure, onlyCustomizedStructure := initGetFlags(cmd)
-
-	if args[0] == "project" {
-		switch typee {
-		case "basic":
-			initCreateBasicProject(name, typee, structure, onlyCustomizedStructure)
-		case "cloudformation":
-			initCreateCloudFormationProject(name, typee, structure, onlyCustomizedStructure)
-		case "terraform":
-			initCreateTerraformProject(name, typee, structure, onlyCustomizedStructure)
-
-		default:
-			return errors.New("Unknow project type")
-		}
-	} else {
-		return errors.New("invalid argument")
-	}
-
-	return nil
 }
