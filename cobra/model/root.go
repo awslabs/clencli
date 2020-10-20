@@ -1,19 +1,37 @@
-package function
+package model
 
-// ReadMe struct for readme.yaml config
+// GlobalConfig struct for the glogal config (~/.clencli.yaml)
+type GlobalConfig struct {
+	Credentials []struct {
+		Credential
+	}
+	Configs []struct {
+		Config
+	}
+}
+
+// Credential does ...
+type Credential struct {
+	Profile   string `yaml:"profile"`
+	Provider  string `yaml:"provider"`
+	AccessKey string `yaml:"accessKey"`
+	SecretKey string `yaml:"secretKey"`
+}
+
+// Config does TODO
+type Config struct {
+	Profile string `yaml:"profile"`
+	Init
+	ReadMe
+	Unsplash
+}
+
+// ReadMe struct of the readme.yaml
 type ReadMe struct {
 	Logo struct {
-		Unsplash struct {
-			Query       string `yaml:"query,omitempty"`
-			Collections string `yaml:"collections,omitempty"`
-			Featured    string `yaml:"featured,omitempty"`
-			Username    string `yaml:"username,omitempty"`
-			Orientation string `yaml:"orientation,omitempty"`
-			Filter      string `yaml:"filter,omitempty"`
-			Size        string `yaml:"size,omitempty"`
-		} `yaml:"unsplash"`
-		Label string `yaml:"label"`
-		URL   string `yaml:"url"`
+		Provider string `yaml:"provider"`
+		Label    string `yaml:"label"`
+		URL      string `yaml:"url"`
 	} `yaml:"logo,omitempty"`
 	Shields struct {
 		Badges []struct {
@@ -58,28 +76,4 @@ type ReadMe struct {
 	} `yaml:"references,omitempty"`
 	License   string `yaml:"license,omitempty"`
 	Copyright string `yaml:"copyright,omitempty"`
-}
-
-// GlobalConfig struct for the glogal config (~/.clencli.yaml)
-type GlobalConfig struct {
-	Unsplash struct {
-		AccessKey string `yaml:"access_key"`
-		SecretKey string `yaml:"secret_key"`
-	} `yaml:"unsplash,omitempty"`
-	Init struct {
-		Types []struct {
-			Type    string `yaml:"type"`
-			Name    string `yaml:"name"`
-			Enabled bool   `yaml:"enabled"`
-			Files   []struct {
-				File struct {
-					Path  string `yaml:"path"`
-					Src   string `yaml:"src"`
-					Dest  string `yaml:"dest"`
-					State string `yaml:"state"`
-				} `yaml:"file,omitempty"`
-			} `yaml:"files"`
-		} `yaml:"types"`
-	} `yaml:"init"`
-	ReadMe
 }

@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/awslabs/clencli/cmd"
+import cmd "github.com/awslabs/clencli/cobra/view"
 
 func main() {
 	cmd.Execute()

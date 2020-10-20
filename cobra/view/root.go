@@ -21,18 +21,19 @@ import (
 	"fmt"
 	"os"
 
-	fun "github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
 
+	cau "github.com/awslabs/clencli/cauldron"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
+var profile string
 
 // RootCmd represents the base command when called without any subcommands
 func RootCmd() *cobra.Command {
-	man := fun.GetManual("root")
+	man := cau.GetManual("root")
 	return &cobra.Command{
 		Use:   man.Use,
 		Short: man.Short,
@@ -59,6 +60,7 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.clencli.yaml)")
+	rootCmd.PersistentFlags().StringVar(&profile, "profile", "default", "Use a specific profile from your config file")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

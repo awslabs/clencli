@@ -1,43 +1,19 @@
 package function
 
 import (
-	"log"
 	"os"
-	"path/filepath"
-	"strings"
-
-	"github.com/spf13/viper"
 
 	"github.com/awslabs/clencli/box"
 )
 
-// InitS struct to initalize projects
-type InitS struct {
-	Init struct {
-		Types []struct {
-			Type    string `yaml:"type"`
-			Name    string `yaml:"name"`
-			Enabled bool   `yaml:"enabled"`
-			Files   []struct {
-				File struct {
-					Path  string `yaml:"path"`
-					Src   string `yaml:"src"`
-					Dest  string `yaml:"dest"`
-					State string `yaml:"state"`
-				} `yaml:"file,omitempty"`
-			} `yaml:"files"`
-		} `yaml:"types"`
-	} `yaml:"init"`
-}
+// InitializeProject creates the project directory, change the current directory and places basic configuration files
+func InitializeProject(name string) {
 
-// Init creates the project directory, change the current directory and places basic configuration files
-func Init(project string) {
+	// Create the name directory
+	CreateDir(name)
 
-	// Create the project directory
-	CreateDir(project)
-
-	// Change current directory to project directory
-	os.Chdir(project)
+	// Change current directory to name directory
+	os.Chdir(name)
 }
 
 // InitBasic create the basic configuration files
@@ -73,46 +49,46 @@ func InitHLD(project string) {
 }
 
 // InitCustomProjectLayout generates
-func InitCustomProjectLayout(projectType string, projectStructureName string) error {
-	var config GlobalConfig
-	err := viper.Unmarshal(&config)
-	if err != nil {
-		log.Fatalf("Unable to decode into struct, %v", err)
-	}
+// func InitCustomProjectLayout(projectType string, projectStructureName string) error {
+// 	var g GlobalConfig
+// 	err := viper.Unmarshal(&g)
+// 	if err != nil {
+// 		log.Fatalf("Unable to decode into struct, %v", err)
+// 	}
 
-	for i := 0; i < len(config.Init.Types); i++ {
-		t := config.Init.Types[i]
-		// match the project type
-		if projectType == t.Type {
-			// only create if project structure is enabled
-			if t.Enabled {
-				log.Println("Creating customized project structure")
-				if projectStructureName == t.Name {
-					log.Printf("Using project structure: %s\n", t.Name)
-				}
+// 	for i := 0; i < len(g.Config.Init.Types); i++ {
+// 		t := g.Config.Init.Types[i]
+// 		// match the project type
+// 		if projectType == t.Type {
+// 			// only create if project structure is enabled
+// 			if t.Enabled {
+// 				log.Println("Creating customized project structure")
+// 				if projectStructureName == t.Name {
+// 					log.Printf("Using project structure: %s\n", t.Name)
+// 				}
 
-				for _, f := range t.Files {
-					if f.File.State == "directory" {
-						CreateDir(f.File.Path)
-					} else if f.File.State == "file" {
-						dir, file := filepath.Split(f.File.Dest)
-						// in case it's the current directory
-						if dir == "" {
-							dir = "."
-						}
-						if strings.Contains(f.File.Src, "http") {
-							DownloadFile(f.File.Src, dir, file)
-						} else {
-							CopyFile(f.File.Src, f.File.Dest)
-						}
-					}
-				}
-			}
-		}
-	}
+// 				for _, f := range t.Files {
+// 					if f.File.State == "directory" {
+// 						CreateDir(f.File.Path)
+// 					} else if f.File.State == "file" {
+// 						dir, file := filepath.Split(f.File.Dest)
+// 						// in case it's the current directory
+// 						if dir == "" {
+// 							dir = "."
+// 						}
+// 						if strings.Contains(f.File.Src, "http") {
+// 							DownloadFile(f.File.Src, dir, file)
+// 						} else {
+// 							CopyFile(f.File.Src, f.File.Dest)
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // InitCloudFormation initialize a project with CloudFormation structure
 func InitCloudFormation() {

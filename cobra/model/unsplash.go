@@ -1,17 +1,14 @@
-package function
+package model
 
-import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
+// Unsplash does ...
+type Unsplash struct {
+	Enabled    bool                  `yaml:"enabled"`
+	parameters RandomPhotoParameters `yaml:"parameters"`
+	response   RandomPhotoResponse   `yaml:"response"`
+}
 
-	"github.com/spf13/viper"
-)
-
-// RandomUnsplash is a struct from Unsplash API Randm Request
-type RandomUnsplash struct {
+// RandomPhotoResponse is a struct from Unsplash API Randm Request
+type RandomPhotoResponse struct {
 	ID             string      `json:"id"`
 	CreatedAt      string      `json:"created_at"`
 	UpdatedAt      string      `json:"updated_at"`
@@ -92,94 +89,13 @@ type RandomUnsplash struct {
 	Downloads int `json:"downloads"`
 }
 
-// GetRandomPhotoDefaults retrieves a single random photo with default values.
-func GetRandomPhotoDefaults(query string) (RandomUnsplash, error) {
-	// landscape orientation is better for README files
-	return GetRandomPhoto(query, "", "", "", "landscape", "low")
-}
-
-// GetRandomPhoto retrieves a single random photo, given optional filters.
-func GetRandomPhoto(query string, collections string, featured string, username string, orientation string, filter string) (RandomUnsplash, error) {
-	var unsplash RandomUnsplash
-
-	clientID := viper.Get("unsplash.access_key")
-	url := fmt.Sprintf("https://api.unsplash.com/photos/random?client_id=%s&query=%s", clientID, query)
-
-	if len(collections) > 0 {
-		url += fmt.Sprintf("&collections=%s", collections)
-	}
-
-	if len(featured) > 0 {
-		url += fmt.Sprintf("&featured=%s", featured)
-	}
-
-	if len(username) > 0 {
-		url += fmt.Sprintf("&username=%s", username)
-	}
-
-	if len(orientation) > 0 {
-		url += fmt.Sprintf("&orientation=%s", orientation)
-	}
-
-	if len(filter) > 0 {
-		url += fmt.Sprintf("&filter=%s", filter)
-	}
-
-	var client http.Client
-	resp, err := client.Get(url)
-	if err != nil {
-		return unsplash, fmt.Errorf("Unexpected error while performing GET on Unsplash API \n%v", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return unsplash, fmt.Errorf("Unexpected error while reading Unsplash response \n%v", err)
-		}
-
-		json.Unmarshal(bodyBytes, &unsplash)
-	}
-
-	return unsplash, err
-}
-
-// DownloadPhoto downloads a photo and saves into downloads/unsplash/ folder
-// It creates the downloads/ folder if it doesn't exists
-func DownloadPhoto(url string, size string, query string) error {
-
-	// Get the photo identifier
-	start := strings.Index(url, "photo")
-	end := strings.Index(url, "?")
-
-	// Create a Rune from the URL
-	runes := []rune(url)
-
-	// Generate the directory path
-	dirPath := "downloads/unsplash/" + query
-
-	// Generate the filename
-	fileName := string(runes[start:end])
-	fileName += "-" + size + ".jpg"
-
-	return DownloadFile(url, dirPath, fileName)
-}
-
-// GetPhotoURLBySize return the photo URL based on the given size
-func GetPhotoURLBySize(size string, u RandomUnsplash) string {
-	switch size {
-	case "thumb":
-		return u.Urls.Thumb
-	case "small":
-		return u.Urls.Small
-	case "regular":
-		return u.Urls.Regular
-	case "full":
-		return u.Urls.Full
-	case "raw":
-		return u.Urls.Raw
-	default:
-		return u.Urls.Small
-	}
-
+// RandomPhotoParameters struct from Unsplash command
+type RandomPhotoParameters struct {
+	Collections string `yaml:"collections"`
+	Featured    string `yaml:"featured"`
+	Filter      string `yaml:"filter"`
+	Orientation string `yaml:"orientation"`
+	Query       string `yaml:"query"`
+	Size        string `yaml:"size"`
+	Username    string `yaml:"username"`
 }
