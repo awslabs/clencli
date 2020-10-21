@@ -22,8 +22,10 @@ import (
 
 	"github.com/spf13/cobra"
 
+	cau "github.com/awslabs/clencli/cauldron"
 	controller "github.com/awslabs/clencli/cobra/controller"
 	homedir "github.com/mitchellh/go-homedir"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -68,9 +70,20 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".clencli" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".clencli")
+		configDirPath := home + "/.clencli"
+		viper.AddConfigPath(configDirPath) // global directory
+		viper.AddConfigPath("clencli")     // local directory
+		viper.SetConfigName("config")
+
+		if cau.DirOrFileExists(configDirPath) {
+			// If the file doesn't exist, create it or append to the file
+			file, err := os.OpenFile(configDirPath+"/logs.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
+			if err != nil {
+				log.Fatal(err)
+			}
+			log.SetFormatter(&log.JSONFormatter{})
+			log.SetOutput(file)
+		}
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
@@ -79,4 +92,5 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+
 }
