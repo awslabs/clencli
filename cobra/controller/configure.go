@@ -10,11 +10,10 @@ import (
 	"strings"
 
 	"github.com/awslabs/clencli/cobra/model"
+	"github.com/mitchellh/go-homedir"
 	"gopkg.in/yaml.v2"
 
 	cau "github.com/awslabs/clencli/cauldron"
-	homedir "github.com/mitchellh/go-homedir"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -31,92 +30,176 @@ func ConfigureCmd() *cobra.Command {
 }
 
 func configureRun(cmd *cobra.Command, args []string) error {
-	p, _ := cmd.Flags().GetString("profile")
-	if p == "" {
-		p = "default"
+	profile, _ := cmd.Flags().GetString("profile")
+
+	if profile == "" {
+		profile = "default"
 	}
 
-	log.Info("Started to configure profile:" + p)
+	fmt.Println("Started to configure profile:" + profile)
 
-	// credentials
-	err := setupCredentials(p)
-	if err != nil {
-		return fmt.Errorf("Unexpected error during credentials setup")
+	// ensure config directory exists, or it will be created
+	configDirExist := doesConfigDirExist()
+
+	if !configDirExist {
+		setupProfile(profile)
+	} else {
+		// check existing config
+		// if not existing, create new ones
 	}
 
-	// configuratons
-	err = setupConfig(p)
-	if err != nil {
-		return fmt.Errorf("Unexpected error during config setup")
-	}
-
-	log.Info("Finished to configure profile:" + p)
+	fmt.Println("Finished to configure profile:" + profile)
 
 	return nil
+}
+
+func doesConfigDirExist() bool {
+	var exists = false
+	path := getConfigDirPath()
+
+	if cau.DirOrFileExists(path) {
+		exists = true
+	}
+
+	if exists {
+		fmt.Println("CLENCLI configuration directory found")
+	}
+
+	return exists
+}
+
+func getConfigDirPath() string {
+	home := getHomeDir()
+	path := home + "/.clencli"
+
+	return path
+}
+
+func getHomeDir() string {
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Printf("Unable to detect the home directory\n%v", err)
+		os.Exit(1)
+	}
+	return home
+}
+
+func createConfigDir() (bool, error) {
+	created := false
+	path := getConfigDirPath()
+
+	fmt.Println("CLENCLI configuration directory not found")
+
+	if cau.CreateDir(path) {
+		fmt.Println("CLENCLI configuration directory created at " + path)
+		created = true
+	}
+
+	return created, nil
+}
+
+func setupProfile(p string) error {
+	created, err := createConfigDir()
+	if err != nil {
+		return fmt.Errorf("Unexpected erro during config directory creation \n%v", err)
+	}
+
+	if created {
+		// credentials
+		err := setupCredentials(p)
+		if err != nil {
+			return fmt.Errorf("Unexpected error during credentials setup")
+		}
+
+		// configuratons
+		err = setupConfig(p)
+		if err != nil {
+			return fmt.Errorf("Unexpected error during config setup")
+		}
+	}
+	return err
 }
 
 func setupCredentials(p string) error {
-	log.Info("Started to setup credentials for profile:" + p)
-	log.Info("Finished to setup credentials for profile:" + p)
-	return nil
+	fmt.Println("Started to setup credentials for profile: " + p)
+	var credentials model.Credentials
+	// load current credentials
+
+	// configure unsplash
+	answer, err := getUserInput("Would you like to setup Unsplash Credentials? (Y/y)")
+	if err != nil {
+		return fmt.Errorf("Unable to get answer if user wants to setup Unsplash Credentials")
+	}
+
+	if answer == "Y" || answer == "y" {
+		// if empty, create new credential
+		var profile model.CredentialProfile
+		profile.Name = p
+		profile.Enabled = true // enabling profile by default
+		profile.Credential, err = configureCredential("unsplash")
+		if err != nil {
+			return fmt.Errorf("Unable to configure Unsplash credentials")
+		}
+		credentials.Profiles = append(credentials.Profiles, profile)
+		err = saveCredentials(credentials)
+		if err != nil {
+			return fmt.Errorf("Unable to save credentials during setup \n%v", err)
+		}
+	} else {
+		fmt.Println("Skipping Unplash configuration ...")
+	}
+
+	fmt.Println("Finished to setup credentials for profile: " + p)
+	return err
+}
+
+func configureCredential(provider string) (model.Credential, error) {
+	var err error
+	var credential model.Credential
+	credential.Provider = provider
+	credential.AccessKey, err = getUserInput("Unsplash API Access Key")
+	if err != nil {
+		return credential, fmt.Errorf("Unable to read Unsplash API Access Key")
+	}
+	credential.SecretKey, err = getUserInput("Unsplash API Secret Key")
+	if err != nil {
+		return credential, fmt.Errorf("Unable to read Unsplash API Secret Key")
+	}
+
+	return credential, err
 }
 
 func setupConfig(p string) error {
-	log.Info("Started to setup configuration for profile:" + p)
-
-	fmt.Println("Configuring named profile:" + p)
+	fmt.Println("Started to setup configuration for profile: " + p)
 
 	var config model.Config
 	// load current configuration
 
-	var profile model.Profile
-	profile.Name = p
+	// configure unsplash
+	answer, err := getUserInput("Would you like to setup Unsplash Random Photo Parameters? (Y/y)")
+	if err != nil {
+		return fmt.Errorf("Unable to get answer if user wants to setup Unsplash Random Photo Parameters")
+	}
 
-	// else create new profile if config directory doesn't exist
-	status, err := createConfigDir()
-	if status {
-		// enabling profile by default
-		profile.Enabled = true
-
-		// .. create two files: credentials.yaml and config.yaml
-
-		// configure unsplash
-		answer, err := getUserInput("Would you like to setup Unsplash Random Photo Parameters? (Y/y)")
-		// answer := "Y"
-		if answer == "Y" || answer == "y" {
-			profile.Unsplash, err = configureUnsplash()
-			if err != nil {
-				return fmt.Errorf("Unable to configure Unsplash")
-			}
-		}
+	if answer == "Y" || answer == "y" {
+		var profile model.ConfigProfile
+		profile.Name = p
+		profile.Enabled = true // enabling profile by default
+		profile.Unsplash, err = configureUnsplash()
 		if err != nil {
-			return fmt.Errorf("Unable to get answer if user wants to setup Unsplash Random Photo Parameters")
+			return fmt.Errorf("Unable to configure Unsplash")
 		}
-
+		config.Profiles = append(config.Profiles, profile)
+		err = saveConfig(config)
+		if err != nil {
+			return fmt.Errorf("Unable to save config during setup \n%v", err)
+		}
+	} else {
+		fmt.Println("Skipping Unplash configuration ...")
 	}
 
-	if err != nil {
-
-	}
-
-	// if profile == "" {
-
-	// }
-
-	// if profile is given,
-	// .. check if profile already exits
-	// .. if exists, load it and
-	// .. update credentials with Credentials struct
-	// .. update config with Config struct
-	// .. else create new profile with credentials and config struct
-
-	config.Profiles = append(config.Profiles, profile)
-	err = saveConfig(config)
-	if err != nil {
-		return fmt.Errorf("Unable to save config during setup \n%v", err)
-	}
-
-	log.Info("Finished to setup configuration for profile:" + p)
+	fmt.Println("Finished to setup configuration for profile: " + p)
 	return err
 }
 
@@ -135,39 +218,9 @@ func configureUnsplash() (model.Unsplash, error) {
 	return unsplash, err
 }
 
-func getConfigDirPath() (string, error) {
-	var path string
-	home, err := homedir.Dir()
-	if err != nil {
-		return path, fmt.Errorf("Unable to get home directory path \n%v", err)
-	}
-	path = home + "/.clencli"
-
-	return path, err
-}
-
-func createConfigDir() (bool, error) {
-	status := false
-	path, err := getConfigDirPath()
-	if err != nil {
-		return status, fmt.Errorf("Unable to get global config dir path \n%v", err)
-	}
-
-	if !cau.DirOrFileExists(path) {
-		fmt.Println("CLENCLI configuration directory not found")
-
-		if cau.CreateDir(path) {
-			fmt.Println("CLENCLI configuration directory created at " + path)
-			status = true
-		}
-	}
-
-	return status, nil
-}
-
 func getUserInput(text string) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print(text + ":")
+	fmt.Print(text + ": ")
 	input, err := reader.ReadString('\n')
 	// convert CRLF to LF
 	input = strings.Replace(input, "\n", "", -1)
@@ -230,11 +283,14 @@ func updateUnsplashFromUserInput() (model.Unsplash, error) {
 	return unsplash, err
 }
 
+func saveCredentials(credentials model.Credentials) error {
+	path := getConfigDirPath()
+	path += "/credentials.yaml"
+	return writeInterfaceToFile(credentials, path)
+}
+
 func saveConfig(config model.Config) error {
-	path, err := getConfigDirPath()
-	if err != nil {
-		return fmt.Errorf("Unable to get CLENCLI configuration directory path \n%v", path)
-	}
+	path := getConfigDirPath()
 	path += "/config.yaml"
 	return writeInterfaceToFile(config, path)
 }
