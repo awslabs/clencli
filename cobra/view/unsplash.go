@@ -25,10 +25,10 @@ func init() {
 	rootCmd.AddCommand(unsplashCmd)
 
 	unsplashCmd.Flags().StringP("collections", "c", "", "Public collection ID(‘s) to filter selection. If multiple, comma-separated")
-	unsplashCmd.Flags().StringP("featured", "f", "", "Limit selection to featured photos.")
+	unsplashCmd.Flags().BoolP("featured", "f", false, "Limit selection to featured photos. Valid values: false, true.")
 	unsplashCmd.Flags().StringP("filter", "l", "low", "Limit results by content safety. Default: low. Valid values are low and high.")
 	unsplashCmd.Flags().StringP("orientation", "", "", "Filter by photo orientation. Valid values: landscape, portrait, squarish.")
-	unsplashCmd.Flags().StringP("query", "q", "mountains", "Limit selection to photos matching a search term. (Deafult: mountains")
+	unsplashCmd.Flags().StringP("query", "q", "mountains", "Limit selection to photos matching a search term. (Deafult: mountains)")
 	unsplashCmd.Flags().StringP("size", "s", "all", "Photos size. Valid values: all, thumb, small, regular, full, raw. Default: all")
 	unsplashCmd.Flags().StringP("username", "u", "", "Limit selection to a single user.")
 
