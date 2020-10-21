@@ -15,6 +15,7 @@ import (
 
 	cau "github.com/awslabs/clencli/cauldron"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // ConfigureCmd command to display CLENCLI current version
@@ -323,40 +324,89 @@ func writeInterfaceToFile(in interface{}, path string) error {
 }
 
 func updateProfile(profile string) error {
+	var credentials model.Credentials
+	var err error
+	credentials, err = readProfileCredentials(profile)
+	if err != nil {
+		return fmt.Errorf("Unable to update the profile's credentials")
+	}
+
+	// update credentials
+	err = updateCredentials(credentials)
+	if err != nil {
+		return fmt.Errorf("Unable to update the profile's credentials")
+	}
+	// update configs
+
 	return nil
 }
 
-// func getLocalConfig(name string) (*viper.Viper, error) {
-// 	lc := viper.New()
+func readAllCredentials() (model.Credentials, error) {
+	c := model.Credentials{}
+	v, err := getViperInstance("credentials") // file within the configuration directory
+	if err != nil {
+		return c, fmt.Errorf("Unable to load existing credentials\n%v", err)
+	}
 
-// 	lc.SetConfigName(name)      // name of config file (without extension)
-// 	lc.SetConfigType("yaml")    // REQUIRED if the config file does not have the extension in the name
-// 	lc.AddConfigPath("clencli") // path to look for the config file in
+	err = v.Unmarshal(&c)
+	if err != nil {
+		return c, fmt.Errorf("Unable to unmarshall config \n%v", err)
+	}
 
-// 	err := lc.ReadInConfig() // Find and read the config file
-// 	if err != nil {          // Handle errors reading the config file
-// 		return lc, fmt.Errorf("Error when trying to read local config \n%s", err)
-// 	}
-// 	return lc, err
-// }
+	return c, err
+}
+
+func readProfileCredentials(profile string) (model.Credentials, error) {
+	var credentials model.Credentials
+	allCredentials, err := readAllCredentials()
+	if err != nil {
+		return credentials, fmt.Errorf("Unable to read credentials\n%v", err)
+	}
+	for _, p := range allCredentials.Profiles {
+		if p.Name == profile {
+			credentials.Profiles = append(credentials.Profiles, p)
+		}
+	}
+
+	return credentials, err
+}
+
+func readConfig() (model.Config, error) {
+	v := viper.GetViper()
+	c := model.Config{}
+
+	err := v.Unmarshal(&c)
+	if err != nil {
+		return c, fmt.Errorf("Unable to unmarshall config \n%v", err)
+	}
+
+	return c, err
+}
+
+func getViperInstance(name string) (*viper.Viper, error) {
+	lc := viper.New()
+
+	lc.SetConfigName(name)
+	lc.SetConfigType("yaml")
+
+	configDirPath := getConfigDirPath()
+	lc.AddConfigPath(configDirPath)
+
+	err := lc.ReadInConfig()
+	if err != nil {
+		return lc, fmt.Errorf("Error when trying to read local config \n%s", err)
+	}
+	return lc, err
+}
+
+func updateCredentials(credentials model.Credentials) error {
+	return nil
+}
 
 // // mergeConfig merges a new configuration with an existing config.
 // func mergeConfig(local *viper.Viper, source ReadMe) error {
 // 	s, _ := json.Marshal(source)
 // 	return local.MergeConfig(bytes.NewBuffer(s))
-// }
-
-// // getGlobalConfig returns a GlobalConfig struct from the global config
-// func getGlobalConfig() (GlobalConfig, error) {
-// 	v := viper.GetViper()
-// 	c := GlobalConfig{}
-
-// 	err := v.Unmarshal(&c)
-// 	if err != nil {
-// 		return c, fmt.Errorf("Unable to Unmarshall GlobalConfig struct \n%v", err)
-// 	}
-
-// 	return c, nil
 // }
 
 // // getLocalReadMeConfig unmarshall local readme.yaml return as ReadMe struct
