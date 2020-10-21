@@ -10,14 +10,6 @@ type GlobalConfig struct {
 	}
 }
 
-// Credential does ...
-type Credential struct {
-	Profile   string `yaml:"profile"`
-	Provider  string `yaml:"provider"`
-	AccessKey string `yaml:"accessKey"`
-	SecretKey string `yaml:"secretKey"`
-}
-
 // ReadMe struct of the readme.yaml
 type ReadMe struct {
 	Logo struct {
