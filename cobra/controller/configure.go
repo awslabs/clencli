@@ -42,10 +42,19 @@ func configureRun(cmd *cobra.Command, args []string) error {
 	configDirExist := doesConfigDirExist()
 
 	if !configDirExist {
-		setupProfile(profile)
+		err := createProfile(profile)
+		if err != nil {
+			return fmt.Errorf("Unexpected error when trying to setup profile: %s\n%s", profile, err)
+		}
 	} else {
+		err := updateProfile(profile)
+		if err != nil {
+			return fmt.Errorf("Unexpected error when trying to update profile: %s\n%s", profile, err)
+		}
+
 		// check existing config
 		// if not existing, create new ones
+
 	}
 
 	fmt.Println("Finished to configure profile:" + profile)
@@ -99,7 +108,7 @@ func createConfigDir() (bool, error) {
 	return created, nil
 }
 
-func setupProfile(p string) error {
+func createProfile(p string) error {
 	created, err := createConfigDir()
 	if err != nil {
 		return fmt.Errorf("Unexpected erro during config directory creation \n%v", err)
@@ -107,13 +116,13 @@ func setupProfile(p string) error {
 
 	if created {
 		// credentials
-		err := setupCredentials(p)
+		err := createCredentials(p)
 		if err != nil {
 			return fmt.Errorf("Unexpected error during credentials setup")
 		}
 
 		// configuratons
-		err = setupConfig(p)
+		err = createConfig(p)
 		if err != nil {
 			return fmt.Errorf("Unexpected error during config setup")
 		}
@@ -121,7 +130,7 @@ func setupProfile(p string) error {
 	return err
 }
 
-func setupCredentials(p string) error {
+func createCredentials(p string) error {
 	fmt.Println("Started to setup credentials for profile: " + p)
 	var credentials model.Credentials
 	// load current credentials
@@ -137,7 +146,7 @@ func setupCredentials(p string) error {
 		var profile model.CredentialProfile
 		profile.Name = p
 		profile.Enabled = true // enabling profile by default
-		profile.Credential, err = configureCredential("unsplash")
+		profile.Credential, err = createCredential("unsplash")
 		if err != nil {
 			return fmt.Errorf("Unable to configure Unsplash credentials")
 		}
@@ -154,7 +163,9 @@ func setupCredentials(p string) error {
 	return err
 }
 
-func configureCredential(provider string) (model.Credential, error) {
+func createCredential(provider string) (model.Credential, error) {
+	fmt.Println("=== Starting to configure credential for provider: " + provider)
+
 	var err error
 	var credential model.Credential
 	credential.Provider = provider
@@ -167,10 +178,11 @@ func configureCredential(provider string) (model.Credential, error) {
 		return credential, fmt.Errorf("Unable to read Unsplash API Secret Key")
 	}
 
+	fmt.Println("=== Finished configuring credential for provider: " + provider)
 	return credential, err
 }
 
-func setupConfig(p string) error {
+func createConfig(p string) error {
 	fmt.Println("Started to setup configuration for profile: " + p)
 
 	var config model.Config
@@ -186,7 +198,7 @@ func setupConfig(p string) error {
 		var profile model.ConfigProfile
 		profile.Name = p
 		profile.Enabled = true // enabling profile by default
-		profile.Unsplash, err = configureUnsplash()
+		profile.Unsplash, err = createUnsplash()
 		if err != nil {
 			return fmt.Errorf("Unable to configure Unsplash")
 		}
@@ -203,18 +215,16 @@ func setupConfig(p string) error {
 	return err
 }
 
-func configureUnsplash() (model.Unsplash, error) {
-	var unsplash model.Unsplash
-
+func createUnsplash() (model.Unsplash, error) {
 	fmt.Println("=== Unsplash Random Photo Parameters")
 
-	unsplash, err := updateUnsplashFromUserInput()
+	var unsplash model.Unsplash
+	unsplash, err := getUserInputAboutUnsplash()
 	if err != nil {
 		return unsplash, fmt.Errorf("Unable to update Unsplash config from user input \n%v", err)
 	}
 
 	fmt.Println("=== Unsplash Random Photo Parameters configured successfully!")
-
 	return unsplash, err
 }
 
@@ -230,7 +240,7 @@ func getUserInput(text string) (string, error) {
 	return input, err
 }
 
-func updateUnsplashFromUserInput() (model.Unsplash, error) {
+func getUserInputAboutUnsplash() (model.Unsplash, error) {
 
 	var unsplash model.Unsplash
 	unsplash.Enabled = true
@@ -310,6 +320,10 @@ func writeInterfaceToFile(in interface{}, path string) error {
 	}
 
 	return err
+}
+
+func updateProfile(profile string) error {
+	return nil
 }
 
 // func getLocalConfig(name string) (*viper.Viper, error) {
