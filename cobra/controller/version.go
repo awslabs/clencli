@@ -9,21 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getOS() {
-	os := runtime.GOOS
-	switch os {
-	case "windows":
-		fmt.Println("Windows")
-	case "darwin":
-		fmt.Println("MAC operating system")
-	case "linux":
-		fmt.Println("Linux")
-	default:
-		fmt.Printf("%s.\n", os)
-	}
-}
-
-func runVersionCmd(cmd *cobra.Command, args []string) error {
+func versionRun(cmd *cobra.Command, args []string) error {
 	// Get the version defined in the VERSION file
 	version, status := box.Get("/VERSION")
 	if status {
@@ -46,6 +32,6 @@ func VersionCmd() *cobra.Command {
 		Use:   man.Use,
 		Short: man.Short,
 		Long:  man.Long,
-		RunE:  runVersionCmd,
+		RunE:  versionRun,
 	}
 }
