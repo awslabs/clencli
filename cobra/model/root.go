@@ -18,14 +18,6 @@ type Credential struct {
 	SecretKey string `yaml:"secretKey"`
 }
 
-// Config does TODO
-type Config struct {
-	Profile string `yaml:"profile"`
-	Init
-	ReadMe
-	Unsplash
-}
-
 // ReadMe struct of the readme.yaml
 type ReadMe struct {
 	Logo struct {
