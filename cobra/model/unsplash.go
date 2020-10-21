@@ -2,13 +2,26 @@ package model
 
 // Unsplash does ...
 type Unsplash struct {
-	Enabled    bool                  `yaml:"enabled"`
-	parameters RandomPhotoParameters `yaml:"parameters"`
-	response   RandomPhotoResponse   `yaml:"response"`
+	Enabled     bool `yaml:"enabled"`
+	RandomPhoto struct {
+		Parameters UnsplashRandomPhotoParameters `yaml:"parameters"`
+		Response   UnsplashRandomPhotoResponse   `yaml:"response,omitempty"`
+	} `yaml:"random_photo"`
 }
 
-// RandomPhotoResponse is a struct from Unsplash API Randm Request
-type RandomPhotoResponse struct {
+// UnsplashRandomPhotoParameters struct from Unsplash command
+type UnsplashRandomPhotoParameters struct {
+	Collections string `yaml:"collections"`
+	Featured    bool   `yaml:"featured"`
+	Filter      string `yaml:"filter"`
+	Orientation string `yaml:"orientation"`
+	Query       string `yaml:"query"`
+	Size        string `yaml:"size"`
+	Username    string `yaml:"username"`
+}
+
+// UnsplashRandomPhotoResponse is a struct from Unsplash API Randm Request
+type UnsplashRandomPhotoResponse struct {
 	ID             string      `json:"id"`
 	CreatedAt      string      `json:"created_at"`
 	UpdatedAt      string      `json:"updated_at"`
@@ -87,15 +100,4 @@ type RandomPhotoResponse struct {
 	} `json:"location"`
 	Views     int `json:"views"`
 	Downloads int `json:"downloads"`
-}
-
-// RandomPhotoParameters struct from Unsplash command
-type RandomPhotoParameters struct {
-	Collections string `yaml:"collections"`
-	Featured    string `yaml:"featured"`
-	Filter      string `yaml:"filter"`
-	Orientation string `yaml:"orientation"`
-	Query       string `yaml:"query"`
-	Size        string `yaml:"size"`
-	Username    string `yaml:"username"`
 }
