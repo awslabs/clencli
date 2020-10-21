@@ -53,12 +53,12 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func getModelFromFlags(cmd *cobra.Command) model.RandomPhotoParameters {
-	var params model.RandomPhotoParameters
+func getModelFromFlags(cmd *cobra.Command) model.UnsplashRandomPhotoParameters {
+	var params model.UnsplashRandomPhotoParameters
 
 	params.Query, _ = cmd.Flags().GetString("query")
 	params.Collections, _ = cmd.Flags().GetString("collections")
-	params.Featured, _ = cmd.Flags().GetString("featured")
+	params.Featured, _ = cmd.Flags().GetBool("featured")
 	params.Username, _ = cmd.Flags().GetString("username")
 	params.Orientation, _ = cmd.Flags().GetString("orientation")
 	params.Filter, _ = cmd.Flags().GetString("filter")
@@ -68,7 +68,7 @@ func getModelFromFlags(cmd *cobra.Command) model.RandomPhotoParameters {
 }
 
 // requestRandomPhotoDefaults retrieves a single random photo with default values.
-// func requestRandomPhotoDefaults(query string) (RandomPhotoResponse, error) {
+// func requestRandomPhotoDefaults(query string) (UnsplashRandomPhotoResponse, error) {
 // 	// landscape orientation is better for README files
 // 	return requestRandomPhoto(query, "", "", "", "landscape", "low")
 // }
@@ -92,10 +92,10 @@ func getModelFromFlags(cmd *cobra.Command) model.RandomPhotoParameters {
 // }
 
 // requestRandomPhoto retrieves a single random photo, given optional filters.
-func requestRandomPhoto(params model.RandomPhotoParameters) (model.RandomPhotoResponse, error) {
-	var response model.RandomPhotoResponse
+func requestRandomPhoto(params model.UnsplashRandomPhotoParameters) (model.UnsplashRandomPhotoResponse, error) {
+	var response model.UnsplashRandomPhotoResponse
 
-	if (model.RandomPhotoParameters{} == params) {
+	if (model.UnsplashRandomPhotoParameters{} == params) {
 		return response, fmt.Errorf("Unable to download Unsplash photo if all fields from query as empty")
 	}
 
@@ -136,7 +136,7 @@ func requestRandomPhoto(params model.RandomPhotoParameters) (model.RandomPhotoRe
 	return response, nil
 }
 
-func buildURL(params model.RandomPhotoParameters, cred model.Credential) string {
+func buildURL(params model.UnsplashRandomPhotoParameters, cred model.Credential) string {
 	clientID := cred.AccessKey
 	url := fmt.Sprintf("https://api.unsplash.com/photos/random?client_id=%s", clientID)
 
@@ -148,9 +148,7 @@ func buildURL(params model.RandomPhotoParameters, cred model.Credential) string 
 		url += fmt.Sprintf("&query=%s", params.Query)
 	}
 
-	if len(params.Featured) > 0 {
-		url += fmt.Sprintf("&featured=%s", params.Featured)
-	}
+	url += fmt.Sprintf("&featured=%t", params.Featured)
 
 	if len(params.Username) > 0 {
 		url += fmt.Sprintf("&username=%s", params.Username)
@@ -189,7 +187,7 @@ func DownloadPhoto(url string, size string, query string) error {
 }
 
 // GetPhotoURLBySize return the photo URL based on the given size
-func GetPhotoURLBySize(p model.RandomPhotoParameters, r model.RandomPhotoResponse) string {
+func GetPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRandomPhotoResponse) string {
 	switch p.Size {
 	case "thumb":
 		return r.Urls.Thumb
