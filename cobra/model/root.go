@@ -1,15 +1,5 @@
 package model
 
-// GlobalConfig struct for the glogal config (~/.clencli.yaml)
-type GlobalConfig struct {
-	Credentials []struct {
-		Credential
-	}
-	Configs []struct {
-		Config
-	}
-}
-
 // ReadMe struct of the readme.yaml
 type ReadMe struct {
 	Logo struct {
