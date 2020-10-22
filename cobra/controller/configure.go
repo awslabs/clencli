@@ -43,10 +43,18 @@ func configureRun(cmd *cobra.Command, args []string) error {
 	configDirExist := doesConfigDirExist()
 
 	if !configDirExist {
-		err := createProfile(profile)
+		created, err := createConfigDir()
 		if err != nil {
-			return fmt.Errorf("Unexpected error when trying to setup profile: %s\n%s", profile, err)
+			return fmt.Errorf("Unexpected error during config directory creation \n%v", err)
 		}
+
+		if created {
+			err := createProfile(profile)
+			if err != nil {
+				return fmt.Errorf("Unexpected error when trying to setup profile: %s\n%s", profile, err)
+			}
+		}
+
 	} else {
 		err := updateProfile(profile)
 		if err != nil {
@@ -64,18 +72,7 @@ func configureRun(cmd *cobra.Command, args []string) error {
 }
 
 func doesConfigDirExist() bool {
-	var exists = false
-	path := getConfigDirPath()
-
-	if cau.DirOrFileExists(path) {
-		exists = true
-	}
-
-	if exists {
-		fmt.Println("CLENCLI configuration directory found")
-	}
-
-	return exists
+	return cau.DirOrFileExists(getConfigDirPath())
 }
 
 func getConfigDirPath() string {
@@ -83,6 +80,14 @@ func getConfigDirPath() string {
 	path := home + "/.clencli"
 
 	return path
+}
+
+func getCredentialsPath() string {
+	return getConfigDirPath() + "/credentials.yaml"
+}
+
+func getConfigPath() string {
+	return getConfigDirPath() + "/config.yaml"
 }
 
 func getHomeDir() string {
@@ -99,8 +104,6 @@ func createConfigDir() (bool, error) {
 	created := false
 	path := getConfigDirPath()
 
-	fmt.Println("CLENCLI configuration directory not found")
-
 	if cau.CreateDir(path) {
 		fmt.Println("CLENCLI configuration directory created at " + path)
 		created = true
@@ -109,30 +112,25 @@ func createConfigDir() (bool, error) {
 	return created, nil
 }
 
-func createProfile(p string) error {
-	created, err := createConfigDir()
+func createProfile(profile string) error {
+
+	// credentials
+	err := createCredentials(profile)
 	if err != nil {
-		return fmt.Errorf("Unexpected erro during config directory creation \n%v", err)
+		return fmt.Errorf("Unexpected error during credentials setup")
 	}
 
-	if created {
-		// credentials
-		err := createCredentials(p)
-		if err != nil {
-			return fmt.Errorf("Unexpected error during credentials setup")
-		}
-
-		// configuratons
-		err = createConfig(p)
-		if err != nil {
-			return fmt.Errorf("Unexpected error during config setup")
-		}
+	// configuratons
+	err = createConfig(profile)
+	if err != nil {
+		return fmt.Errorf("Unexpected error during config setup")
 	}
+
 	return err
 }
 
-func createCredentials(p string) error {
-	fmt.Println("Started to setup credentials for profile: " + p)
+func createCredentials(profile string) error {
+	fmt.Println("Started to setup credentials for profile: " + profile)
 	var credentials model.Credentials
 	// load current credentials
 
@@ -144,14 +142,14 @@ func createCredentials(p string) error {
 
 	if answer == "Y" || answer == "y" {
 		// if empty, create new credential
-		var profile model.CredentialProfile
-		profile.Name = p
-		profile.Enabled = true // enabling profile by default
-		profile.Credential, err = createCredential("unsplash")
+		var cp model.CredentialProfile
+		cp.Name = profile
+		cp.Enabled = true // enabling profile by default
+		cp.Credential, err = createCredential("unsplash")
 		if err != nil {
 			return fmt.Errorf("Unable to configure Unsplash credentials")
 		}
-		credentials.Profiles = append(credentials.Profiles, profile)
+		credentials.Profiles = append(credentials.Profiles, cp)
 		err = saveCredentials(credentials)
 		if err != nil {
 			return fmt.Errorf("Unable to save credentials during setup \n%v", err)
@@ -160,7 +158,7 @@ func createCredentials(p string) error {
 		fmt.Println("Skipping Unplash configuration ...")
 	}
 
-	fmt.Println("Finished to setup credentials for profile: " + p)
+	fmt.Println("Finished to setup credentials for profile: " + profile)
 	return err
 }
 
@@ -183,8 +181,13 @@ func createCredential(provider string) (model.Credential, error) {
 	return credential, err
 }
 
-func createConfig(p string) error {
-	fmt.Println("Started to setup configuration for profile: " + p)
+func maskString(s string, showLastChars int) string {
+	maskSize := len(s) - showLastChars
+	return strings.Repeat(s, maskSize) + s[maskSize:]
+}
+
+func createConfig(profile string) error {
+	fmt.Println("Started to setup configuration for profile: " + profile)
 
 	var config model.Config
 	// load current configuration
@@ -196,14 +199,14 @@ func createConfig(p string) error {
 	}
 
 	if answer == "Y" || answer == "y" {
-		var profile model.ConfigProfile
-		profile.Name = p
-		profile.Enabled = true // enabling profile by default
-		profile.Unsplash, err = createUnsplash()
+		var cp model.ConfigProfile
+		cp.Name = profile
+		cp.Enabled = true // enabling profile by default
+		cp.Unsplash, err = createUnsplash()
 		if err != nil {
 			return fmt.Errorf("Unable to configure Unsplash")
 		}
-		config.Profiles = append(config.Profiles, profile)
+		config.Profiles = append(config.Profiles, cp)
 		err = saveConfig(config)
 		if err != nil {
 			return fmt.Errorf("Unable to save config during setup \n%v", err)
@@ -212,7 +215,7 @@ func createConfig(p string) error {
 		fmt.Println("Skipping Unplash configuration ...")
 	}
 
-	fmt.Println("Finished to setup configuration for profile: " + p)
+	fmt.Println("Finished to setup configuration for profile: " + profile)
 	return err
 }
 
@@ -325,24 +328,91 @@ func writeInterfaceToFile(in interface{}, path string) error {
 
 func updateProfile(profile string) error {
 	var credentials model.Credentials
+	// var config model.Config
 	var err error
-	credentials, err = readProfileCredentials(profile)
-	if err != nil {
-		return fmt.Errorf("Unable to update the profile's credentials")
+
+	mustCreateCredentials := shouldCreateCredentials(profile)
+	if mustCreateCredentials {
+		err = createCredentials(profile)
+		if err != nil {
+			return fmt.Errorf("Unexpected error while creating credentials\n%v", err)
+		}
+	} else {
+		// update credentials
+		credentials, err = readProfileCredentials(profile)
+		if err != nil {
+			return err
+		}
+
+		err = updateCredentials(credentials)
+		if err != nil {
+			return fmt.Errorf("Unable to update the profile's credentials")
+		}
 	}
 
-	// update credentials
-	err = updateCredentials(credentials)
-	if err != nil {
-		return fmt.Errorf("Unable to update the profile's credentials")
+	mustCreateConfig := shouldCreateConfig(profile)
+	if mustCreateConfig {
+		err = createConfig(profile)
+		if err != nil {
+			return fmt.Errorf("Unexpected error while creating config\n%v", err)
+		}
 	}
+
 	// update configs
 
 	return nil
 }
 
+func shouldCreateCredentials(profile string) bool {
+	// check if files are empty
+	size, _ := cau.FileSize(getCredentialsPath())
+	if size <= 0 {
+		return true
+	}
+
+	// check if profile is empty
+	isEmpty, _ := isProfileCredentialsEmpty(profile)
+
+	if isEmpty {
+		return true
+	}
+
+	return false
+}
+
+func shouldCreateConfig(profile string) bool {
+	// check if files are empty
+	size, _ := cau.FileSize(getConfigPath())
+	if size <= 0 {
+		return true
+	}
+
+	// check if profile is empty
+	isEmpty, _ := isProfileConfigEmpty(profile)
+	if isEmpty {
+		return true
+	}
+
+	return false
+}
+
 func readAllCredentials() (model.Credentials, error) {
 	c := model.Credentials{}
+	v, err := getViperInstance("credentials") // file within the configuration directory
+	if err != nil {
+		return c, fmt.Errorf("Unable to load existing credentials\n%v", err)
+	}
+
+	err = v.Unmarshal(&c)
+	if err != nil {
+		return c, fmt.Errorf("Unable to unmarshall config \n%v", err)
+	}
+
+	return c, err
+}
+
+func readAllConfig() (model.Config, error) {
+	c := model.Config{}
 	v, err := getViperInstance("credentials") // file within the configuration directory
 	if err != nil {
 		return c, fmt.Errorf("Unable to load existing credentials\n%v", err)
@@ -369,6 +439,53 @@ func readProfileCredentials(profile string) (model.Credentials, error) {
 	}
 
 	return credentials, err
+}
+
+func readProfileConfig(profile string) (model.Config, error) {
+	var config model.Config
+	allConfigs, err := readAllConfig()
+	if err != nil {
+		return config, fmt.Errorf("Unable to read config\n%v", err)
+	}
+	for _, p := range allConfigs.Profiles {
+		if p.Name == profile {
+			config.Profiles = append(config.Profiles, p)
+		}
+	}
+
+	return config, err
+}
+
+func isProfileConfigEmpty(profile string) (bool, error) {
+	// check credentials
+	var answer bool = true
+	config, err := readProfileConfig(profile)
+	if err != nil {
+		return answer, fmt.Errorf("Unable to read profiles from config\n%v", err)
+	}
+
+	for _, p := range config.Profiles {
+		if p.Name == profile {
+			answer = false
+		}
+	}
+
+	return answer, err
+}
+
+func isProfileCredentialsEmpty(profile string) (bool, error) {
+	credentials, err := readProfileCredentials(profile)
+	if err != nil {
+		return false, fmt.Errorf("Unable to read profiles from credentials\n%v", err)
+	}
+
+	for _, p := range credentials.Profiles {
+		if p.Name == profile {
+			return false, err
+		}
+	}
+
+	return true, err
 }
 
 func readConfig() (model.Config, error) {
@@ -400,7 +517,31 @@ func getViperInstance(name string) (*viper.Viper, error) {
 }
 
 func updateCredentials(credentials model.Credentials) error {
-	return nil
+	var err error
+	for _, profile := range credentials.Profiles {
+		err = updateCredential(profile.Credential)
+		if err != nil {
+			return fmt.Errorf("Unable to update credential\n%v", err)
+		}
+	}
+	return err
+}
+
+func updateCredential(credential model.Credential) error {
+	var err error
+	if credential.AccessKey != "" {
+		accessKey, err := getUserInput("Unsplash API Access Key [" + maskString(credential.AccessKey, 3) + "]")
+		if err != nil {
+			return fmt.Errorf("Unable to get user input about access key\n%v", err)
+		}
+
+		if accessKey != "" {
+			credential.AccessKey = accessKey
+		}
+	} else {
+		createCredential(credential.Provider)
+	}
+	return err
 }
 
 // // mergeConfig merges a new configuration with an existing config.

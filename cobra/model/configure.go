@@ -15,8 +15,8 @@ type CredentialProfile struct {
 // Credential does ...
 type Credential struct {
 	Provider  string `yaml:"provider"`
-	AccessKey string `yaml:"access_key"`
-	SecretKey string `yaml:"secret_key"`
+	AccessKey string `yaml:"accessKey"`
+	SecretKey string `yaml:"secretkey"`
 }
 
 // Config does TODO...
