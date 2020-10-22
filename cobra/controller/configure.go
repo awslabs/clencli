@@ -203,7 +203,7 @@ func createConfig(profile string) error {
 	}
 
 	if answer == "Y" || answer == "y" {
-		var cp model.ConfigProfile
+		var cp model.ConfigurationProfile
 		cp.Name = profile
 		cp.Enabled = true // enabling profile by default
 		cp.Unsplash, err = createUnsplash()
@@ -345,12 +345,12 @@ func updateProfile(profile string) error {
 		// update credentials
 		credentials, err = readProfileCredentials(profile)
 		if err != nil {
-			return err
+			return fmt.Errorf("Unable to read the profile's credentials\n%v", err)
 		}
 
 		err = updateCredentials(credentials)
 		if err != nil {
-			return fmt.Errorf("Unable to update the profile's credentials")
+			return fmt.Errorf("Unable to update the profile's credentials\n%v", err)
 		}
 	}
 
@@ -360,11 +360,20 @@ func updateProfile(profile string) error {
 		if err != nil {
 			return fmt.Errorf("Unexpected error while creating config\n%v", err)
 		}
+	} else {
+		// update configs
+		config, err := readProfileConfig(profile)
+		if err != nil {
+			return fmt.Errorf("Unable to read the profile's credentials\n%v", err)
+		}
+
+		err = updateConfig(config)
+		if err != nil {
+			return fmt.Errorf("Unable to update the profile's config\n%v", err)
+		}
 	}
 
-	// update configs
-
-	return nil
+	return err
 }
 
 func shouldCreateCredentials(profile string) bool {
@@ -569,6 +578,8 @@ func updateCredential(credential model.Credential) (model.Credential, error) {
 
 	return credential, err
 }
+
+func updateConfs()
 
 // // mergeConfig merges a new configuration with an existing config.
 // func mergeConfig(local *viper.Viper, source ReadMe) error {
