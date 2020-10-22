@@ -19,13 +19,13 @@ type Credential struct {
 	SecretKey string `yaml:"secretkey"`
 }
 
-// Config does TODO...
-type Config struct {
-	Profiles []ConfigProfile `yaml:"profiles"`
+// Configurations does TODO...
+type Configurations struct {
+	Profiles []ConfigurationProfile `yaml:"profiles"`
 }
 
-// ConfigProfile does TODO...
-type ConfigProfile struct {
+// ConfigurationProfile does TODO...
+type ConfigurationProfile struct {
 	Name     string `yaml:"name"`
 	Enabled  bool   `yaml:"enabled"`
 	Unsplash `yaml:"unsplash"`
