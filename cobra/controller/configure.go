@@ -183,7 +183,11 @@ func createCredential(provider string) (model.Credential, error) {
 
 func maskString(s string, showLastChars int) string {
 	maskSize := len(s) - showLastChars
-	return strings.Repeat(s, maskSize) + s[maskSize:]
+	if maskSize <= 0 {
+		return s
+	}
+
+	return strings.Repeat("*", maskSize) + s[maskSize:]
 }
 
 func createConfig(profile string) error {
@@ -518,30 +522,52 @@ func getViperInstance(name string) (*viper.Viper, error) {
 
 func updateCredentials(credentials model.Credentials) error {
 	var err error
-	for _, profile := range credentials.Profiles {
-		err = updateCredential(profile.Credential)
+	for i, profile := range credentials.Profiles {
+		credentials.Profiles[i].Credential, err = updateCredential(profile.Credential)
 		if err != nil {
 			return fmt.Errorf("Unable to update credential\n%v", err)
 		}
 	}
+
+	err = saveCredentials(credentials)
+	if err != nil {
+		return fmt.Errorf("Unable to save credentials\n%v", err)
+	}
+
 	return err
 }
 
-func updateCredential(credential model.Credential) error {
+func updateCredential(credential model.Credential) (model.Credential, error) {
 	var err error
 	if credential.AccessKey != "" {
 		accessKey, err := getUserInput("Unsplash API Access Key [" + maskString(credential.AccessKey, 3) + "]")
 		if err != nil {
-			return fmt.Errorf("Unable to get user input about access key\n%v", err)
+			return credential, fmt.Errorf("Unable to get user input about access key\n%v", err)
 		}
 
 		if accessKey != "" {
 			credential.AccessKey = accessKey
 		}
+
 	} else {
 		createCredential(credential.Provider)
 	}
-	return err
+
+	if credential.SecretKey != "" {
+		secretKey, err := getUserInput("Unsplash API Secret Key [" + maskString(credential.SecretKey, 3) + "]")
+		if err != nil {
+			return credential, fmt.Errorf("Unable to get user input about access key\n%v", err)
+		}
+
+		if secretKey != "" {
+			credential.SecretKey = secretKey
+		}
+
+	} else {
+		createCredential(credential.Provider)
+	}
+
+	return credential, err
 }
 
 // // mergeConfig merges a new configuration with an existing config.
