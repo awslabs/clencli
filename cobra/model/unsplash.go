@@ -2,10 +2,19 @@ package model
 
 // Unsplash does ...
 type Unsplash struct {
-	Enabled     bool `yaml:"enabled"`
+	Name        string `yaml:"name,omitempty"`
+	Description string `yaml:"description,omitempty"`
+	Enabled     bool   `yaml:"enabled"`
+	CreatedAt   string `yaml:"createdAt"`
+	UpdatedAt   string `yaml:"updatedAt"`
 	RandomPhoto struct {
-		Parameters UnsplashRandomPhotoParameters `yaml:"parameters"`
-		Response   UnsplashRandomPhotoResponse   `yaml:"response,omitempty"`
+		Name        string                        `yaml:"name,omitempty"`
+		Description string                        `yaml:"description,omitempty"`
+		Enabled     bool                          `yaml:"enabled"`
+		CreatedAt   string                        `yaml:"createdAt"`
+		UpdatedAt   string                        `yaml:"updatedAt"`
+		Parameters  UnsplashRandomPhotoParameters `yaml:"parameters"`
+		Response    UnsplashRandomPhotoResponse   `yaml:"response,omitempty"`
 	} `yaml:"random_photo"`
 }
 

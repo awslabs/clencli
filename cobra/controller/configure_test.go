@@ -20,3 +20,10 @@ func TestConfigureWithNoArgAndNoFlags(t *testing.T) {
 	assert.Contains(t, output, "one the following arguments are required")
 	assert.Contains(t, err.Error(), "one the following arguments are required")
 }
+
+// to cover:
+// .. config dir doesn't exist
+// .. config dir exist but no files
+// .. config dir exist but only credentials
+// .. config dir exist but only config
+// .. config dir exist with both files

@@ -1,5 +1,29 @@
 package model
 
+import "os"
+
+type App struct {
+	// Name of file to look for inside the path
+	Name                      string
+	HomeDir                   string
+	ConfigurationsDir         string
+	ConfigurationsName        string
+	ConfigurationsType        string
+	ConfigurationsPath        string
+	ConfigurationsPermissions os.FileMode
+	CredentialsName           string
+	CredentialsType           string
+	CredentialsPath           string
+	CredentialsPermissions    os.FileMode
+	LogsDir                   string
+	LogsName                  string
+	LogsType                  string
+	LogsPath                  string
+	LogsPermissions           os.FileMode
+
+	WorkingDir string
+}
+
 // ReadMe struct of the readme.yaml
 type ReadMe struct {
 	Logo struct {

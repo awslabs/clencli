@@ -22,14 +22,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	cau "github.com/awslabs/clencli/cauldron"
+	aid "github.com/awslabs/clencli/cobra/aid"
 	controller "github.com/awslabs/clencli/cobra/controller"
-	homedir "github.com/mitchellh/go-homedir"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
 var profile string
 var rootCmd = controller.RootCmd()
 
@@ -49,8 +46,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.clencli.yaml)")
-	rootCmd.PersistentFlags().StringVar(&profile, "profile", "default", "Use a specific profile from your config file")
+	rootCmd.PersistentFlags().StringVar(&profile, "profile", "default", "Use a specific profile from your configurations file")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -59,32 +55,9 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		configDirPath := home + "/.clencli"
-		viper.AddConfigPath(configDirPath) // global directory
-		viper.AddConfigPath("clencli")     // local directory
-		viper.SetConfigName("config")
-
-		if cau.DirOrFileExists(configDirPath) {
-			// If the file doesn't exist, create it or append to the file
-			file, err := os.OpenFile(configDirPath+"/logs.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
-			if err != nil {
-				log.Fatal(err)
-			}
-			log.SetFormatter(&log.JSONFormatter{})
-			log.SetOutput(file)
-		}
-	}
+	app := aid.GetAppInfo()
+	viper.AddConfigPath(app.ConfigurationsDir) // global directory
+	viper.SetConfigName(app.ConfigurationsName)
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -92,5 +65,7 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+
+	aid.SetupLogging()
 
 }

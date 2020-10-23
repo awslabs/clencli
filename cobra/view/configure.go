@@ -22,5 +22,5 @@ var configureCmd = controller.ConfigureCmd()
 
 func init() {
 	rootCmd.AddCommand(configureCmd)
-	configureCmd.Flags().StringP("profile", "p", "", "Profile name")
+	configureCmd.Flags().StringP("profile", "p", "default", "Profile name")
 }
