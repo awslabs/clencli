@@ -78,7 +78,7 @@ func GetConfigurations() (model.Configurations, error) {
 	var confs model.Configurations
 	v, err := readConfig(GetAppInfo().ConfigurationsName)
 	if err != nil {
-		return confs, fmt.Errorf("Unable to read credentials\n%v", err)
+		return confs, fmt.Errorf("Unable to read configurations\n%v", err)
 	}
 
 	err = v.Unmarshal(&confs)

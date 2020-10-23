@@ -39,7 +39,7 @@ type ConfigurationProfile struct {
 	Enabled        bool            `yaml:"enabled"`
 	CreatedAt      string          `yaml:"createdAt"`
 	UpdatedAt      string          `yaml:"updatedAt"`
-	Configurations []Configuration `yaml:"credentials"`
+	Configurations []Configuration `yaml:"configurations"`
 }
 
 // Configuration does TODO
