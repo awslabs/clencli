@@ -16,7 +16,9 @@ limitations under the License.
 
 package view
 
-import controller "github.com/awslabs/clencli/cobra/controller"
+import (
+	controller "github.com/awslabs/clencli/cobra/controller"
+)
 
 var configureCmd = controller.ConfigureCmd()
 
