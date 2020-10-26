@@ -254,6 +254,13 @@ func ReadConfig(name string) (*viper.Viper, error) {
 
 }
 
+// RemoveIndex removes an item from the slice
+func RemoveIndex(s []int, index int) []int {
+	ret := make([]int, 0)
+	ret = append(ret, s[:index]...)
+	return append(ret, s[index+1:]...)
+}
+
 // WriteInterfaceToFile does TODO
 func WriteInterfaceToFile(in interface{}, path string) error {
 	b, err := yaml.Marshal(&in)

@@ -97,6 +97,32 @@ func CreateCredentials(name string) model.Credentials {
 	return credentials
 }
 
+// DeleteConfigurationProfile delete a profile preserving it order
+func DeleteConfigurationProfile(name string) {
+	allConfigurations := GetConfigurations()
+	var newConfigurations model.Configurations
+	for _, profile := range allConfigurations.Profiles {
+		// only append profile that doesn't match
+		if profile.Name != name {
+			newConfigurations.Profiles = append(newConfigurations.Profiles, profile)
+		}
+	}
+	SaveConfigurations(newConfigurations)
+}
+
+// DeleteCredentialProfile delete a profile preserving the credentials order
+func DeleteCredentialProfile(name string) {
+	allCredentials := GetCredentials()
+	var newCredentials model.Credentials
+	for _, profile := range allCredentials.Profiles {
+		if profile.Name != name {
+			newCredentials.Profiles = append(newCredentials.Profiles, profile)
+		}
+	}
+
+	SaveCredentials(newCredentials)
+}
+
 // GetConfigurations does TODO
 func GetConfigurations() model.Configurations {
 	var confs model.Configurations
