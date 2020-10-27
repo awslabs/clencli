@@ -4,7 +4,7 @@
 .PHONY: cobra/add
 cobra/add: ## Add a Cobra command
 ifdef command
-	cobra add $(command)
+	cd cobra && cobra add $(command)
 else
 	@echo "command not defined"
 endif
