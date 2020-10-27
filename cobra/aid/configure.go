@@ -115,17 +115,6 @@ func ConfigurationsFileExist() bool {
 	return cau.DirOrFileExists(GetAppInfo().ConfigurationsPath)
 }
 
-// ConfigurationsProfileExist TODO
-func ConfigurationsProfileExist(name string, configurations model.Configurations) bool {
-	for _, profile := range configurations.Profiles {
-		if profile.Name == name {
-			return true
-		}
-	}
-	return false
-
-}
-
 // CreateConfigDir TODO
 func CreateConfigDir() bool {
 	return cau.CreateDir(GetAppInfo().ConfigurationsDir)
@@ -134,33 +123,6 @@ func CreateConfigDir() bool {
 // CredentialsFileExist does TODO
 func CredentialsFileExist() bool {
 	return cau.DirOrFileExists(GetAppInfo().CredentialsPath)
-}
-
-// CredentialsProfileExist TODO
-func CredentialsProfileExist(name string, credentials model.Credentials) bool {
-	for _, profile := range credentials.Profiles {
-		if profile.Name == name {
-			return true
-		}
-	}
-	return false
-
-}
-
-// GetCredentials does TODO
-func GetCredentials() (model.Credentials, error) {
-	var creds model.Credentials
-	v, err := ReadConfig(GetAppInfo().CredentialsName)
-	if err != nil {
-		return creds, fmt.Errorf("Unable to read credentials\n%v", err)
-	}
-
-	err = v.Unmarshal(&creds)
-	if err != nil {
-		return creds, fmt.Errorf("Unable to unmarshall credentials \n%v", err)
-	}
-
-	return creds, err
 }
 
 func getSensitiveUserInput(text string, info string) (string, error) {

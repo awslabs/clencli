@@ -10,13 +10,31 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Data Access Object
+// AddConfigurationProfile TODO
+func AddConfigurationProfile(name string) {
+	configurations := GetConfigurations()
+	configurations.Profiles = append(configurations.Profiles, CreateConfigurationProfile(name))
+	SaveConfigurations(configurations)
+}
 
-// Optional<T> get(long id);
-// List<T> getAll();
-// void save(T t);
-// void update(T t, String[] params);
-// void delete(T t);
+// AddCredentialProfile TODO
+func AddCredentialProfile(name string) {
+	credentials := GetCredentials()
+	credentials.Profiles = append(credentials.Profiles, CreateCredentialProfile(name))
+	SaveCredentials(credentials)
+}
+
+// ConfigurationsProfileExist TODO
+func ConfigurationsProfileExist(name string) bool {
+	configurations := GetConfigurations()
+	for _, profile := range configurations.Profiles {
+		if profile.Name == name {
+			return true
+		}
+	}
+	return false
+
+}
 
 // CreateConfigurationProfile TODO
 func CreateConfigurationProfile(name string) model.ConfigurationProfile {
@@ -48,14 +66,13 @@ func CreateConfigurationProfile(name string) model.ConfigurationProfile {
 }
 
 // CreateConfigurations does TODO
-func CreateConfigurations(name string) model.Configurations {
+func CreateConfigurations(name string) {
 	fmt.Println("> Configurations")
 	var configurations model.Configurations
 	var profile model.ConfigurationProfile
 	profile = CreateConfigurationProfile(name)
 	configurations.Profiles = append(configurations.Profiles, profile)
-
-	return configurations
+	SaveConfigurations(configurations)
 }
 
 // CreateCredentialProfile TODO
@@ -88,13 +105,24 @@ func CreateCredentialProfile(name string) model.CredentialProfile {
 }
 
 // CreateCredentials TODO
-func CreateCredentials(name string) model.Credentials {
+func CreateCredentials(name string) {
 	fmt.Println("> Credentials")
 	var credentials model.Credentials
 	profile := CreateCredentialProfile(name)
 	credentials.Profiles = append(credentials.Profiles, profile)
+	SaveCredentials(credentials)
+}
 
-	return credentials
+// CredentialsProfileExist TODO
+func CredentialsProfileExist(name string) bool {
+	credentials := GetCredentials()
+	for _, profile := range credentials.Profiles {
+		if profile.Name == name {
+			return true
+		}
+	}
+	return false
+
 }
 
 // DeleteConfigurationProfile delete a profile preserving it order
@@ -166,9 +194,10 @@ func SaveCredentials(credentials model.Credentials) error {
 }
 
 // UpdateConfigurations does TODO
-func UpdateConfigurations(name string, confs model.Configurations) model.Configurations {
+func UpdateConfigurations(name string) {
 	fmt.Println("> Configurations")
-	for i, profile := range confs.Profiles {
+	configurations := GetConfigurations()
+	for i, profile := range configurations.Profiles {
 		if profile.Name == name {
 			profile = aid.AskAboutConfigurationProfile(profile)
 
@@ -187,18 +216,19 @@ func UpdateConfigurations(name string, confs model.Configurations) model.Configu
 				}
 			}
 
-			confs.Profiles[i] = profile
+			configurations.Profiles[i] = profile
 		}
 
 	}
 
-	return confs
+	SaveConfigurations(configurations)
 }
 
 // UpdateCredentials does TODO
-func UpdateCredentials(name string, creds model.Credentials) model.Credentials {
+func UpdateCredentials(name string) {
 	fmt.Println("> Credentials")
-	for i, profile := range creds.Profiles {
+	credentials := GetCredentials()
+	for i, profile := range credentials.Profiles {
 
 		if profile.Name == name {
 			profile = aid.AskAboutCredentialProfile(profile)
@@ -218,9 +248,9 @@ func UpdateCredentials(name string, creds model.Credentials) model.Credentials {
 				}
 			}
 
-			creds.Profiles[i] = profile
+			credentials.Profiles[i] = profile
 		}
 	}
 
-	return creds
+	SaveCredentials(credentials)
 }
