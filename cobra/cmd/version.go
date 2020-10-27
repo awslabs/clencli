@@ -14,7 +14,7 @@ limitations under the License.
 
 */
 
-package view
+package cmd
 
 import controller "github.com/awslabs/clencli/cobra/controller"
 
