@@ -1,4 +1,4 @@
-use: configure [options]
-short: Configures the application
-long: Configures the application
+use: configure [delete]
+short: Configures CLENCLI global settings
+long: Configures CLENCLI global credentials and configurations used by commands
   
