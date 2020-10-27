@@ -36,47 +36,32 @@ func configureRun(cmd *cobra.Command, args []string) error {
 		if !aid.ConfigDirExist() {
 			if aid.CreateConfigDir() {
 				fmt.Println("CLENCLI configuration directory created")
-
-				credentials := dao.CreateCredentials(profile)
-				dao.SaveCredentials(credentials)
-
-				configurations := dao.CreateConfigurations(profile)
-				dao.SaveConfigurations(configurations)
-
+				dao.CreateCredentials(profile)
+				dao.CreateConfigurations(profile)
 			}
 		} else if aid.ConfigDirExist() &&
 			(!aid.CredentialsFileExist() || !aid.ConfigurationsFileExist()) {
 
 			if !aid.CredentialsFileExist() {
-				credentials := dao.CreateCredentials(profile)
-				dao.SaveCredentials(credentials)
+				dao.CreateCredentials(profile)
 			}
 
 			if !aid.ConfigurationsFileExist() {
-				configurations := dao.CreateConfigurations(profile)
-				dao.SaveConfigurations(configurations)
+				dao.CreateConfigurations(profile)
 			}
 		} else {
 			if aid.ConfigDirExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
-				credentials := dao.GetCredentials()
-				configurations := dao.GetConfigurations()
-
-				if aid.CredentialsProfileExist(profile, credentials) && aid.ConfigurationsProfileExist(profile, configurations) {
-					credentials = dao.UpdateCredentials(profile, credentials)
-					dao.SaveCredentials(credentials)
-
-					configurations = dao.UpdateConfigurations(profile, configurations)
-					dao.SaveConfigurations(configurations)
+				if dao.CredentialsProfileExist(profile) && dao.ConfigurationsProfileExist(profile) {
+					dao.UpdateCredentials(profile)
+					dao.UpdateConfigurations(profile)
 				}
 
-				if !aid.CredentialsProfileExist(profile, credentials) {
-					credentials.Profiles = append(credentials.Profiles, dao.CreateCredentialProfile(profile))
-					dao.SaveCredentials(credentials)
+				if !dao.CredentialsProfileExist(profile) {
+					dao.AddCredentialProfile(profile)
 				}
 
-				if !aid.ConfigurationsProfileExist(profile, configurations) {
-					configurations.Profiles = append(configurations.Profiles, dao.CreateConfigurationProfile(profile))
-					dao.SaveConfigurations(configurations)
+				if !dao.ConfigurationsProfileExist(profile) {
+					dao.AddConfigurationProfile(profile)
 				}
 			}
 		}
