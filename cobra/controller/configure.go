@@ -1,3 +1,18 @@
+/*
+Copyright © 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package controller
 
 import (
@@ -28,9 +43,8 @@ func ConfigureCmd() *cobra.Command {
 
 func configureRun(cmd *cobra.Command, args []string) error {
 	profile, _ := cmd.Flags().GetString("profile")
-	arg := args[0]
 
-	if arg != "delete" {
+	if len(args) == 0 {
 		// todo: cases to cover, configure --profile name
 
 		if !aid.ConfigDirExist() {
@@ -65,7 +79,7 @@ func configureRun(cmd *cobra.Command, args []string) error {
 				}
 			}
 		}
-	} else {
+	} else if len(args) > 0 && args[0] == "delete" {
 		if !aid.ConfigDirExist() {
 			return fmt.Errorf("CLENCLI configuration directory not found")
 		}
