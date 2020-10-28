@@ -20,7 +20,7 @@ import (
 	"runtime"
 
 	"github.com/awslabs/clencli/box"
-	cau "github.com/awslabs/clencli/cauldron"
+	helper "github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -41,7 +41,7 @@ func versionRun(cmd *cobra.Command, args []string) error {
 
 // VersionCmd command to display CLENCLI current version
 func VersionCmd() *cobra.Command {
-	man := cau.GetManual("version")
+	man := helper.GetManual("version")
 
 	return &cobra.Command{
 		Use:   man.Use,

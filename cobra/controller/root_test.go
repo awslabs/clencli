@@ -18,14 +18,14 @@ package controller
 import (
 	"testing"
 
-	cau "github.com/awslabs/clencli/cauldron"
+	helper "github.com/awslabs/clencli/helper"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRootWithNoArgAndNoFlags(t *testing.T) {
 	rootCmd := RootCmd()
-	output, err := cau.ExecuteCommand(rootCmd)
+	output, err := helper.ExecuteCommand(rootCmd)
 
 	assert.NotEqual(t, rootCmd.Use, "")
 	assert.NotEqual(t, rootCmd.Short, "")

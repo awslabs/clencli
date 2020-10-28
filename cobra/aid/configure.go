@@ -21,29 +21,29 @@ import (
 	"io/ioutil"
 	"os"
 
-	cau "github.com/awslabs/clencli/cauldron"
+	helper "github.com/awslabs/clencli/helper"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
 // ConfigDirExist TODO
 func ConfigDirExist() bool {
-	return cau.DirOrFileExists(GetAppInfo().ConfigurationsDir)
+	return helper.DirOrFileExists(GetAppInfo().ConfigurationsDir)
 }
 
 // ConfigurationsFileExist does TODO
 func ConfigurationsFileExist() bool {
-	return cau.DirOrFileExists(GetAppInfo().ConfigurationsPath)
+	return helper.DirOrFileExists(GetAppInfo().ConfigurationsPath)
 }
 
 // CreateConfigDir TODO
 func CreateConfigDir() bool {
-	return cau.CreateDir(GetAppInfo().ConfigurationsDir)
+	return helper.CreateDir(GetAppInfo().ConfigurationsDir)
 }
 
 // CredentialsFileExist does TODO
 func CredentialsFileExist() bool {
-	return cau.DirOrFileExists(GetAppInfo().CredentialsPath)
+	return helper.DirOrFileExists(GetAppInfo().CredentialsPath)
 }
 
 // ReadConfig TODO

@@ -23,8 +23,8 @@ import (
 	"os"
 	"strings"
 
-	cau "github.com/awslabs/clencli/cauldron"
-	function "github.com/awslabs/clencli/cauldron"
+	function "github.com/awslabs/clencli/helper"
+	helper "github.com/awslabs/clencli/helper"
 	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
 	"github.com/spf13/cobra"
 )
@@ -33,7 +33,7 @@ var renderValidArgs = []string{"template"}
 
 // RenderCmd command to render templates
 func RenderCmd() *cobra.Command {
-	man := cau.GetManual("render")
+	man := helper.GetManual("render")
 	return &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
@@ -72,12 +72,12 @@ func renderRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("Unable to render template "+name+"\n%v", err)
 	}
 
-	// err = cau.UpdateReadMe()
+	// err = helper.UpdateReadMe()
 	// if err != nil {
 	// 	return fmt.Errorf("Unable to update local config with global config values \n%v", err)
 	// }
 
-	// err = cau.UpdateReadMeLogoURL()
+	// err = helper.UpdateReadMeLogoURL()
 	// if err != nil {
 	// 	return fmt.Errorf("Unable to update local config with new URL from Unsplash \n%v", err)
 	// }

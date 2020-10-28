@@ -16,13 +16,13 @@ limitations under the License.
 package controller
 
 import (
-	cau "github.com/awslabs/clencli/cauldron"
+	helper "github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 
 // RootCmd represents the base command when called without any subcommands
 func RootCmd() *cobra.Command {
-	man := cau.GetManual("root")
+	man := helper.GetManual("root")
 	return &cobra.Command{
 		Use:   man.Use,
 		Short: man.Short,

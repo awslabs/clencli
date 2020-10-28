@@ -19,14 +19,14 @@ import (
 	"fmt"
 	"strings"
 
-	cau "github.com/awslabs/clencli/cauldron"
 	model "github.com/awslabs/clencli/cobra/model"
+	helper "github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 
 // UnsplashCmd command to download photos from Unsplash.com
 func UnsplashCmd() *cobra.Command {
-	man := cau.GetManual("unsplash")
+	man := helper.GetManual("unsplash")
 	return &cobra.Command{
 		Use:   man.Use,
 		Short: man.Short,
@@ -38,7 +38,7 @@ func UnsplashCmd() *cobra.Command {
 func unsplashRun(cmd *cobra.Command, args []string) error {
 	// params := getModelFromFlags(cmd)
 
-	// unsplash, err := cau.GetRandomPhoto(
+	// unsplash, err := helper.GetRandomPhoto(
 	// 	query,
 	// 	collections,
 	// 	featured,
@@ -51,19 +51,19 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 	// }
 
 	// if size == "thumb" || size == "all" {
-	// 	cau.DownloadPhoto(unsplash.Urls.Thumb, "thumb", query)
+	// 	helper.DownloadPhoto(unsplash.Urls.Thumb, "thumb", query)
 	// }
 	// if size == "small" || size == "all" {
-	// 	cau.DownloadPhoto(unsplash.Urls.Small, "small", query)
+	// 	helper.DownloadPhoto(unsplash.Urls.Small, "small", query)
 	// }
 	// if size == "regular" || size == "all" {
-	// 	cau.DownloadPhoto(unsplash.Urls.Regular, "regular", query)
+	// 	helper.DownloadPhoto(unsplash.Urls.Regular, "regular", query)
 	// }
 	// if size == "full" || size == "all" {
-	// 	cau.DownloadPhoto(unsplash.Urls.Full, "full", query)
+	// 	helper.DownloadPhoto(unsplash.Urls.Full, "full", query)
 	// }
 	// if size == "raw" || size == "all" {
-	// 	cau.DownloadPhoto(unsplash.Urls.Raw, "raw", query)
+	// 	helper.DownloadPhoto(unsplash.Urls.Raw, "raw", query)
 	// }
 	return nil
 }
@@ -198,7 +198,7 @@ func DownloadPhoto(url string, size string, query string) error {
 	fileName := string(runes[start:end])
 	fileName += "-" + size + ".jpg"
 
-	return cau.DownloadFile(url, dirPath, fileName)
+	return helper.DownloadFile(url, dirPath, fileName)
 }
 
 // GetPhotoURLBySize return the photo URL based on the given size

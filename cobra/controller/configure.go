@@ -21,7 +21,7 @@ import (
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/dao"
 
-	cau "github.com/awslabs/clencli/cauldron"
+	helper "github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ var configureValidArgs = []string{"delete"}
 
 // ConfigureCmd command to display CLENCLI current version
 func ConfigureCmd() *cobra.Command {
-	man := cau.GetManual("configure")
+	man := helper.GetManual("configure")
 
 	return &cobra.Command{
 		Use:       man.Use,

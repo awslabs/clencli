@@ -18,22 +18,14 @@ package controller
 import (
 	"testing"
 
-	cau "github.com/awslabs/clencli/cauldron"
+	helper "github.com/awslabs/clencli/helper"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestConfigureCreateConfigDir(t *testing.T) {
-	pwd, nwd := cau.Setup(t)
+	pwd, nwd := helper.Setup(t)
 	createConfigDir()
-	cau.Teardown(pwd, nwd)
-}
-
-func TestConfigureWithNoArgAndNoFlags(t *testing.T) {
-	rootCmd, _ := cau.InitRootAndChildCmd(RootCmd(), ConfigureCmd())
-	output, err := cau.ExecuteCommand(rootCmd, "configure")
-
-	assert.Contains(t, output, "one the following arguments are required")
-	assert.Contains(t, err.Error(), "one the following arguments are required")
+	helper.Teardown(pwd, nwd)
 }
 
 // to cover:
