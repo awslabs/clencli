@@ -27,21 +27,21 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// AddConfigurationProfile TODO
+// AddConfigurationProfile add the given profile name into the configurations file
 func AddConfigurationProfile(name string) {
 	configurations := GetConfigurations()
 	configurations.Profiles = append(configurations.Profiles, CreateConfigurationProfile(name))
-	SaveConfigurations(configurations)
+	saveConfigurations(configurations)
 }
 
-// AddCredentialProfile TODO
+// AddCredentialProfile add the given profile name into the credentials file
 func AddCredentialProfile(name string) {
 	credentials := GetCredentials()
 	credentials.Profiles = append(credentials.Profiles, CreateCredentialProfile(name))
-	SaveCredentials(credentials)
+	saveCredentials(credentials)
 }
 
-// ConfigurationsProfileExist TODO
+// ConfigurationsProfileExist return `true` if the configuration file exist, `false` if otherwise
 func ConfigurationsProfileExist(name string) bool {
 	configurations := GetConfigurations()
 	for _, profile := range configurations.Profiles {
@@ -53,7 +53,7 @@ func ConfigurationsProfileExist(name string) bool {
 
 }
 
-// CreateConfigurationProfile TODO
+// CreateConfigurationProfile create the given profile name into the configurations file, return the profile created
 func CreateConfigurationProfile(name string) model.ConfigurationProfile {
 	fmt.Println(">> Profile")
 	var profile model.ConfigurationProfile
@@ -82,17 +82,17 @@ func CreateConfigurationProfile(name string) model.ConfigurationProfile {
 	return profile
 }
 
-// CreateConfigurations does TODO
+// CreateConfigurations create the configuration file with the given profile name
 func CreateConfigurations(name string) {
 	fmt.Println("> Configurations")
 	var configurations model.Configurations
 	var profile model.ConfigurationProfile
 	profile = CreateConfigurationProfile(name)
 	configurations.Profiles = append(configurations.Profiles, profile)
-	SaveConfigurations(configurations)
+	saveConfigurations(configurations)
 }
 
-// CreateCredentialProfile TODO
+// CreateCredentialProfile create the given profile name into the credentials file, return the profile created
 func CreateCredentialProfile(name string) model.CredentialProfile {
 	fmt.Println(">> Profile")
 	var profile model.CredentialProfile
@@ -121,16 +121,16 @@ func CreateCredentialProfile(name string) model.CredentialProfile {
 	return profile
 }
 
-// CreateCredentials TODO
+// CreateCredentials create the credentials file with the given profile name
 func CreateCredentials(name string) {
 	fmt.Println("> Credentials")
 	var credentials model.Credentials
 	profile := CreateCredentialProfile(name)
 	credentials.Profiles = append(credentials.Profiles, profile)
-	SaveCredentials(credentials)
+	saveCredentials(credentials)
 }
 
-// CredentialsProfileExist TODO
+// CredentialsProfileExist returns `true` if the profile name given exist in the credentials file
 func CredentialsProfileExist(name string) bool {
 	credentials := GetCredentials()
 	for _, profile := range credentials.Profiles {
@@ -142,7 +142,7 @@ func CredentialsProfileExist(name string) bool {
 
 }
 
-// DeleteConfigurationProfile delete a profile preserving it order
+// DeleteConfigurationProfile delete a profile from the configurations file
 func DeleteConfigurationProfile(name string) {
 	answer := view.GetUserInputAsBool("Do you want to delete the profile '"+name+"' from "+aid.GetAppInfo().ConfigurationsPath+"?", false)
 	if answer {
@@ -154,11 +154,11 @@ func DeleteConfigurationProfile(name string) {
 				newConfigurations.Profiles = append(newConfigurations.Profiles, profile)
 			}
 		}
-		SaveConfigurations(newConfigurations)
+		saveConfigurations(newConfigurations)
 	}
 }
 
-// DeleteCredentialProfile delete a profile preserving the credentials order
+// DeleteCredentialProfile delete a profile from the credentials file
 func DeleteCredentialProfile(name string) {
 	answer := view.GetUserInputAsBool("Do you want to delete the profile '"+name+"' from "+aid.GetAppInfo().CredentialsPath+"?", false)
 	if answer {
@@ -170,11 +170,11 @@ func DeleteCredentialProfile(name string) {
 			}
 		}
 
-		SaveCredentials(newCredentials)
+		saveCredentials(newCredentials)
 	}
 }
 
-// GetConfigurations does TODO
+// GetConfigurations read the current configurations file and return its model
 func GetConfigurations() model.Configurations {
 	var confs model.Configurations
 	v, err := aid.ReadConfig(aid.GetAppInfo().ConfigurationsName)
@@ -190,7 +190,7 @@ func GetConfigurations() model.Configurations {
 	return confs
 }
 
-// GetCredentials does TODO
+// GetCredentials read the current credentials file and return its model
 func GetCredentials() model.Credentials {
 	var creds model.Credentials
 	v, err := aid.ReadConfig(aid.GetAppInfo().CredentialsName)
@@ -206,17 +206,15 @@ func GetCredentials() model.Credentials {
 	return creds
 }
 
-// SaveConfigurations TODO
-func SaveConfigurations(configurations model.Configurations) error {
+func saveConfigurations(configurations model.Configurations) error {
 	return aid.WriteInterfaceToFile(configurations, aid.GetAppInfo().ConfigurationsPath)
 }
 
-// SaveCredentials TODO
-func SaveCredentials(credentials model.Credentials) error {
+func saveCredentials(credentials model.Credentials) error {
 	return aid.WriteInterfaceToFile(credentials, aid.GetAppInfo().CredentialsPath)
 }
 
-// UpdateConfigurations does TODO
+// UpdateConfigurations updates the given profile name in the configurations file
 func UpdateConfigurations(name string) {
 	fmt.Println("> Configurations")
 	configurations := GetConfigurations()
@@ -244,10 +242,10 @@ func UpdateConfigurations(name string) {
 
 	}
 
-	SaveConfigurations(configurations)
+	saveConfigurations(configurations)
 }
 
-// UpdateCredentials does TODO
+// UpdateCredentials updates the given profile name in the credentials file
 func UpdateCredentials(name string) {
 	fmt.Println("> Credentials")
 	credentials := GetCredentials()
@@ -275,5 +273,5 @@ func UpdateCredentials(name string) {
 		}
 	}
 
-	SaveCredentials(credentials)
+	saveCredentials(credentials)
 }

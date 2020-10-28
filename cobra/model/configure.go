@@ -15,12 +15,12 @@ limitations under the License.
 
 package model
 
-// Credentials does TODO
+// Credentials model
 type Credentials struct {
 	Profiles []CredentialProfile `yaml:"profiles"`
 }
 
-// CredentialProfile does TODO...
+// CredentialProfile model
 type CredentialProfile struct {
 	Name        string       `yaml:"name"`
 	Description string       `yaml:"description,omitempty"`
@@ -30,7 +30,7 @@ type CredentialProfile struct {
 	Credentials []Credential `yaml:"credentials"`
 }
 
-// Credential does TODO
+// Credential model
 type Credential struct {
 	Name        string `yaml:"name,omitempty"`
 	Description string `yaml:"description,omitempty"`
@@ -42,12 +42,12 @@ type Credential struct {
 	SecretKey   string `yaml:"secretkey"`
 }
 
-// Configurations does TODO
+// Configurations model
 type Configurations struct {
 	Profiles []ConfigurationProfile `yaml:"profiles"`
 }
 
-// ConfigurationProfile does TODO...
+// ConfigurationProfile model
 type ConfigurationProfile struct {
 	Name           string          `yaml:"name"`
 	Description    string          `yaml:"description,omitempty"`
@@ -57,7 +57,7 @@ type ConfigurationProfile struct {
 	Configurations []Configuration `yaml:"configurations"`
 }
 
-// Configuration does TODO
+// Configuration model
 type Configuration struct {
 	Name        string `yaml:"name,omitempty"`
 	Description string `yaml:"description,omitempty"`

@@ -24,7 +24,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// GetAppInfo does TODO ...
+// GetAppInfo return information about CLENCLI settings
 func GetAppInfo() model.App {
 	var err error
 	var app model.App
@@ -62,7 +62,7 @@ func getHomeDir() string {
 	return home
 }
 
-// SetupLogging does TODO ...
+// SetupLogging set up logging for the application
 func SetupLogging() {
 	app := GetAppInfo()
 	if _, err := os.Stat(app.LogsDir); os.IsExist(err) {

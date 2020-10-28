@@ -9,7 +9,7 @@ import (
 	"github.com/awslabs/clencli/helper"
 )
 
-// Setup does TODO
+// Setup create the necessary artifacts for a test, return the current working and the new working directory
 func Setup(t *testing.T) (pwd string, nwd string) {
 	cwd, err := os.Getwd()
 	if err != nil {

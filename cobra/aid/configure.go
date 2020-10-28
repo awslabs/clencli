@@ -26,27 +26,27 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ConfigDirExist TODO
-func ConfigDirExist() bool {
+// ConfigurationDirectoryExist returns `true` if the configuration directory exist, `false` otherwise
+func ConfigurationDirectoryExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().ConfigurationsDir)
 }
 
-// ConfigurationsFileExist does TODO
+// ConfigurationsFileExist returns `true` if the configuration file exist, `false` otherwise
 func ConfigurationsFileExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().ConfigurationsPath)
 }
 
-// CreateConfigDir TODO
+// CreateConfigDir creates the configuration directory, returns `true` if the configuration directory exist, `false` otherwise
 func CreateConfigDir() bool {
 	return helper.CreateDir(GetAppInfo().ConfigurationsDir)
 }
 
-// CredentialsFileExist does TODO
+// CredentialsFileExist returns `true` if the credentials file exist, `false` otherwise
 func CredentialsFileExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().CredentialsPath)
 }
 
-// ReadConfig TODO
+// ReadConfig returns the viper instance of the given configuration `name`
 func ReadConfig(name string) (*viper.Viper, error) {
 	v := viper.New()
 	app := GetAppInfo()
@@ -63,7 +63,7 @@ func ReadConfig(name string) (*viper.Viper, error) {
 
 }
 
-// WriteInterfaceToFile does TODO
+// WriteInterfaceToFile write the given interface into a file
 func WriteInterfaceToFile(in interface{}, path string) error {
 	b, err := yaml.Marshal(&in)
 	if err != nil {
