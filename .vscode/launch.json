@@ -5,6 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "debug-configure",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "args": ["configure"]
+        },
+        {
+            "name": "debug-configure-delete-profile",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}/main.go",
+            "args": ["configure", "delete", "--profile", "dylan"]
+        },
+        {
             "name": "debug-init-help",
             "type": "go",
             "request": "launch",

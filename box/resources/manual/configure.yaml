@@ -1,0 +1,4 @@
+use: configure [delete]
+short: Configures CLENCLI global settings
+long: Configures CLENCLI global credentials and configurations used by commands
+  

@@ -11,12 +11,26 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
-package main
 
-import "github.com/awslabs/clencli/cobra/cmd"
+package controller
 
-func main() {
-	cmd.Execute()
+import (
+	"testing"
+
+	helper "github.com/awslabs/clencli/helper"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestRootWithNoArgAndNoFlags(t *testing.T) {
+	rootCmd := RootCmd()
+	output, err := helper.ExecuteCommand(rootCmd)
+
+	assert.NotEqual(t, rootCmd.Use, "")
+	assert.NotEqual(t, rootCmd.Short, "")
+	assert.NotEqual(t, rootCmd.Long, "")
+	assert.NotEqual(t, output, "")
+	assert.Equal(t, err, nil)
+
 }

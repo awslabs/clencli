@@ -11,12 +11,21 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
-package main
 
-import "github.com/awslabs/clencli/cobra/cmd"
+package controller
 
-func main() {
-	cmd.Execute()
+import (
+	helper "github.com/awslabs/clencli/helper"
+	"github.com/spf13/cobra"
+)
+
+// RootCmd represents the base command when called without any subcommands
+func RootCmd() *cobra.Command {
+	man := helper.GetManual("root")
+	return &cobra.Command{
+		Use:   man.Use,
+		Short: man.Short,
+		Long:  man.Long,
+	}
 }

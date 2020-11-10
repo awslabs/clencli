@@ -1,17 +1,51 @@
-package function
+/*
+Copyright © 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
+    http://www.apache.org/licenses/LICENSE-2.0
 
-	"github.com/spf13/viper"
-)
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 
-// RandomUnsplash is a struct from Unsplash API Randm Request
-type RandomUnsplash struct {
+package model
+
+// Unsplash does ...
+type Unsplash struct {
+	Name        string `yaml:"name,omitempty"`
+	Description string `yaml:"description,omitempty"`
+	Enabled     bool   `yaml:"enabled"`
+	CreatedAt   string `yaml:"createdAt"`
+	UpdatedAt   string `yaml:"updatedAt"`
+	RandomPhoto struct {
+		Name        string                        `yaml:"name,omitempty"`
+		Description string                        `yaml:"description,omitempty"`
+		Enabled     bool                          `yaml:"enabled"`
+		CreatedAt   string                        `yaml:"createdAt"`
+		UpdatedAt   string                        `yaml:"updatedAt"`
+		Parameters  UnsplashRandomPhotoParameters `yaml:"parameters"`
+		Response    UnsplashRandomPhotoResponse   `yaml:"response,omitempty"`
+	} `yaml:"random_photo"`
+}
+
+// UnsplashRandomPhotoParameters struct from Unsplash command
+type UnsplashRandomPhotoParameters struct {
+	Collections string `yaml:"collections"`
+	Featured    bool   `yaml:"featured"`
+	Filter      string `yaml:"filter"`
+	Orientation string `yaml:"orientation"`
+	Query       string `yaml:"query"`
+	Size        string `yaml:"size"`
+	Username    string `yaml:"username"`
+}
+
+// UnsplashRandomPhotoResponse is a struct from Unsplash API Randm Request
+type UnsplashRandomPhotoResponse struct {
 	ID             string      `json:"id"`
 	CreatedAt      string      `json:"created_at"`
 	UpdatedAt      string      `json:"updated_at"`
@@ -90,77 +124,4 @@ type RandomUnsplash struct {
 	} `json:"location"`
 	Views     int `json:"views"`
 	Downloads int `json:"downloads"`
-}
-
-// GetRandomPhotoDefaults retrieves a single random photo with default values.
-func GetRandomPhotoDefaults(query string) (RandomUnsplash, error) {
-	// landscape orientation is better for README files
-	return GetRandomPhoto(query, "", "", "", "landscape", "low")
-}
-
-// GetRandomPhoto retrieves a single random photo, given optional filters.
-func GetRandomPhoto(query string, collections string, featured string, username string, orientation string, filter string) (RandomUnsplash, error) {
-	var unsplash RandomUnsplash
-
-	clientID := viper.Get("unsplash.access_key")
-	url := fmt.Sprintf("https://api.unsplash.com/photos/random?client_id=%s&query=%s", clientID, query)
-
-	if len(collections) > 0 {
-		url += fmt.Sprintf("&collections=%s", collections)
-	}
-
-	if len(featured) > 0 {
-		url += fmt.Sprintf("&featured=%s", featured)
-	}
-
-	if len(username) > 0 {
-		url += fmt.Sprintf("&username=%s", username)
-	}
-
-	if len(orientation) > 0 {
-		url += fmt.Sprintf("&orientation=%s", orientation)
-	}
-
-	if len(filter) > 0 {
-		url += fmt.Sprintf("&filter=%s", filter)
-	}
-
-	var client http.Client
-	resp, err := client.Get(url)
-	if err != nil {
-		return unsplash, fmt.Errorf("Unexpected error while performing GET on Unsplash API \n%v", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusOK {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return unsplash, fmt.Errorf("Unexpected error while reading Unsplash response \n%v", err)
-		}
-
-		json.Unmarshal(bodyBytes, &unsplash)
-	}
-
-	return unsplash, err
-}
-
-// DownloadPhoto downloads a photo and saves into downloads/unsplash/ folder
-// It creates the downloads/ folder if it doesn't exists
-func DownloadPhoto(url string, size string, query string) error {
-
-	// Get the photo identifier
-	start := strings.Index(url, "photo")
-	end := strings.Index(url, "?")
-
-	// Create a Rune from the URL
-	runes := []rune(url)
-
-	// Generate the directory path
-	dirPath := "downloads/unsplash/" + query
-
-	// Generate the filename
-	fileName := string(runes[start:end])
-	fileName += "-" + size + ".jpg"
-
-	return DownloadFile(url, dirPath, fileName)
 }

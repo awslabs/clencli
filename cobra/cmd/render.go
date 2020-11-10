@@ -11,12 +11,16 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
-package main
 
-import "github.com/awslabs/clencli/cobra/cmd"
+package cmd
 
-func main() {
-	cmd.Execute()
+import controller "github.com/awslabs/clencli/cobra/controller"
+
+var renderCmd = controller.RenderCmd()
+
+func init() {
+	rootCmd.AddCommand(renderCmd)
+	renderCmd.Flags().StringP("name", "n", "readme", "Template name to be rendered")
+	renderCmd.Flags().StringP("unsplash-profile", "u", "default", "Unsplash profile ")
 }

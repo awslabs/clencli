@@ -1,4 +1,4 @@
-package function
+package helper
 
 import (
 	"fmt"
@@ -82,4 +82,23 @@ func CopyFile(sourceFile string, destinationFile string) {
 		fmt.Println(err)
 		return
 	}
+}
+
+// FileSize return the size of the give file path.
+// Gives an error if files does not exist
+func FileSize(path string) (int64, error) {
+	var size int64 = -1
+	if FileExists(path) {
+		info, err := os.Stat(path)
+		if err != nil {
+			if err != nil {
+				return size, fmt.Errorf("Unable to obtain information about file: %s\n%s", path, err)
+			}
+			return size, err
+		}
+		size = info.Size()
+	} else {
+		return size, fmt.Errorf("File does not exist")
+	}
+	return size, nil
 }

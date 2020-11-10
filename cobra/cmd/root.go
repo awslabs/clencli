@@ -11,36 +11,23 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
 
-// Package cmd contains Cobra commands
 package cmd
 
 import (
 	"fmt"
 	"os"
 
-	fun "github.com/awslabs/clencli/function"
 	"github.com/spf13/cobra"
 
-	homedir "github.com/mitchellh/go-homedir"
+	aid "github.com/awslabs/clencli/cobra/aid"
+	controller "github.com/awslabs/clencli/cobra/controller"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
-
-// RootCmd represents the base command when called without any subcommands
-func RootCmd() *cobra.Command {
-	man := fun.GetManual("root")
-	return &cobra.Command{
-		Use:   man.Use,
-		Short: man.Short,
-		Long:  man.Long,
-	}
-}
-
-var rootCmd = RootCmd()
+var profile string
+var rootCmd = controller.RootCmd()
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
@@ -55,33 +42,18 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
+	// Cobra supports persistent flags, which, if defined here will be global for your application.
+	rootCmd.PersistentFlags().StringVar(&profile, "profile", "default", "Use a specific profile from your configurations file")
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.clencli.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
+	// Cobra also supports local flags, which will only run when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		// Search config in home directory with name ".clencli" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".clencli")
-	}
+	app := aid.GetAppInfo()
+	viper.AddConfigPath(app.ConfigurationsDir) // global directory
+	viper.SetConfigName(app.ConfigurationsName)
 
 	viper.AutomaticEnv() // read in environment variables that match
 
@@ -89,4 +61,7 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+
+	aid.SetupLogging()
+
 }

@@ -11,10 +11,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
 
-package cmd
+package controller
 
 import (
 	"bufio"
@@ -24,13 +23,27 @@ import (
 	"os"
 	"strings"
 
-	"github.com/awslabs/clencli/function"
-	fun "github.com/awslabs/clencli/function"
+	function "github.com/awslabs/clencli/helper"
+	helper "github.com/awslabs/clencli/helper"
 	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
 	"github.com/spf13/cobra"
 )
 
 var renderValidArgs = []string{"template"}
+
+// RenderCmd command to render templates
+func RenderCmd() *cobra.Command {
+	man := helper.GetManual("render")
+	return &cobra.Command{
+		Use:       man.Use,
+		Short:     man.Short,
+		Long:      man.Long,
+		ValidArgs: renderValidArgs,
+		Args:      cobra.OnlyValidArgs,
+		PreRunE:   renderPreRun,
+		RunE:      renderRun,
+	}
+}
 
 func renderPreRun(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
@@ -59,15 +72,15 @@ func renderRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("Unable to render template "+name+"\n%v", err)
 	}
 
-	err = fun.UpdateReadMe()
-	if err != nil {
-		return fmt.Errorf("Unable to update local config with global config values \n%v", err)
-	}
+	// err = helper.UpdateReadMe()
+	// if err != nil {
+	// 	return fmt.Errorf("Unable to update local config with global config values \n%v", err)
+	// }
 
-	err = fun.UpdateReadMeLogoURL()
-	if err != nil {
-		return fmt.Errorf("Unable to update local config with new URL from Unsplash \n%v", err)
-	}
+	// err = helper.UpdateReadMeLogoURL()
+	// if err != nil {
+	// 	return fmt.Errorf("Unable to update local config with new URL from Unsplash \n%v", err)
+	// }
 
 	err = initGomplate(name)
 	if err == nil {
@@ -77,28 +90,6 @@ func renderRun(cmd *cobra.Command, args []string) error {
 	}
 
 	return nil
-}
-
-// RenderCmd command to render templates
-func RenderCmd() *cobra.Command {
-	man := fun.GetManual("render")
-	return &cobra.Command{
-		Use:       man.Use,
-		Short:     man.Short,
-		Long:      man.Long,
-		ValidArgs: renderValidArgs,
-		Args:      cobra.OnlyValidArgs,
-		PreRunE:   renderPreRun,
-		RunE:      renderRun,
-	}
-}
-
-// renderCmd represents the render command
-var renderCmd = RenderCmd()
-
-func init() {
-	rootCmd.AddCommand(renderCmd)
-	renderCmd.Flags().StringP("name", "n", "readme", "Template name to be rendered")
 }
 
 func initGomplate(name string) error {

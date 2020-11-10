@@ -11,12 +11,23 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
-package main
 
-import "github.com/awslabs/clencli/cobra/cmd"
+package model
 
-func main() {
-	cmd.Execute()
+// Init struct to initalize things: projects, etc
+type Init struct {
+	Types []struct {
+		Type    string `yaml:"type"`
+		Name    string `yaml:"name"`
+		Enabled bool   `yaml:"enabled"`
+		Files   []struct {
+			File struct {
+				Path  string `yaml:"path"`
+				Src   string `yaml:"src"`
+				Dest  string `yaml:"dest"`
+				State string `yaml:"state"`
+			} `yaml:"file,omitempty"`
+		} `yaml:"files"`
+	} `yaml:"types"`
 }

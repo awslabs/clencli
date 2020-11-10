@@ -11,12 +11,26 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
-package main
 
-import "github.com/awslabs/clencli/cobra/cmd"
+package controller
 
-func main() {
-	cmd.Execute()
+import (
+	"testing"
+
+	helper "github.com/awslabs/clencli/helper"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestConfigureCreateConfigDir(t *testing.T) {
+	pwd, nwd := helper.Setup(t)
+	createConfigDir()
+	helper.Teardown(pwd, nwd)
 }
+
+// to cover:
+// .. config dir doesn't exist
+// .. config dir exist but no files
+// .. config dir exist but only credentials
+// .. config dir exist but only config
+// .. config dir exist with both files

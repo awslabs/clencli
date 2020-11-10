@@ -11,12 +11,21 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
 */
-package main
 
-import "github.com/awslabs/clencli/cobra/cmd"
+package cmd
 
-func main() {
-	cmd.Execute()
+import controller "github.com/awslabs/clencli/cobra/controller"
+
+var initCmd = controller.InitCmd()
+
+func init() {
+	rootCmd.AddCommand(initCmd)
+	initCmd.Flags().StringP("name", "n", "", "The project name.")
+	initCmd.Flags().StringP("type", "t", "basic", "The project type.")
+	initCmd.Flags().StringP("structure", "s", "default", "The project structure name defined on main configurations.")
+	initCmd.Flags().BoolP("only-customized-structure", "o", false, "Only customized structure to be used when initializing the project")
+
+	initCmd.MarkFlagRequired("name")
+
 }
