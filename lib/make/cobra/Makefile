@@ -16,3 +16,9 @@ ifdef command
 else
 	@echo "command not defined"
 endif
+
+
+.PHONY: cobra/install
+cobra/install:
+	go get github.com/spf13/cobra/cobra
+

@@ -30,18 +30,25 @@ var initValidArgs = []string{"project"}
 // InitCmd command to initialize projects
 func InitCmd() *cobra.Command {
 	man := helper.GetManual("init")
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
+		Example: "an example",
 		Long:      man.Long,
 		ValidArgs: initValidArgs,
 		Args:      cobra.OnlyValidArgs,
 		PreRunE:   initPreRun,
 		RunE:      initRun,
 	}
+
+	return cmd
 }
 
 func initPreRun(cmd *cobra.Command, args []string) error {
+	if len(args) == 0 {
+		return errors.New("this command requires one argument")
+	}
+
 	err := validateProjectType(cmd, args)
 	return err
 }
@@ -49,19 +56,15 @@ func initPreRun(cmd *cobra.Command, args []string) error {
 func validateProjectType(cmd *cobra.Command, args []string) error {
 	// ensure the project types
 	if args[0] == "project" {
-		t, err := cmd.Flags().GetString("type")
+		pType, err := cmd.Flags().GetString("type")
 		// flag accessed but not defined
 
-		if err != nil {
+		if err != nil || pType == "" {
 			return errors.New("Project type must be defined")
 		}
 
-		if t == "" {
-			return errors.New("Project type must be provided")
-		}
-
-		if t != "basic" && t != "cloudformation" && t != "terraform" {
-			return fmt.Errorf("Unknown project type provided: %s", t)
+		if pType != "basic" && pType != "cloudformation" && pType != "terraform" {
+			return fmt.Errorf("Unknown project type provided: %s", pType)
 		}
 	} else {
 		return fmt.Errorf("Unknown argument provided: %s", args[0])

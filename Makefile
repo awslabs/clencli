@@ -1,7 +1,9 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 include lib/make/*/Makefile
-include lib/make/test/*/Makefile
+
+.PHONY: clencli/test
+clencli/test: go/test
 
 .PHONY: clencli/build
 clencli/build: go/version go/get go/fmt go/generate go/build ## Builds the app
@@ -52,6 +54,7 @@ clencli/clean: ## Removes unnecessary files and directories
 	rm -rf downloads/
 	rm -rf generated-*/
 	rm -rf dist/
+	rm -rf build/
 
 .PHONY: clencli/update-readme
 clencli/update-readme: ## Renders template readme.tmpl with additional documents

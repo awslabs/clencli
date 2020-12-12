@@ -50,4 +50,4 @@ go/env: ## Print Go environment information
 go/test:
 	@echo "=== Testing commands"
 	@rm -rf test
-	@cd cmd && go test -v
+	@cd cobra/cmd && go test -v

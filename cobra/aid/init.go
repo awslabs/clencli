@@ -3,18 +3,20 @@ package aid
 import (
 	"os"
 
+	"github.com/awslabs/clencli/box"
 	"github.com/awslabs/clencli/helper"
 )
 
 // CreateBasicProject creates a basic project
 func CreateBasicProject(name string) {
-	initializeProject(name)
+	createProjectDir(name)
+	initBasic()
 	// helper.InitCustomProjectLayout(typee, "default")
 	// helper.InitCustomProjectLayout(typee, structure)
 	// helper.UpdateReadMe()
 }
 
-func initializeProject(name string) {
+func createProjectDir(name string) {
 
 	// Create the name directory
 	helper.CreateDir(name)
@@ -23,8 +25,29 @@ func initializeProject(name string) {
 	os.Chdir(name)
 }
 
+// InitBasic create the basic configuration files
+func initBasic() {
+
+	// Create a directory for CLENCLI
+	helper.CreateDir("clencli")
+
+	initReadme := "clencli/readme.yaml"
+	blobReadme, _ := box.Get("/init/clencli/readme.yaml")
+	helper.WriteFile(initReadme, blobReadme)
+
+	// Gomplate
+	initReadMeTmpl := "clencli/readme.tmpl"
+	blobReadMeTmpl, _ := box.Get("/init/clencli/readme.tmpl")
+	helper.WriteFile(initReadMeTmpl, blobReadMeTmpl)
+
+	// Gitignore
+	initGitIgnore := ".gitignore"
+	blobGitIgnore, _ := box.Get("/init/.gitignore")
+	helper.WriteFile(initGitIgnore, blobGitIgnore)
+}
+
 // func initCreateCloudFormationProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
-// 	helper.InitializeProject(name)
+// 	helper.createProjectDir(name)
 // 	if !onlyCustomizedStructure {
 // 		helper.InitBasic()
 // 		helper.InitHLD(name)
@@ -36,7 +59,7 @@ func initializeProject(name string) {
 // }
 
 // func initCreateTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
-// 	helper.InitializeProject(name)
+// 	helper.createProjectDir(name)
 // 	if !onlyCustomizedStructure {
 // 		helper.InitBasic()
 // 		helper.InitHLD(name)
@@ -45,27 +68,6 @@ func initializeProject(name string) {
 // 	// helper.InitCustomProjectLayout(typee, "default")
 // 	// helper.InitCustomProjectLayout(typee, structure)
 // 	// helper.UpdateReadMe()
-// }
-
-// InitBasic create the basic configuration files
-// func InitBasic() {
-
-// 	// Create a directory for CLENCLI
-// 	CreateDir("clencli")
-
-// 	initReadme := "clencli/readme.yaml"
-// 	blobReadme, _ := box.Get("/init/clencli/readme.yaml")
-// 	WriteFile(initReadme, blobReadme)
-
-// 	// Gomplate
-// 	initReadMeTmpl := "clencli/readme.tmpl"
-// 	blobReadMeTmpl, _ := box.Get("/init/clencli/readme.tmpl")
-// 	WriteFile(initReadMeTmpl, blobReadMeTmpl)
-
-// 	// Gitignore
-// 	initGitIgnore := ".gitignore"
-// 	blobGitIgnore, _ := box.Get("/init/.gitignore")
-// 	WriteFile(initGitIgnore, blobGitIgnore)
 // }
 
 // // InitHLD copies the High Level Design template file

@@ -16,9 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"os"
-	"os/exec"
 	"testing"
 
 	"github.com/awslabs/clencli/cobra/controller"
@@ -29,20 +27,28 @@ import (
 
 func TestMain(m *testing.M) {
 	tester.SetupAll()
-	// pwd, nwd := tester.SetupAll()
+	pwd, nwd := tester.SetupAll()
 	code := m.Run()
 	// comment the line below if you want to keep the test results
-	// tester.TeardownAll(pwd, nwd)
+	tester.TeardownAll(pwd, nwd)
 	os.Exit(code)
 }
 
 func command() *cobra.Command {
-	return tester.InitRootCmd(controller.RootCmd(), GetInitCmd())
+	cmd := GetInitCmd()
+	// cmd.Flags().StringP("name", "n", "", "The project name.")
+	// cmd.Flags().StringP("type", "t", "basic", "The project type.")
+	// cmd.MarkFlagRequired("name")
+
+	return tester.InitRootCmd(controller.RootCmd(), cmd)
 }
 
+// need to figure out a way to load the flags after initializing the command itself
+
 func TestInitWithNoArgAndNoFlags(t *testing.T) {
-	err := tester.ExecuteCommand(command(), "init")
-	assert.Contains(t, err.Error(), "required flag(s) \"name\" not set")
+	cmd := command()
+	err := tester.ExecuteCommand(cmd, "init")
+	assert.Contains(t, err.Error(), "this command requires one argument")
 }
 
 func TestInitWithInvalidArgAndNoFlags(t *testing.T) {
@@ -67,7 +73,7 @@ func TestInitWithValidTypeOnly(t *testing.T) {
 
 func TestInitWithInvalidTypeOnly(t *testing.T) {
 	err := tester.ExecuteCommand(command(), "init", "project", "--type", "null")
-	assert.Contains(t, err.Error(), "required flag(s) \"name\" not set")
+	assert.Contains(t, err.Error(), "Unknown project type provided")
 }
 
 func TestInitWithNameAndInvalidType(t *testing.T) {
@@ -77,15 +83,14 @@ func TestInitWithNameAndInvalidType(t *testing.T) {
 
 func TestInitWithNameOnly(t *testing.T) {
 	pwd, nwd := tester.Setup(t)
-	fmt.Println(pwd)
-	fmt.Println(nwd)
 	err := tester.ExecuteCommand(command(), "init", "project", "--name", "generated-project")
+	pPath := pwd + "/" + nwd + "/generated-project"
 	assert.Nil(t, err)
-	// exec.Command("pwd")
-	cmd := exec.Command("ls -ltha")
-	cmd.Run()
-
-	assert.DirExists(t, "TestInitWithNameOnly/")
+	assert.DirExists(t, pPath)
+	assert.FileExists(t, pPath+"/.gitignore")
+	assert.DirExists(t, pPath+"/clencli")
+	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
+	assert.FileExists(t, pPath+"/clencli/readme.yaml")
 	tester.Teardown(pwd, nwd)
 }
 
