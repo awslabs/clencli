@@ -18,14 +18,13 @@ package controller
 import (
 	"testing"
 
-	helper "github.com/awslabs/clencli/helper"
-	"github.com/stretchr/testify/assert"
+	"github.com/awslabs/clencli/tester"
 )
 
 func TestConfigureCreateConfigDir(t *testing.T) {
-	pwd, nwd := helper.Setup(t)
-	createConfigDir()
-	helper.Teardown(pwd, nwd)
+	pwd, nwd := tester.Setup(t)
+	// createConfigDir()
+	tester.Teardown(pwd, nwd)
 }
 
 // to cover:

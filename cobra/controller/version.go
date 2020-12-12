@@ -20,7 +20,7 @@ import (
 	"runtime"
 
 	"github.com/awslabs/clencli/box"
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 

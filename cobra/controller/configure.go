@@ -21,7 +21,7 @@ import (
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/dao"
 
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 

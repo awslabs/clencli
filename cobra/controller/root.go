@@ -16,7 +16,7 @@ limitations under the License.
 package controller
 
 import (
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 

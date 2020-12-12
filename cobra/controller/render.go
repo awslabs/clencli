@@ -23,8 +23,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/awslabs/clencli/helper"
 	function "github.com/awslabs/clencli/helper"
-	helper "github.com/awslabs/clencli/helper"
 	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
 	"github.com/spf13/cobra"
 )

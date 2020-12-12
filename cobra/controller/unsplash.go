@@ -20,7 +20,7 @@ import (
 	"strings"
 
 	model "github.com/awslabs/clencli/cobra/model"
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 

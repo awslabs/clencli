@@ -21,7 +21,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/helper"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
