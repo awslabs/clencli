@@ -1,6 +1,6 @@
 .PHONY: go/build
 go/build: ## Compile packages and dependencies
-	go build -o $(GOPATH)/bin/clencli
+	go build -o build/clencli
 
 .PHONY: go/install
 go/install: ## Compile and install packages and dependencies
