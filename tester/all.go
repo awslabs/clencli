@@ -28,7 +28,7 @@ func SetupAll() (pwd string, nwd string) {
 	dt := time.Now().Format(format)
 
 	cwd, err := os.Getwd()
-	path := cwd + "/../test/" + dt
+	path := cwd + "/../../test/" + dt
 
 	if err != nil {
 		log.Fatal("Unable to get the current directory path")

@@ -33,13 +33,17 @@ func InitCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
-		Example: "an example",
+		Example:   man.Example,
 		Long:      man.Long,
 		ValidArgs: initValidArgs,
 		Args:      cobra.OnlyValidArgs,
 		PreRunE:   initPreRun,
 		RunE:      initRun,
 	}
+
+	cmd.Flags().StringP("name", "n", "", "The project name.")
+	cmd.Flags().StringP("type", "t", "basic", "The project type.")
+	cmd.MarkFlagRequired("name")
 
 	return cmd
 }
@@ -87,11 +91,6 @@ func initRun(cmd *cobra.Command, args []string) error {
 	switch pType {
 	case "basic":
 		aid.CreateBasicProject(pName)
-	// case "cloudformation":
-	// 	initCreateCloudFormationProject(n, t, s, o)
-	// case "terraform":
-	// 	initCreateTerraformProject(n, t, s, o)
-
 	default:
 		return errors.New("Unknow project type")
 	}

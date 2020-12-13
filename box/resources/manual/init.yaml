@@ -1,3 +1,4 @@
 use: init project --name <value> [ --type [basic|cloudformation|terraform] ]
+example: init project --name foo # if you want to generate a basic project
 short: Initialize a project
 long: Initialize a project with code structure
