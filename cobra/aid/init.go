@@ -73,11 +73,11 @@ func initCloudProject() {
 func CreateCloudFormationProject(name string) {
 	CreateBasicProject(name)
 	initCloudProject()
-	initCloudFormation()
+	initCloudFormationProject()
 }
 
 // initialize a project with CloudFormation structure and copies template files
-func initCloudFormation() {
+func initCloudFormationProject() {
 
 	helper.CreateDir("environments")
 	helper.CreateDir("environments/dev")
@@ -91,9 +91,54 @@ func initCloudFormation() {
 	blobCFSkeleton, _ = box.Get("/init/type/clouformation/skeleton.json")
 	helper.WriteFile(initCFSkeleton, blobCFSkeleton)
 
-	// TODO: copy a template to create standard tags for the entire stack easily
-	// https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html
-	// example aws cloudformation create-stack ... --tags
+	/* TODO: copy a template to create standard tags for the entire stack easily
+	https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html
+	example aws cloudformation create-stack ... --tags */
+
+	/* TODO: copy Makefile */
+	/* TODO: copy LICENSE */
+}
+
+/* TERRAFORM PROJECT */
+
+// CreateTerraformProject creates a HashiCorp Terraform project
+func CreateTerraformProject(name string) {
+	CreateBasicProject(name)
+	initCloudProject()
+	initTerraformProject()
+}
+
+// InitTerraform initialize a project with Terraform structure
+func initTerraformProject() {
+	initMakefile := "Makefile"
+	blobMakefile, _ := box.Get("/init/type/terraform/Makefile")
+	helper.WriteFile(initMakefile, blobMakefile)
+
+	initLicense := "LICENSE"
+	blobLicense, _ := box.Get("/init/type/terraform/LICENSE")
+	helper.WriteFile(initLicense, blobLicense)
+
+	helper.CreateDir("environments")
+
+	initDevEnvironment := "environments/dev.tf"
+	blobDevEnvironment, _ := box.Get("/init/type/terraform/environments/dev.tf")
+	helper.WriteFile(initDevEnvironment, blobDevEnvironment)
+
+	initProdEnvironment := "environments/prod.tf"
+	blobProdEnvironment, _ := box.Get("/init/type/terraform/environments/prod.tf")
+	helper.WriteFile(initProdEnvironment, blobProdEnvironment)
+
+	initMainTF := "main.tf"
+	blobMainTF, _ := box.Get("/init/type/terraform/main.tf")
+	helper.WriteFile(initMainTF, blobMainTF)
+
+	initVariablesTF := "variables.tf"
+	blobVariablesTF, _ := box.Get("/init/type/terraform/variables.tf")
+	helper.WriteFile(initVariablesTF, blobVariablesTF)
+
+	initOutputsTF := "outputs.tf"
+	blobOutputsTF, _ := box.Get("/init/type/terraform/outputs.tf")
+	helper.WriteFile(initOutputsTF, blobOutputsTF)
 }
 
 // // InitCustomProjectLayout generates
@@ -148,37 +193,4 @@ func initCloudFormation() {
 // 	// helper.InitCustomProjectLayout(typee, "default")
 // 	// helper.InitCustomProjectLayout(typee, structure)
 // 	// helper.UpdateReadMe()
-// }
-
-// // InitTerraform initialize a project with Terraform structure
-// func InitTerraform() {
-// 	initMakefile := "Makefile"
-// 	blobMakefile, _ := box.Get("/init/type/terraform/Makefile")
-// 	WriteFile(initMakefile, blobMakefile)
-
-// 	initLicense := "LICENSE"
-// 	blobLicense, _ := box.Get("/init/type/terraform/LICENSE")
-// 	WriteFile(initLicense, blobLicense)
-
-// 	CreateDir("environments")
-
-// 	initDevEnvironment := "environments/dev.tf"
-// 	blobDevEnvironment, _ := box.Get("/init/type/terraform/environments/dev.tf")
-// 	WriteFile(initDevEnvironment, blobDevEnvironment)
-
-// 	initProdEnvironment := "environments/prod.tf"
-// 	blobProdEnvironment, _ := box.Get("/init/type/terraform/environments/prod.tf")
-// 	WriteFile(initProdEnvironment, blobProdEnvironment)
-
-// 	initMainTF := "main.tf"
-// 	blobMainTF, _ := box.Get("/init/type/terraform/main.tf")
-// 	WriteFile(initMainTF, blobMainTF)
-
-// 	initVariablesTF := "variables.tf"
-// 	blobVariablesTF, _ := box.Get("/init/type/terraform/variables.tf")
-// 	WriteFile(initVariablesTF, blobVariablesTF)
-
-// 	initOutputsTF := "outputs.tf"
-// 	blobOutputsTF, _ := box.Get("/init/type/terraform/outputs.tf")
-// 	WriteFile(initOutputsTF, blobOutputsTF)
 // }

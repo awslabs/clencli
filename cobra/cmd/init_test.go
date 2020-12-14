@@ -123,3 +123,31 @@ func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
 	assert.FileExists(t, pPath+"/skeleton.yaml")
 	assert.FileExists(t, pPath+"/skeleton.json")
 }
+
+func TestInitProjectWithNameAndTerraformType(t *testing.T) {
+	pwd, nwd := tester.Setup(t)
+	pPath := pwd + "/" + nwd + "/" + "foo"
+	err := command("project", "--name", "foo", "--type", "terraform")
+
+	assert.Nil(t, err)
+	assert.DirExists(t, pPath)
+	assert.FileExists(t, pPath+"/.gitignore")
+	assert.DirExists(t, pPath+"/clencli")
+
+	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
+	assert.FileExists(t, pPath+"/clencli/readme.yaml")
+
+	assert.FileExists(t, pPath+"/clencli/hld.tmpl")
+	assert.FileExists(t, pPath+"/clencli/hld.yaml")
+
+	assert.FileExists(t, pPath+"/main.tf")
+	assert.FileExists(t, pPath+"/variables.tf")
+	assert.FileExists(t, pPath+"/outputs.tf")
+
+	assert.DirExists(t, pPath+"/environments")
+	assert.FileExists(t, pPath+"/environments/dev.tf")
+	assert.FileExists(t, pPath+"/environments/prod.tf")
+
+	assert.FileExists(t, pPath+"/Makefile")
+	assert.FileExists(t, pPath+"/LICENSE")
+}
