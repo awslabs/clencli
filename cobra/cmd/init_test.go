@@ -55,6 +55,7 @@ func TestInitProjectWithName(t *testing.T) {
 	assert.DirExists(t, pPath)
 	assert.FileExists(t, pPath+"/.gitignore")
 	assert.DirExists(t, pPath+"/clencli")
+
 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
 }
@@ -78,6 +79,7 @@ func TestInitProjectWithNameAndBasicType(t *testing.T) {
 	assert.DirExists(t, pPath)
 	assert.FileExists(t, pPath+"/.gitignore")
 	assert.DirExists(t, pPath+"/clencli")
+
 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
 }
@@ -91,8 +93,10 @@ func TestInitProjectWithNameAndCloudType(t *testing.T) {
 	assert.DirExists(t, pPath)
 	assert.FileExists(t, pPath+"/.gitignore")
 	assert.DirExists(t, pPath+"/clencli")
+
 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
+
 	assert.FileExists(t, pPath+"/clencli/hld.tmpl")
 	assert.FileExists(t, pPath+"/clencli/hld.yaml")
 }
@@ -106,6 +110,7 @@ func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
 	assert.DirExists(t, pPath)
 	assert.FileExists(t, pPath+"/.gitignore")
 	assert.DirExists(t, pPath+"/clencli")
+
 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
 
