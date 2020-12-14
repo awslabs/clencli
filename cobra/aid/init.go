@@ -7,6 +7,8 @@ import (
 	"github.com/awslabs/clencli/helper"
 )
 
+/* BASIC PROJECT */
+
 // CreateBasicProject creates a basic project
 func CreateBasicProject(name string) {
 	createProjectDir(name)
@@ -16,18 +18,12 @@ func CreateBasicProject(name string) {
 	// helper.UpdateReadMe()
 }
 
-// CreateCloudProject copies the necessary template for cloud projects
-func CreateCloudProject(name string) {
-	CreateBasicProject(name)
-	initCloudProject()
-}
-
 func createProjectDir(name string) {
 
-	// Create the name directory
+	// Create the project directory, only if doesn't exist
 	helper.CreateDir(name)
 
-	// Change current directory to name directory
+	// Change current directory to the project directory
 	os.Chdir(name)
 }
 
@@ -52,6 +48,14 @@ func initBasicProject() {
 	helper.WriteFile(initGitIgnore, blobGitIgnore)
 }
 
+/* CLOUD PROJECT */
+
+// CreateCloudProject copies the necessary templates for cloud projects
+func CreateCloudProject(name string) {
+	CreateBasicProject(name)
+	initCloudProject()
+}
+
 // copies the High Level Design template file
 func initCloudProject() {
 	initHLD := "clencli/hld.yaml"
@@ -61,6 +65,35 @@ func initCloudProject() {
 	initHLDTmpl := "clencli/hld.tmpl"
 	blobHLDTmpl, _ := box.Get("/init/clencli/hld.tmpl")
 	helper.WriteFile(initHLDTmpl, blobHLDTmpl)
+}
+
+/* CLOUDFORMATION PROJECT */
+
+// CreateCloudFormationProject creates an AWS CloudFormation project
+func CreateCloudFormationProject(name string) {
+	CreateBasicProject(name)
+	initCloudProject()
+	initCloudFormation()
+}
+
+// initialize a project with CloudFormation structure and copies template files
+func initCloudFormation() {
+
+	helper.CreateDir("environments")
+	helper.CreateDir("environments/dev")
+	helper.CreateDir("environments/prod")
+
+	initCFSkeleton := "skeleton.yaml"
+	blobCFSkeleton, _ := box.Get("/init/type/clouformation/skeleton.yaml")
+	helper.WriteFile(initCFSkeleton, blobCFSkeleton)
+
+	initCFSkeleton = "skeleton.json"
+	blobCFSkeleton, _ = box.Get("/init/type/clouformation/skeleton.json")
+	helper.WriteFile(initCFSkeleton, blobCFSkeleton)
+
+	// TODO: copy a template to create standard tags for the entire stack easily
+	// https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html
+	// example aws cloudformation create-stack ... --tags
 }
 
 // // InitCustomProjectLayout generates
@@ -105,18 +138,6 @@ func initCloudProject() {
 // 	return nil
 // }
 
-// func initCreateCloudFormationProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
-// 	helper.createProjectDir(name)
-// 	if !onlyCustomizedStructure {
-// 		helper.InitBasicProject()
-// 		helper.InitHLD(name)
-// 		helper.InitCloudFormation()
-// 	}
-// 	// helper.InitCustomProjectLayout(typee, "default")
-// 	// helper.InitCustomProjectLayout(typee, structure)
-// 	// helper.UpdateReadMe()
-// }
-
 // func initCreateTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
 // 	helper.createProjectDir(name)
 // 	if !onlyCustomizedStructure {
@@ -127,23 +148,6 @@ func initCloudProject() {
 // 	// helper.InitCustomProjectLayout(typee, "default")
 // 	// helper.InitCustomProjectLayout(typee, structure)
 // 	// helper.UpdateReadMe()
-// }
-
-// // InitCloudFormation initialize a project with CloudFormation structure
-// func InitCloudFormation() {
-
-// 	CreateDir("environments")
-// 	CreateDir("environments/dev")
-// 	CreateDir("environments/prod")
-
-// 	initCFStack := "stack.yaml"
-// 	blobCFStack, _ := box.Get("/init/type/clouformation/stack.yaml")
-// 	WriteFile(initCFStack, blobCFStack)
-
-// 	initCFNested := "nested.yaml"
-// 	blobCFNested, _ := box.Get("/init/type/clouformation/nested.yaml")
-// 	WriteFile(initCFNested, blobCFNested)
-
 // }
 
 // // InitTerraform initialize a project with Terraform structure

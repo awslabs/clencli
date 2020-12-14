@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-// CreateDir create a directory, even if not existent, given its name
+// CreateDir create a directory given its name
 func CreateDir(name string) bool {
 	_, err := os.Stat(name)
 	if os.IsNotExist(err) {

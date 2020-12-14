@@ -96,3 +96,25 @@ func TestInitProjectWithNameAndCloudType(t *testing.T) {
 	assert.FileExists(t, pPath+"/clencli/hld.tmpl")
 	assert.FileExists(t, pPath+"/clencli/hld.yaml")
 }
+
+func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
+	pwd, nwd := tester.Setup(t)
+	pPath := pwd + "/" + nwd + "/" + "foo"
+	err := command("project", "--name", "foo", "--type", "cloudformation")
+
+	assert.Nil(t, err)
+	assert.DirExists(t, pPath)
+	assert.FileExists(t, pPath+"/.gitignore")
+	assert.DirExists(t, pPath+"/clencli")
+	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
+	assert.FileExists(t, pPath+"/clencli/readme.yaml")
+
+	assert.FileExists(t, pPath+"/clencli/hld.tmpl")
+	assert.FileExists(t, pPath+"/clencli/hld.yaml")
+
+	assert.DirExists(t, pPath+"/environments/dev")
+	assert.DirExists(t, pPath+"/environments/prod")
+
+	assert.FileExists(t, pPath+"/skeleton.yaml")
+	assert.FileExists(t, pPath+"/skeleton.json")
+}

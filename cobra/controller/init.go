@@ -91,6 +91,8 @@ func initRun(cmd *cobra.Command, args []string) error {
 		aid.CreateBasicProject(pName)
 	case "cloud":
 		aid.CreateCloudProject(pName)
+	case "cloudformation":
+		aid.CreateCloudFormationProject(pName)
 	default:
 		return errors.New("Unknow project type")
 	}
