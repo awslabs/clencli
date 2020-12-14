@@ -26,6 +26,7 @@ import (
 )
 
 var initValidArgs = []string{"project"}
+var initValidProjectTypes = []string{"basic", "cloud", "cloudformation", "terraform"}
 
 // InitCmd command to initialize projects
 func InitCmd() *cobra.Command {
@@ -67,7 +68,7 @@ func validateProjectType(cmd *cobra.Command, args []string) error {
 			return errors.New("Project type must be defined")
 		}
 
-		if pType != "basic" && pType != "cloudformation" && pType != "terraform" {
+		if !helper.ContainsString(initValidProjectTypes, pType) {
 			return fmt.Errorf("Unknown project type provided: %s", pType)
 		}
 	} else {
@@ -85,12 +86,11 @@ func initRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("Something went wrong \n%s", err)
 	}
 
-	// structure, _ = cmd.Flags().GetString("structure")
-	// onlyCustomizedStructure, _ = cmd.Flags().GetBool("only-customized-structure")
-
 	switch pType {
 	case "basic":
 		aid.CreateBasicProject(pName)
+	case "cloud":
+		aid.CreateCloudProject(pName)
 	default:
 		return errors.New("Unknow project type")
 	}

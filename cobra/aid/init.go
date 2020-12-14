@@ -10,10 +10,16 @@ import (
 // CreateBasicProject creates a basic project
 func CreateBasicProject(name string) {
 	createProjectDir(name)
-	initBasic()
+	initBasicProject()
 	// helper.InitCustomProjectLayout(typee, "default")
 	// helper.InitCustomProjectLayout(typee, structure)
 	// helper.UpdateReadMe()
+}
+
+// CreateCloudProject copies the necessary template for cloud projects
+func CreateCloudProject(name string) {
+	CreateBasicProject(name)
+	initCloudProject()
 }
 
 func createProjectDir(name string) {
@@ -25,8 +31,8 @@ func createProjectDir(name string) {
 	os.Chdir(name)
 }
 
-// InitBasic create the basic configuration files
-func initBasic() {
+// create the basic configuration files
+func initBasicProject() {
 
 	// Create a directory for CLENCLI
 	helper.CreateDir("clencli")
@@ -46,40 +52,16 @@ func initBasic() {
 	helper.WriteFile(initGitIgnore, blobGitIgnore)
 }
 
-// func initCreateCloudFormationProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
-// 	helper.createProjectDir(name)
-// 	if !onlyCustomizedStructure {
-// 		helper.InitBasic()
-// 		helper.InitHLD(name)
-// 		helper.InitCloudFormation()
-// 	}
-// 	// helper.InitCustomProjectLayout(typee, "default")
-// 	// helper.InitCustomProjectLayout(typee, structure)
-// 	// helper.UpdateReadMe()
-// }
+// copies the High Level Design template file
+func initCloudProject() {
+	initHLD := "clencli/hld.yaml"
+	blobHLD, _ := box.Get("/init/clencli/hld.yaml")
+	helper.WriteFile(initHLD, blobHLD)
 
-// func initCreateTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
-// 	helper.createProjectDir(name)
-// 	if !onlyCustomizedStructure {
-// 		helper.InitBasic()
-// 		helper.InitHLD(name)
-// 		helper.InitTerraform()
-// 	}
-// 	// helper.InitCustomProjectLayout(typee, "default")
-// 	// helper.InitCustomProjectLayout(typee, structure)
-// 	// helper.UpdateReadMe()
-// }
-
-// // InitHLD copies the High Level Design template file
-// func InitHLD(project string) {
-// 	initHLD := "clencli/hld.yaml"
-// 	blobHLD, _ := box.Get("/init/clencli/hld.yaml")
-// 	WriteFile(initHLD, blobHLD)
-
-// 	initHLDTmpl := "clencli/hld.tmpl"
-// 	blobHLDTmpl, _ := box.Get("/init/clencli/hld.tmpl")
-// 	WriteFile(initHLDTmpl, blobHLDTmpl)
-// }
+	initHLDTmpl := "clencli/hld.tmpl"
+	blobHLDTmpl, _ := box.Get("/init/clencli/hld.tmpl")
+	helper.WriteFile(initHLDTmpl, blobHLDTmpl)
+}
 
 // // InitCustomProjectLayout generates
 // func InitCustomProjectLayout(projectType string, projectStructureName string) error {
@@ -121,6 +103,30 @@ func initBasic() {
 // 	}
 
 // 	return nil
+// }
+
+// func initCreateCloudFormationProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+// 	helper.createProjectDir(name)
+// 	if !onlyCustomizedStructure {
+// 		helper.InitBasicProject()
+// 		helper.InitHLD(name)
+// 		helper.InitCloudFormation()
+// 	}
+// 	// helper.InitCustomProjectLayout(typee, "default")
+// 	// helper.InitCustomProjectLayout(typee, structure)
+// 	// helper.UpdateReadMe()
+// }
+
+// func initCreateTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
+// 	helper.createProjectDir(name)
+// 	if !onlyCustomizedStructure {
+// 		helper.InitBasicProject()
+// 		helper.InitHLD(name)
+// 		helper.InitTerraform()
+// 	}
+// 	// helper.InitCustomProjectLayout(typee, "default")
+// 	// helper.InitCustomProjectLayout(typee, structure)
+// 	// helper.UpdateReadMe()
 // }
 
 // // InitCloudFormation initialize a project with CloudFormation structure

@@ -11,10 +11,10 @@ import (
 
 func TestMain(m *testing.M) {
 	tester.SetupAll()
-	pwd, nwd := tester.SetupAll()
+	// pwd, nwd := tester.SetupAll()
 	code := m.Run()
 	// comment the line below if you want to keep the test results
-	tester.TeardownAll(pwd, nwd)
+	// tester.TeardownAll(pwd, nwd)
 	os.Exit(code)
 }
 
@@ -80,4 +80,19 @@ func TestInitProjectWithNameAndBasicType(t *testing.T) {
 	assert.DirExists(t, pPath+"/clencli")
 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
+}
+
+func TestInitProjectWithNameAndCloudType(t *testing.T) {
+	pwd, nwd := tester.Setup(t)
+	pPath := pwd + "/" + nwd + "/" + "foo"
+	err := command("project", "--name", "foo", "--type", "cloud")
+
+	assert.Nil(t, err)
+	assert.DirExists(t, pPath)
+	assert.FileExists(t, pPath+"/.gitignore")
+	assert.DirExists(t, pPath+"/clencli")
+	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
+	assert.FileExists(t, pPath+"/clencli/readme.yaml")
+	assert.FileExists(t, pPath+"/clencli/hld.tmpl")
+	assert.FileExists(t, pPath+"/clencli/hld.yaml")
 }
