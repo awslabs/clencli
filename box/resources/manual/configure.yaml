@@ -1,4 +1,9 @@
 use: configure [delete]
+example: >
+  If you want to create a new named profile:
+    clencli configure --profile work
+    
+  If you want to delete a named profile:
+    clencli configure delete --profile work
 short: Configures CLENCLI global settings
 long: Configures CLENCLI global credentials and configurations used by commands
-  
