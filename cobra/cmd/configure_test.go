@@ -1,9 +1,34 @@
 package cmd
 
-// func TestConfigureWithNoArgAndNoFlags(t *testing.T) {
-// 	rootCmd, _ := helper.InitRootAndChildCmd(con.RootCmd(), con.ConfigureCmd())
-// 	output, err := helper.ExecuteCommand(rootCmd, "configure")
+import (
+	"os"
+	"testing"
 
-// 	assert.Contains(t, output, "one the following arguments are required")
-// 	assert.Contains(t, err.Error(), "one the following arguments are required")
-// }
+	"github.com/awslabs/clencli/cobra/controller"
+	"github.com/awslabs/clencli/tester"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestMain(m *testing.M) {
+	tester.SetupAll()
+	pwd, nwd := tester.SetupAll()
+	code := m.Run()
+	// comment the line below if you want to keep the test results
+	tester.TeardownAll(pwd, nwd)
+	os.Exit(code)
+}
+
+func executeConfigure(args ...string) error {
+	cmd := controller.ConfigureCmd()
+	cmd.SetArgs(args)
+	err := cmd.Execute()
+	return err
+}
+
+func TestConfigureEmpty(t *testing.T) {
+	err := executeConfigure("")
+	// assert.Contains(t, out, "Usage")
+	assert.Contains(t, err.Error(), "invalid argument")
+}
+
+// TODO: test configure command and provide the input via the test block

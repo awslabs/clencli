@@ -34,8 +34,8 @@ func InitCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
-		Example:   man.Example,
 		Long:      man.Long,
+		Example:   man.Example,
 		ValidArgs: initValidArgs,
 		Args:      cobra.OnlyValidArgs,
 		PreRunE:   initPreRun,

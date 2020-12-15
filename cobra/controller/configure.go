@@ -30,26 +30,27 @@ var configureValidArgs = []string{"delete"}
 // ConfigureCmd command to display CLENCLI current version
 func ConfigureCmd() *cobra.Command {
 	man := helper.GetManual("configure")
-
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
 		Long:      man.Long,
+		Example:   man.Example,
 		ValidArgs: configureValidArgs,
 		Args:      cobra.OnlyValidArgs,
 		RunE:      configureRun,
 	}
+
+	cmd.Flags().StringP("profile", "p", "default", "Profile name")
+
+	return cmd
 }
 
 func configureRun(cmd *cobra.Command, args []string) error {
 	profile, _ := cmd.Flags().GetString("profile")
 
 	if len(args) == 0 {
-		// todo: cases to cover, configure --profile name
-
 		if !aid.ConfigurationDirectoryExist() {
 			if aid.CreateConfigDir() {
-				fmt.Println("CLENCLI configuration directory created")
 				dao.CreateCredentials(profile)
 				dao.CreateConfigurations(profile)
 			}
