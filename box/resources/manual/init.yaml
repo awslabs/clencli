@@ -1,4 +1,9 @@
 use: init project --name <value> [ --type [basic|cloudformation|terraform] ]
-example: init project --name foo # if you want to generate a basic project
+example: >
+  If you want to generate a basic project:
+    clencli init project --name foo
+  
+  If you want to generate a CloudFormation project:
+    clencli init project --type cloudformation --name foo  
 short: Initialize a project
-long: Initialize a project with code structure
+long: Initialize a project with code structure and templates
