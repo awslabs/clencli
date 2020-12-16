@@ -19,10 +19,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/awslabs/clencli/cobra/view"
-
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/model"
+	"github.com/awslabs/clencli/cobra/view"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -204,6 +203,29 @@ func GetCredentials() model.Credentials {
 	}
 
 	return creds
+}
+
+// GetCredentialProfile returns credentials of a profile
+func GetCredentialProfile(name string) model.CredentialProfile {
+	credentials := GetCredentials()
+	for _, profile := range credentials.Profiles {
+		if profile.Name == name {
+			return profile
+		}
+	}
+	return (model.CredentialProfile{})
+}
+
+// GetCredentialByProvider return credentials based on the given provider, if non-existent, return an empty credential
+func GetCredentialByProvider(profile string, provider string) model.Credential {
+	var cp model.CredentialProfile = GetCredentialProfile(profile)
+	for _, c := range cp.Credentials {
+		if c.Provider == provider {
+			return c
+		}
+	}
+
+	return (model.Credential{})
 }
 
 func saveConfigurations(configurations model.Configurations) error {

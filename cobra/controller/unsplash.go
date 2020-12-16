@@ -19,6 +19,8 @@ import (
 	"fmt"
 
 	"github.com/awslabs/clencli/cobra/aid"
+	"github.com/awslabs/clencli/cobra/dao"
+	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
@@ -56,22 +58,21 @@ func unsplashPreRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unknown photo size provided: %s", params.Size)
 	}
 
-	// params := getModelFromFlags(cmd)
 	return nil
 }
 
 func unsplashRun(cmd *cobra.Command, args []string) error {
 	params := aid.GetModelFromFlags(cmd)
-
-	if params.Size == "all" {
-		for _, s := range unsplashPhotoSizes {
-			fmt.Print(s)
-			aid.DownloadPhoto(params, profile)
-		}
-	} else {
-		fmt.Print(params.Size)
-		// aid.DownloadPhoto(unsplash.Urls.Thumb, params.Size, query)
+	var cred model.Credential = dao.GetCredentialByProvider(profile, "unsplash")
+	if (model.Credential{}) == cred {
+		return fmt.Errorf("Unsplash credential not found")
 	}
+
+	// if params.Size == "all" {
+	// aid.DownloadPhotos(params, cred)
+	// } else {
+	aid.DownloadPhoto(params, cred)
+	// }
 
 	return nil
 }

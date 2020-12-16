@@ -24,41 +24,44 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func buildURL(params model.UnsplashRandomPhotoParameters, profile string) string {
+func buildURL(params model.UnsplashRandomPhotoParameters, cred model.Credential) string {
+	clientID := cred.AccessKey
+	url := fmt.Sprintf("https://api.unsplash.com/photos/random?client_id=%s", clientID)
 
-	// clientID := cred.AccessKey
-	// url := fmt.Sprintf("https://api.unsplash.com/photos/random?client_id=%s", clientID)
+	if len(params.Collections) > 0 {
+		url += fmt.Sprintf("&collections=%s", params.Collections)
+	}
 
-	// if len(params.Collections) > 0 {
-	// 	url += fmt.Sprintf("&collections=%s", params.Collections)
-	// }
+	if len(params.Query) > 0 {
+		url += fmt.Sprintf("&query=%s", params.Query)
+	}
 
-	// if len(params.Query) > 0 {
-	// 	url += fmt.Sprintf("&query=%s", params.Query)
-	// }
+	url += fmt.Sprintf("&featured=%t", params.Featured)
 
-	// url += fmt.Sprintf("&featured=%t", params.Featured)
+	if len(params.Username) > 0 {
+		url += fmt.Sprintf("&username=%s", params.Username)
+	}
 
-	// if len(params.Username) > 0 {
-	// 	url += fmt.Sprintf("&username=%s", params.Username)
-	// }
+	if len(params.Orientation) > 0 {
+		url += fmt.Sprintf("&orientation=%s", params.Orientation)
+	}
 
-	// if len(params.Orientation) > 0 {
-	// 	url += fmt.Sprintf("&orientation=%s", params.Orientation)
-	// }
+	if len(params.Filter) > 0 {
+		url += fmt.Sprintf("&filter=%s", params.Filter)
+	}
 
-	// if len(params.Filter) > 0 {
-	// 	url += fmt.Sprintf("&filter=%s", params.Filter)
-	// }
-
-	// return url
-	return ""
+	return url
 }
+
+// func DownloadPhotos(params model.UnsplashRandomPhotoParameters, cred model.Credential) error {
+// 	for _, s := range unsplashPhotoSizes {
+// 	}
+// }
 
 // DownloadPhoto downloads a photo and saves into downloads/unsplash/ folder
 // It creates the downloads/ folder if it doesn't exists
-func DownloadPhoto(params model.UnsplashRandomPhotoParameters, profile string) error {
-	url := buildURL(params, profile)
+func DownloadPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential) error {
+	url := buildURL(params, cred)
 
 	// Get the photo identifier
 	start := strings.Index(url, "photo")
@@ -95,6 +98,7 @@ func GetPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRa
 	}
 }
 
+// GetModelFromFlags fills the parameters onto the Unsplash Random Photo Parameters struct
 func GetModelFromFlags(cmd *cobra.Command) model.UnsplashRandomPhotoParameters {
 	var params model.UnsplashRandomPhotoParameters
 
