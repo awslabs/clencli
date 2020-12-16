@@ -20,8 +20,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var profile string
+
 // RootCmd represents the base command when called without any subcommands
-func RootCmd() *cobra.Command {
+func RootCmd(p string) *cobra.Command {
+	profile = p
 	man := helper.GetManual("root")
 	return &cobra.Command{
 		Use:   man.Use,

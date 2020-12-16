@@ -13,23 +13,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controller
+package cmd
 
-import (
-	"testing"
+// func TestRootWithNoArgAndNoFlags(t *testing.T) {
+// 	rootCmd := RootCmd()
+// 	output, err := helper.ExecuteCommand(rootCmd)
 
-	"github.com/awslabs/clencli/tester"
-)
+// 	assert.NotEqual(t, rootCmd.Use, "")
+// 	assert.NotEqual(t, rootCmd.Short, "")
+// 	assert.NotEqual(t, rootCmd.Long, "")
+// 	assert.NotEqual(t, output, "")
+// 	assert.Equal(t, err, nil)
 
-func TestConfigureCreateConfigDir(t *testing.T) {
-	pwd, nwd := tester.Setup(t)
-	// createConfigDir()
-	tester.Teardown(pwd, nwd)
-}
-
-// to cover:
-// .. config dir doesn't exist
-// .. config dir exist but no files
-// .. config dir exist but only credentials
-// .. config dir exist but only config
-// .. config dir exist with both files
+// }

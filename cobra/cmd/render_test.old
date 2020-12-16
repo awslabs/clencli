@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controller
+package cmd
 
 // func TestRenderWithNoArgAndNoFlags(t *testing.T) {
 // 	rootCmd, _ := helper.InitRootAndChildCmd(RootCmd(), RenderCmd())
