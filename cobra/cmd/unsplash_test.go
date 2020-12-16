@@ -8,14 +8,16 @@ import (
 )
 
 func executeUnsplash(args ...string) error {
+	rootCmd := controller.RootCmd()
 	cmd := controller.UnsplashCmd()
-	cmd.SetArgs(args)
-	err := cmd.Execute()
+	rootCmd.AddCommand(cmd)
+	rootCmd.SetArgs(args)
+	err := rootCmd.Execute()
 	return err
 }
 
 func TestUnsplashEmpty(t *testing.T) {
-	err := executeUnsplash("")
+	err := executeUnsplash("unsplash")
 	// assert.Contains(t, out, "Usage")
 	assert.Contains(t, err.Error(), "invalid argument")
 }

@@ -63,14 +63,10 @@ func unsplashPreRun(cmd *cobra.Command, args []string) error {
 func unsplashRun(cmd *cobra.Command, args []string) error {
 	params := aid.GetModelFromFlags(cmd)
 
-	// p, _ := cmd.InheritedFlags().GetString("profile")
-
-	fmt.Printf("%v", cmd)
-
 	if params.Size == "all" {
 		for _, s := range unsplashPhotoSizes {
 			fmt.Print(s)
-			// aid.DownloadPhoto(unsplash.Urls.Thumb, s, query)
+			aid.DownloadPhoto(params, profile)
 		}
 	} else {
 		fmt.Print(params.Size)

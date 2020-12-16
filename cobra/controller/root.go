@@ -23,12 +23,20 @@ import (
 var profile string
 
 // RootCmd represents the base command when called without any subcommands
-func RootCmd(p string) *cobra.Command {
-	profile = p
+func RootCmd() *cobra.Command {
 	man := helper.GetManual("root")
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   man.Use,
 		Short: man.Short,
 		Long:  man.Long,
 	}
+
+	// Here you will define your flags and configuration settings.
+	// Cobra supports persistent flags, which, if defined here will be global for your application.
+	cmd.PersistentFlags().StringVar(&profile, "profile", "default", "Use a specific profile from your configurations file")
+
+	// Cobra also supports local flags, which will only run when this action is called directly.
+	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	return cmd
 }

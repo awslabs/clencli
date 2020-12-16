@@ -40,18 +40,20 @@ func ConfigureCmd() *cobra.Command {
 		RunE:      configureRun,
 	}
 
-	cmd.Flags().StringP("profile", "p", "default", "Profile name")
+	// cmd.Flags().StringP("profile", "p", "default", "Profile name")
 
 	return cmd
 }
 
 func configureRun(cmd *cobra.Command, args []string) error {
-	profile, _ := cmd.Flags().GetString("profile")
+	// profile, _ := cmd.Flags().GetString("profile")
 
 	if len(args) == 0 {
 		if !aid.ConfigurationDirectoryExist() {
 			if aid.CreateConfigDir() {
+				// TODO: ask if user wants to setup credentials
 				dao.CreateCredentials(profile)
+				// TODO: ask if user wants to setup configurations
 				dao.CreateConfigurations(profile)
 			}
 		} else if aid.ConfigurationDirectoryExist() &&
