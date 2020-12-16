@@ -68,11 +68,5 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("Unsplash credential not found")
 	}
 
-	// if params.Size == "all" {
-	// aid.DownloadPhotos(params, cred)
-	// } else {
-	aid.DownloadPhoto(params, cred)
-	// }
-
-	return nil
+	return aid.DownloadPhoto(params, cred)
 }

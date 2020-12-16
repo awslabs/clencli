@@ -24,7 +24,7 @@ func WriteFile(filename string, data []byte) bool {
 
 // DownloadFile downloads a file and saves into downloads/ folder
 // It creates the downloads/ folder if it doesn't exists
-func DownloadFile(url string, dirPath string, fileName string) error {
+func DownloadFile(url string, dirPath string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
@@ -32,18 +32,15 @@ func DownloadFile(url string, dirPath string, fileName string) error {
 	}
 	defer resp.Body.Close()
 
-	if CreateDir(dirPath) {
-		// Create the file
-		out, err := os.Create(dirPath + "/" + fileName)
-		if err != nil {
-			return err
-		}
-		defer out.Close()
-
-		// Write the body to file
-		_, err = io.Copy(out, resp.Body)
+	// Create the file
+	out, err := os.Create(dirPath + "/" + "test.jpg")
+	if err != nil {
 		return err
 	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
 	return err
 }
 

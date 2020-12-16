@@ -21,8 +21,8 @@ import (
 //     createdAt: 2020-12-16 20:29:25.990261473 +0800 AWST m=+0.007131351
 //     updatedAt: 2020-12-16 20:32:05.910609998 +0800 AWST m=+35.377134125
 //     provider: unsplash
-//     accessKey: 
-//     secretkey: 
+//     accessKey:
+//     secretkey:
 
 func TestUnsplashEmpty(t *testing.T) {
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash")
@@ -31,7 +31,7 @@ func TestUnsplashEmpty(t *testing.T) {
 }
 
 func TestUnsplashWithUntiTestingProfile(t *testing.T) {
-	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash", "--profile", "unit-testing")
+	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash", "--profile", "unit-testing", "--size", "small")
 	// assert.Contains(t, out, "Usage")
 	assert.Contains(t, err.Error(), "Unsplash credential not found")
 }

@@ -16,13 +16,32 @@ limitations under the License.
 package aid
 
 import (
+	"encoding/json"
 	"fmt"
-	"strings"
+	"io/ioutil"
+	"log"
+	"net/http"
 
 	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
+
+// GetModelFromFlags fills the parameters onto the Unsplash Random Photo Parameters struct
+func GetModelFromFlags(cmd *cobra.Command) model.UnsplashRandomPhotoParameters {
+	var params model.UnsplashRandomPhotoParameters
+
+	params.Query, _ = cmd.Flags().GetString("query")
+	params.Collections, _ = cmd.Flags().GetString("collections")
+	params.Featured, _ = cmd.Flags().GetBool("featured")
+	params.Username, _ = cmd.Flags().GetString("username")
+	params.Orientation, _ = cmd.Flags().GetString("orientation")
+	params.Filter, _ = cmd.Flags().GetString("filter")
+	params.Size, _ = cmd.Flags().GetString("size")
+
+	return params
+}
 
 func buildURL(params model.UnsplashRandomPhotoParameters, cred model.Credential) string {
 	clientID := cred.AccessKey
@@ -61,27 +80,26 @@ func buildURL(params model.UnsplashRandomPhotoParameters, cred model.Credential)
 // DownloadPhoto downloads a photo and saves into downloads/unsplash/ folder
 // It creates the downloads/ folder if it doesn't exists
 func DownloadPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential) error {
-	url := buildURL(params, cred)
+	response, err := requestRandomPhoto(params, cred)
+	if err != nil {
+		return err
+	}
 
-	// Get the photo identifier
-	start := strings.Index(url, "photo")
-	end := strings.Index(url, "?")
+	dumpUnsplashRandomPhotoResponse(response)
 
-	// Create a Rune from the URL
-	runes := []rune(url)
+	// TODO: download photos given the selected size by the user
+	fmt.Println(response.Urls)
 
-	// Generate the directory path
-	dirPath := "downloads/unsplash/" + params.Query
+	dirPath, err := helper.CreateDirectoryNamedPath("downloads/unsplash/" + params.Query)
+	if err != nil {
+		return err
+	}
 
-	// Generate the filename
-	fileName := string(runes[start:end])
-	fileName += "-" + params.Size + ".jpg"
-
-	return helper.DownloadFile(url, dirPath, fileName)
+	return helper.DownloadFile(getPhotoURLBySize(params, response), dirPath)
 }
 
 // GetPhotoURLBySize return the photo URL based on the given size
-func GetPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRandomPhotoResponse) string {
+func getPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRandomPhotoResponse) string {
 	switch p.Size {
 	case "thumb":
 		return r.Urls.Thumb
@@ -96,21 +114,6 @@ func GetPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRa
 	default:
 		return r.Urls.Small
 	}
-}
-
-// GetModelFromFlags fills the parameters onto the Unsplash Random Photo Parameters struct
-func GetModelFromFlags(cmd *cobra.Command) model.UnsplashRandomPhotoParameters {
-	var params model.UnsplashRandomPhotoParameters
-
-	params.Query, _ = cmd.Flags().GetString("query")
-	params.Collections, _ = cmd.Flags().GetString("collections")
-	params.Featured, _ = cmd.Flags().GetBool("featured")
-	params.Username, _ = cmd.Flags().GetString("username")
-	params.Orientation, _ = cmd.Flags().GetString("orientation")
-	params.Filter, _ = cmd.Flags().GetString("filter")
-	params.Size, _ = cmd.Flags().GetString("size")
-
-	return params
 }
 
 // requestRandomPhotoDefaults retrieves a single random photo with default values.
@@ -138,46 +141,33 @@ func GetModelFromFlags(cmd *cobra.Command) model.UnsplashRandomPhotoParameters {
 // }
 
 // requestRandomPhoto retrieves a single random photo, given optional filters.
-func requestRandomPhoto(params model.UnsplashRandomPhotoParameters) (model.UnsplashRandomPhotoResponse, error) {
+func requestRandomPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential) (model.UnsplashRandomPhotoResponse, error) {
 	var response model.UnsplashRandomPhotoResponse
+	url := buildURL(params, cred)
 
-	if (model.UnsplashRandomPhotoParameters{} == params) {
-		return response, fmt.Errorf("Unable to download Unsplash photo if all fields from query as empty")
+	var client http.Client
+	resp, err := client.Get(url)
+	if err != nil {
+		return response, fmt.Errorf("Unexpected error while performing GET on Unsplash API \n%v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return response, fmt.Errorf("Unexpected error while reading Unsplash response \n%v", err)
+		}
+
+		json.Unmarshal(bodyBytes, &response)
 	}
 
-	// gc, err := getGlobalConfig()
-	// if err != nil {
-	// 	return response, fmt.Errorf("Unexpected error while getting global configuration \n%v", err)
-	// }
+	return response, err
+}
 
-	// // check if Credentials has unsplash credential
-	// // return response, fmt.Errorf("No Unsplash credentials found in the global configuration \n%v", err)
-
-	// // check if config has Unsplash credentials
-	// for _, cred := range gc.Credentials {
-	// 	if cred.Provider == "unsplash" {
-	// 		if cred.AccessKey != "" && cred.SecretKey != "" {
-
-	// 			url := buildURL(params, cred.Credential)
-
-	// 			var client http.Client
-	// 			resp, err := client.Get(url)
-	// 			if err != nil {
-	// 				return response, fmt.Errorf("Unexpected error while performing GET on Unsplash API \n%v", err)
-	// 			}
-	// 			defer resp.Body.Close()
-
-	// 			if resp.StatusCode == http.StatusOK {
-	// 				bodyBytes, err := ioutil.ReadAll(resp.Body)
-	// 				if err != nil {
-	// 					return response, fmt.Errorf("Unexpected error while reading Unsplash response \n%v", err)
-	// 				}
-
-	// 				json.Unmarshal(bodyBytes, &response)
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	return response, nil
+func dumpUnsplashRandomPhotoResponse(r model.UnsplashRandomPhotoResponse) {
+	d, err := yaml.Marshal(r)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+	helper.WriteFile("unsplash.yaml", d)
 }
