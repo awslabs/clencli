@@ -6,7 +6,7 @@ include lib/make/*/Makefile
 clencli/test: go/test
 
 .PHONY: clencli/build
-clencli/build: go/version go/get go/fmt go/generate go/build ## Builds the app
+clencli/build: go/mod/tidy go/version go/get go/fmt go/generate go/build ## Builds the app
 
 .PHONY: clencli/install
 clencli/install: go/get go/fmt go/generate go/install ## Builds the app and install all dependencies

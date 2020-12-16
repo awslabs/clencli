@@ -8,38 +8,37 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func executeInit(args ...string) error {
-	cmd := controller.InitCmd()
-	cmd.SetArgs(args)
-	err := cmd.Execute()
-	return err
+func TestInitWithNoArgs(t *testing.T) {
+	err := tester.ExecuteCommand(controller.InitCmd(), "init")
+	// assert.Contains(t, out, "Usage")
+	assert.Contains(t, err.Error(), "this command requires one argument")
 }
 
-func TestInitEmpty(t *testing.T) {
-	err := executeInit("")
+func TestInitWithEmptyArgs(t *testing.T) {
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "")
 	// assert.Contains(t, out, "Usage")
 	assert.Contains(t, err.Error(), "invalid argument")
 }
 
 func TestInitWithInvalidArg(t *testing.T) {
-	err := executeInit("foo")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "foo")
 	assert.Contains(t, err.Error(), "invalid argument")
 }
 
 func TestInitProjectWithNoName(t *testing.T) {
-	err := executeInit("project")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project")
 	assert.Contains(t, err.Error(), "required flag(s) \"name\" not set")
 }
 
 func TestInitProjectWithEmptyName(t *testing.T) {
-	err := executeInit("project", "--name")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project", "--name")
 	assert.Contains(t, err.Error(), "flag needs an argument: --name")
 }
 
 func TestInitProjectWithName(t *testing.T) {
 	pwd, nwd := tester.Setup(t)
 	pPath := pwd + "/" + nwd + "/" + "foo"
-	err := executeInit("project", "--name", "foo")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project", "--name", "foo")
 
 	assert.Nil(t, err)
 	assert.DirExists(t, pPath)
@@ -51,19 +50,19 @@ func TestInitProjectWithName(t *testing.T) {
 }
 
 func TestInitProjectWithNameAndEmptyType(t *testing.T) {
-	err := executeInit("project", "--name", "foo", "--type")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type")
 	assert.Contains(t, err.Error(), "flag needs an argument: --type")
 }
 
 func TestInitProjectWithNameAndWrongType(t *testing.T) {
-	err := executeInit("project", "--name", "foo", "--type", "nil")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "nil")
 	assert.Contains(t, err.Error(), "Unknown project type provided")
 }
 
 func TestInitProjectWithNameAndBasicType(t *testing.T) {
 	pwd, nwd := tester.Setup(t)
 	pPath := pwd + "/" + nwd + "/" + "foo"
-	err := executeInit("project", "--name", "foo", "--type", "basic")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "basic")
 
 	assert.Nil(t, err)
 	assert.DirExists(t, pPath)
@@ -77,7 +76,7 @@ func TestInitProjectWithNameAndBasicType(t *testing.T) {
 func TestInitProjectWithNameAndCloudType(t *testing.T) {
 	pwd, nwd := tester.Setup(t)
 	pPath := pwd + "/" + nwd + "/" + "foo"
-	err := executeInit("project", "--name", "foo", "--type", "cloud")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "cloud")
 
 	assert.Nil(t, err)
 	assert.DirExists(t, pPath)
@@ -94,7 +93,7 @@ func TestInitProjectWithNameAndCloudType(t *testing.T) {
 func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
 	pwd, nwd := tester.Setup(t)
 	pPath := pwd + "/" + nwd + "/" + "foo"
-	err := executeInit("project", "--name", "foo", "--type", "cloudformation")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "cloudformation")
 
 	assert.Nil(t, err)
 	assert.DirExists(t, pPath)
@@ -117,7 +116,7 @@ func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
 func TestInitProjectWithNameAndTerraformType(t *testing.T) {
 	pwd, nwd := tester.Setup(t)
 	pPath := pwd + "/" + nwd + "/" + "foo"
-	err := executeInit("project", "--name", "foo", "--type", "terraform")
+	err := tester.ExecuteCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "terraform")
 
 	assert.Nil(t, err)
 	assert.DirExists(t, pPath)
