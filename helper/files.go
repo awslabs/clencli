@@ -22,9 +22,8 @@ func WriteFile(filename string, data []byte) bool {
 	return true
 }
 
-// DownloadFile downloads a file and saves into downloads/ folder
-// It creates the downloads/ folder if it doesn't exists
-func DownloadFile(url string, dirPath string) error {
+// DownloadFile downloads a file and saves into the given directory with the given file name
+func DownloadFile(url string, dirPath string, filename string) error {
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
@@ -33,7 +32,7 @@ func DownloadFile(url string, dirPath string) error {
 	defer resp.Body.Close()
 
 	// Create the file
-	out, err := os.Create(dirPath + "/" + "test.jpg")
+	out, err := os.Create(dirPath + "/" + filename)
 	if err != nil {
 		return err
 	}
@@ -98,4 +97,15 @@ func FileSize(path string) (int64, error) {
 		return size, fmt.Errorf("File does not exist")
 	}
 	return size, nil
+}
+
+// ListFiles list of all file names in the given directory. Pass "." if you want to list at the current directory.
+func ListFiles(dir string) []os.FileInfo {
+	files, err := ioutil.ReadDir(dir)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return files
 }

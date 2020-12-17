@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/awslabs/clencli/cobra/controller"
+	"github.com/awslabs/clencli/helper"
 	"github.com/awslabs/clencli/tester"
 	"github.com/stretchr/testify/assert"
 )
@@ -31,9 +32,18 @@ func TestUnsplashEmpty(t *testing.T) {
 }
 
 func TestUnsplashWithUntiTestingProfile(t *testing.T) {
-	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash", "--profile", "unit-testing", "--size", "small")
-	// assert.Contains(t, out, "Usage")
-	assert.Contains(t, err.Error(), "Unsplash credential not found")
+	// TODO: setup the clencli/credentials before starting the test
+	pwd, nwd := tester.Setup(t)
+	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash", "--profile", "unit-testing")
+	dPath := pwd + "/" + nwd + "/" + "downloads"
+	assert.Nil(t, err)
+	assert.FileExists(t, "unsplash.yaml")
+	assert.DirExists(t, dPath)
+	assert.DirExists(t, dPath+"/unsplash")
+	assert.DirExists(t, dPath+"/unsplash/mountains")
+
+	files := helper.ListFiles(dPath + "/unsplash/mountains/")
+	assert.Greater(t, len(files), 0)
 }
 
 func TestUnsplashWithQuery(t *testing.T) {

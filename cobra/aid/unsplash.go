@@ -72,14 +72,9 @@ func buildURL(params model.UnsplashRandomPhotoParameters, cred model.Credential)
 	return url
 }
 
-// func DownloadPhotos(params model.UnsplashRandomPhotoParameters, cred model.Credential) error {
-// 	for _, s := range unsplashPhotoSizes {
-// 	}
-// }
-
 // DownloadPhoto downloads a photo and saves into downloads/unsplash/ folder
 // It creates the downloads/ folder if it doesn't exists
-func DownloadPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential) error {
+func DownloadPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential, photoSizes []string) error {
 	response, err := requestRandomPhoto(params, cred)
 	if err != nil {
 		return err
@@ -87,15 +82,26 @@ func DownloadPhoto(params model.UnsplashRandomPhotoParameters, cred model.Creden
 
 	dumpUnsplashRandomPhotoResponse(response)
 
-	// TODO: download photos given the selected size by the user
-	fmt.Println(response.Urls)
-
 	dirPath, err := helper.CreateDirectoryNamedPath("downloads/unsplash/" + params.Query)
 	if err != nil {
 		return err
 	}
 
-	return helper.DownloadFile(getPhotoURLBySize(params, response), dirPath)
+	if params.Size == "all" {
+		for _, pSize := range photoSizes {
+			if pSize != "all" {
+				params.Size = pSize
+				err = helper.DownloadFile(getPhotoURLBySize(params, response), dirPath, response.ID+"-"+pSize+".jpeg")
+				if err != nil {
+					return err
+				}
+			}
+		}
+	} else {
+		err = helper.DownloadFile(getPhotoURLBySize(params, response), dirPath, response.ID+".jpeg")
+	}
+
+	return err
 }
 
 // GetPhotoURLBySize return the photo URL based on the given size
@@ -115,30 +121,6 @@ func getPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRa
 		return r.Urls.Small
 	}
 }
-
-// requestRandomPhotoDefaults retrieves a single random photo with default values.
-// func requestRandomPhotoDefaults(query string) (UnsplashRandomPhotoResponse, error) {
-// 	// landscape orientation is better for README files
-// 	return requestRandomPhoto(query, "", "", "", "landscape", "low")
-// }
-
-// func hasCredentials(provider string, name string) (bool, error) {
-// 	global, err := getGlobalConfig()
-// 	if err != nil {
-// 		return false, fmt.Errorf("Unable to get global config \n%v", err)
-// 	}
-
-// 	for _, cred := range global.Credentials {
-// 		// verify if Unsplash credentials are set
-// 		if cred.Provider == "unsplash" {
-// 			if cred.AccessKey != "" && cred.SecretKey != "" {
-// 				return cred, nil
-// 			}
-// 		}
-
-// 	}
-
-// }
 
 // requestRandomPhoto retrieves a single random photo, given optional filters.
 func requestRandomPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential) (model.UnsplashRandomPhotoResponse, error) {
