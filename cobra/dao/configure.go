@@ -209,7 +209,8 @@ func GetCredentials() model.Credentials {
 func GetCredentialProfile(name string) model.CredentialProfile {
 	credentials := GetCredentials()
 	for _, profile := range credentials.Profiles {
-		if profile.Name == name {
+
+		if profile.Name == name && profile.Enabled {
 			return profile
 		}
 	}
