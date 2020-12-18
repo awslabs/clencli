@@ -65,7 +65,7 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 	params := aid.GetModelFromFlags(cmd)
 	var cred model.Credential = dao.GetCredentialByProvider(profile, "unsplash")
 	if (model.Credential{}) == cred {
-		return fmt.Errorf("Unsplash credential not found")
+		return fmt.Errorf("no unsplash credential found or no profile enabled")
 	}
 
 	return aid.DownloadPhoto(params, cred, unsplashPhotoSizes)
