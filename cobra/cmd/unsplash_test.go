@@ -1,29 +1,37 @@
 package cmd
 
 import (
+	"os"
 	"testing"
 
+	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/controller"
+	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
 	"github.com/awslabs/clencli/tester"
 	"github.com/stretchr/testify/assert"
 )
 
-// profiles:
-// - name: unit-testing
-//   description: Unit Testing
-//   enabled: false
-//   createdAt: 2020-12-16 20:29:25.990242206 +0800 AWST m=+0.007112078
-//   updatedAt: 2020-12-16 20:31:51.50260984 +0800 AWST m=+20.969133917
-//   credentials:
-//   - name: clencli-unit
-//     description: Unsplash Credentials
-//     enabled: true
-//     createdAt: 2020-12-16 20:29:25.990261473 +0800 AWST m=+0.007131351
-//     updatedAt: 2020-12-16 20:32:05.910609998 +0800 AWST m=+35.377134125
-//     provider: unsplash
-//     accessKey:
-//     secretkey:
+func setupUnplashCredential() {
+	// only setup credentials if non-existent
+	if !aid.CredentialsFileExist() {
+		var credentials model.Credentials
+
+		var profile model.CredentialProfile
+		profile.Name = "unsplash-unit-testing"
+		profile.Enabled = true // enabling profile by default
+
+		var credential model.Credential
+		credential.Enabled = true
+		credential.AccessKey = os.Getenv("UNSPLASH_ACCESS_KEY")
+		credential.SecretKey = os.Getenv("UNSPLASH_SECRET_KEY")
+		credential.Provider = "unsplash"
+		profile.Credentials = append(profile.Credentials, credential)
+
+		credentials.Profiles = append(credentials.Profiles, profile)
+		aid.WriteInterfaceToFile(credentials, aid.GetAppInfo().CredentialsPath)
+	}
+}
 
 func TestUnsplashEmpty(t *testing.T) {
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash")
@@ -34,6 +42,7 @@ func TestUnsplashEmpty(t *testing.T) {
 func TestUnsplashWithUntiTestingProfile(t *testing.T) {
 	// TODO: setup the clencli/credentials before starting the test
 	pwd, nwd := tester.Setup(t)
+	setupUnplashCredential()
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash", "--profile", "unit-testing")
 	dPath := pwd + "/" + nwd + "/" + "downloads"
 	assert.Nil(t, err)
@@ -47,6 +56,7 @@ func TestUnsplashWithUntiTestingProfile(t *testing.T) {
 }
 
 func TestUnsplashWithQuery(t *testing.T) {
+	setupUnplashCredential()
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash", "--query", "horse")
 	assert.Contains(t, err.Error(), "invalid argument")
 }
