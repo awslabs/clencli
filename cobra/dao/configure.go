@@ -22,33 +22,42 @@ import (
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/cobra/view"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // AddConfigurationProfile add the given profile name into the configurations file
-func AddConfigurationProfile(name string) {
-	configurations := GetConfigurations()
+func AddConfigurationProfile(name string) error {
+	configurations, err := GetConfigurations()
+	if err != nil {
+		return err
+	}
 	configurations.Profiles = append(configurations.Profiles, CreateConfigurationProfile(name))
 	saveConfigurations(configurations)
+	return err
 }
 
 // AddCredentialProfile add the given profile name into the credentials file
-func AddCredentialProfile(name string) {
-	credentials := GetCredentials()
+func AddCredentialProfile(name string) error {
+	credentials, err := GetCredentials()
+	if err != nil {
+		return err
+	}
 	credentials.Profiles = append(credentials.Profiles, CreateCredentialProfile(name))
 	saveCredentials(credentials)
+	return err
 }
 
 // ConfigurationsProfileExist return `true` if the configuration file exist, `false` if otherwise
-func ConfigurationsProfileExist(name string) bool {
-	configurations := GetConfigurations()
+func ConfigurationsProfileExist(name string) (bool, error) {
+	configurations, err := GetConfigurations()
+	if err != nil {
+		return false, err
+	}
 	for _, profile := range configurations.Profiles {
 		if profile.Name == name {
-			return true
+			return true, err
 		}
 	}
-	return false
+	return false, err
 
 }
 
@@ -130,22 +139,29 @@ func CreateCredentials(name string) {
 }
 
 // CredentialsProfileExist returns `true` if the profile name given exist in the credentials file
-func CredentialsProfileExist(name string) bool {
-	credentials := GetCredentials()
+func CredentialsProfileExist(name string) (bool, error) {
+	credentials, err := GetCredentials()
+	if err != nil {
+		return false, err
+	}
 	for _, profile := range credentials.Profiles {
 		if profile.Name == name {
-			return true
+			return true, err
 		}
 	}
-	return false
+	return false, err
 
 }
 
 // DeleteConfigurationProfile delete a profile from the configurations file
-func DeleteConfigurationProfile(name string) {
+func DeleteConfigurationProfile(name string) error {
+	// TODO: return bool if profile was deleted or not
 	answer := view.GetUserInputAsBool("Do you want to delete the profile '"+name+"' from "+aid.GetAppInfo().ConfigurationsPath+"?", false)
 	if answer {
-		allConfigurations := GetConfigurations()
+		allConfigurations, err := GetConfigurations()
+		if err != nil {
+			return err
+		}
 		var newConfigurations model.Configurations
 		for _, profile := range allConfigurations.Profiles {
 			// only append profile that doesn't match
@@ -154,14 +170,20 @@ func DeleteConfigurationProfile(name string) {
 			}
 		}
 		saveConfigurations(newConfigurations)
+		return err
 	}
+
+	return nil
 }
 
 // DeleteCredentialProfile delete a profile from the credentials file
-func DeleteCredentialProfile(name string) {
+func DeleteCredentialProfile(name string) error {
 	answer := view.GetUserInputAsBool("Do you want to delete the profile '"+name+"' from "+aid.GetAppInfo().CredentialsPath+"?", false)
 	if answer {
-		allCredentials := GetCredentials()
+		allCredentials, err := GetCredentials()
+		if err != nil {
+			return err
+		}
 		var newCredentials model.Credentials
 		for _, profile := range allCredentials.Profiles {
 			if profile.Name != name {
@@ -170,63 +192,71 @@ func DeleteCredentialProfile(name string) {
 		}
 
 		saveCredentials(newCredentials)
+		return err
 	}
+	return nil
 }
 
 // GetConfigurations read the current configurations file and return its model
-func GetConfigurations() model.Configurations {
+func GetConfigurations() (model.Configurations, error) {
 	var confs model.Configurations
 	v, err := aid.ReadConfig(aid.GetAppInfo().ConfigurationsName)
 	if err != nil {
-		log.Fatalf("Unable to read configurations\n%v", err)
+		return confs, fmt.Errorf("unable to read configurations\n%v", err)
 	}
 
 	err = v.Unmarshal(&confs)
 	if err != nil {
-		log.Fatalf("Unable to unmarshall configurations \n%v", err)
+		return confs, fmt.Errorf("unable to unmarshall configurations \n%v", err)
 	}
 
-	return confs
+	return confs, err
 }
 
 // GetCredentials read the current credentials file and return its model
-func GetCredentials() model.Credentials {
+func GetCredentials() (model.Credentials, error) {
 	var creds model.Credentials
 	v, err := aid.ReadConfig(aid.GetAppInfo().CredentialsName)
 	if err != nil {
-		log.Fatalf("Unable to read credentials\n%v", err)
+		return creds, fmt.Errorf("unable to read credentials\n%v", err)
 	}
 
 	err = v.Unmarshal(&creds)
 	if err != nil {
-		log.Fatalf("Unable to unmarshall credentials \n%v", err)
+		return creds, fmt.Errorf("unable to unmarshall credentials \n%v", err)
 	}
 
-	return creds
+	return creds, err
 }
 
 // GetCredentialProfile returns credentials of a profile
-func GetCredentialProfile(name string) model.CredentialProfile {
-	credentials := GetCredentials()
+func GetCredentialProfile(name string) (model.CredentialProfile, error) {
+	credentials, err := GetCredentials()
+	if err != nil {
+		return (model.CredentialProfile{}), err
+	}
 	for _, profile := range credentials.Profiles {
 
 		if profile.Name == name && profile.Enabled {
-			return profile
+			return profile, err
 		}
 	}
-	return (model.CredentialProfile{})
+	return (model.CredentialProfile{}), err
 }
 
 // GetCredentialByProvider return credentials based on the given provider, if non-existent, return an empty credential
-func GetCredentialByProvider(profile string, provider string) model.Credential {
-	var cp model.CredentialProfile = GetCredentialProfile(profile)
+func GetCredentialByProvider(profile string, provider string) (model.Credential, error) {
+	cp, err := GetCredentialProfile(profile)
+	if err != nil {
+		return (model.Credential{}), err
+	}
 	for _, c := range cp.Credentials {
 		if c.Provider == provider {
-			return c
+			return c, err
 		}
 	}
 
-	return (model.Credential{})
+	return (model.Credential{}), err
 }
 
 func saveConfigurations(configurations model.Configurations) error {
@@ -238,9 +268,12 @@ func saveCredentials(credentials model.Credentials) error {
 }
 
 // UpdateConfigurations updates the given profile name in the configurations file
-func UpdateConfigurations(name string) {
+func UpdateConfigurations(name string) error {
 	fmt.Println("> Configurations")
-	configurations := GetConfigurations()
+	configurations, err := GetConfigurations()
+	if err != nil {
+		return err
+	}
 	for i, profile := range configurations.Profiles {
 		if profile.Name == name {
 			profile = view.AskAboutConfigurationProfile(profile)
@@ -266,12 +299,17 @@ func UpdateConfigurations(name string) {
 	}
 
 	saveConfigurations(configurations)
+	return err
 }
 
 // UpdateCredentials updates the given profile name in the credentials file
-func UpdateCredentials(name string) {
+func UpdateCredentials(name string) error {
 	fmt.Println("> Credentials")
-	credentials := GetCredentials()
+	credentials, err := GetCredentials()
+	if err != nil {
+		return err
+	}
+
 	for i, profile := range credentials.Profiles {
 
 		if profile.Name == name {
@@ -297,4 +335,5 @@ func UpdateCredentials(name string) {
 	}
 
 	saveCredentials(credentials)
+	return err
 }

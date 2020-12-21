@@ -35,7 +35,6 @@ func setupUnplashCredential() {
 
 func TestUnsplashEmpty(t *testing.T) {
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash")
-	// assert.Contains(t, out, "Usage")
 	assert.Contains(t, err.Error(), "Unsplash credential not found")
 }
 

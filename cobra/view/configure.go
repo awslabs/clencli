@@ -146,7 +146,7 @@ func getUserInput(text string, info string) (string, error) {
 	// convert CRLF to LF
 	input = strings.Replace(input, "\n", "", -1)
 	if err != nil {
-		return input, fmt.Errorf("Unable to read user input \n%v", err)
+		return input, fmt.Errorf("unable to read user input \n%v", err)
 	}
 	return input, err
 }

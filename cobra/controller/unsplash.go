@@ -63,7 +63,11 @@ func unsplashPreRun(cmd *cobra.Command, args []string) error {
 
 func unsplashRun(cmd *cobra.Command, args []string) error {
 	params := aid.GetModelFromFlags(cmd)
-	var cred model.Credential = dao.GetCredentialByProvider(profile, "unsplash")
+	cred, err := dao.GetCredentialByProvider(profile, "unsplash")
+	if err != nil {
+		return err
+	}
+
 	if (model.Credential{}) == cred {
 		return fmt.Errorf("no unsplash credential found or no profile enabled")
 	}

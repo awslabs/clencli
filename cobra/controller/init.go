@@ -69,10 +69,10 @@ func validateProjectType(cmd *cobra.Command, args []string) error {
 		}
 
 		if !helper.ContainsString(initValidProjectTypes, pType) {
-			return fmt.Errorf("Unknown project type provided: %s", pType)
+			return fmt.Errorf("unknown project type provided: %s", pType)
 		}
 	} else {
-		return fmt.Errorf("Unknown argument provided: %s", args[0])
+		return fmt.Errorf("unknown argument provided: %s", args[0])
 	}
 
 	return nil
@@ -83,7 +83,7 @@ func initRun(cmd *cobra.Command, args []string) error {
 	pType, err := cmd.Flags().GetString("type")
 
 	if err != nil {
-		return fmt.Errorf("Something went wrong \n%s", err)
+		return fmt.Errorf("something went wrong \n%s", err)
 	}
 
 	switch pType {

@@ -34,7 +34,7 @@ func versionRun(cmd *cobra.Command, args []string) error {
 
 		fmt.Printf("CLENCLI v%s %s %s %s\n", version, goVersion, goOS, goArch)
 	} else {
-		return fmt.Errorf("Version not available")
+		return fmt.Errorf("version not available")
 	}
 	return nil
 }

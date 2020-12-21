@@ -69,7 +69,7 @@ func renderPreRun(cmd *cobra.Command, args []string) error {
 func renderRun(cmd *cobra.Command, args []string) error {
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
-		return fmt.Errorf("Unable to render template "+name+"\n%v", err)
+		return fmt.Errorf("unable to render template "+name+"\n%v", err)
 	}
 
 	// err = helper.UpdateReadMe()
