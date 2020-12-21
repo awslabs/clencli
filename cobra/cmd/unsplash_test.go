@@ -41,15 +41,9 @@ func DeleteCredential() {
 }
 
 func TestUnsplashEmptyWithoutCredentials(t *testing.T) {
+	DeleteCredential()
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash")
 	assert.Contains(t, err.Error(), "unable to read credentials")
-}
-
-func TestUnsplashEmptyWithEmptyCredentials(t *testing.T) {
-	createUnplashCredential()
-	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash")
-	assert.Contains(t, err.Error(), "no unsplash credential found")
-	DeleteCredential()
 }
 
 func TestUnsplashEmptyWithCredentials(t *testing.T) {
