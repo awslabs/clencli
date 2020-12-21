@@ -109,3 +109,9 @@ func ListFiles(dir string) []os.FileInfo {
 
 	return files
 }
+
+// DeleteFile removes the named file or (empty) directory.
+// If there is an error, it will be of type *PathError.
+func DeleteFile(name string) error {
+	return os.Remove(name)
+}
