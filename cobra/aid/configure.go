@@ -82,3 +82,8 @@ func WriteInterfaceToFile(in interface{}, path string) error {
 
 	return err
 }
+
+// DeleteCredentialFile delete the credentials file
+func DeleteCredentialFile() error {
+	return helper.DeleteFile(GetAppInfo().CredentialsPath)
+}
