@@ -12,10 +12,14 @@ jobs:
       - run: go env 
       - run: go generate ./...
       # Tests disabled for now
-      - name: Run go test
+      - name: Run prepare go test
         env: 
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           UNSPLASH_SECRET_KEY: ${{ secrets.UNSPLASH_SECRET_KEY }}
-        run: cd cobra/cmd && go test -v
+        run: |
+          export UNSPLASH_ACCESS_KEY="${UNSPLASH_ACCESS_KEY}"
+          export UNSPLASH_SECRET_KEY="${UNSPLASH_SECRET_KEY}"
+      - name: Run go test
+          run: cd cobra/cmd && go test -v
       - name: Run go build
         run: mkdir bin/ && go build -o bin/clencli
