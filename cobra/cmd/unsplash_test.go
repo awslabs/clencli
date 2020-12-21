@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setupUnplashCredential() {
+func createUnplashCredential() {
 	// only setup credentials if non-existent
 	if !aid.CredentialsFileExist() {
 		var credentials model.Credentials
@@ -33,15 +33,35 @@ func setupUnplashCredential() {
 	}
 }
 
-func TestUnsplashEmpty(t *testing.T) {
+func DeleteCredential() {
+	if aid.CredentialsFileExist() {
+		aid.DeleteCredentialFile()
+	}
+}
+
+func TestUnsplashEmptyWithoutCredentials(t *testing.T) {
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash")
-	assert.Contains(t, err.Error(), "Unsplash credential not found")
+	assert.Contains(t, err.Error(), "unable to read credentials")
+}
+
+func TestUnsplashEmptyWithEmptyCredentials(t *testing.T) {
+	createUnplashCredential()
+	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash")
+	assert.Contains(t, err.Error(), "no unsplash credential found")
+	DeleteCredential()
+}
+
+func TestUnsplashEmptyWithCredentials(t *testing.T) {
+	createUnplashCredential()
+	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash")
+	assert.Contains(t, err.Error(), "unable to read credentials")
+	// DeleteCredential()
 }
 
 func TestUnsplashWithUntiTestingProfile(t *testing.T) {
 	// TODO: setup the clencli/credentials before starting the test
 	pwd, nwd := tester.Setup(t)
-	setupUnplashCredential()
+	createUnplashCredential()
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash", "--profile", "unit-testing")
 	dPath := pwd + "/" + nwd + "/" + "downloads"
 	assert.Nil(t, err)
@@ -55,7 +75,7 @@ func TestUnsplashWithUntiTestingProfile(t *testing.T) {
 }
 
 func TestUnsplashWithQuery(t *testing.T) {
-	setupUnplashCredential()
+	createUnplashCredential()
 	err := tester.ExecuteCommand(controller.UnsplashCmd(), "unsplash", "--query", "horse")
 	assert.Contains(t, err.Error(), "invalid argument")
 }
