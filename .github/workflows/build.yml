@@ -12,11 +12,9 @@ jobs:
       - run: go env 
       - run: go generate ./...
       - name: Run go test
-        env: 
-          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-          UNSPLASH_SECRET_KEY: ${{ secrets.UNSPLASH_SECRET_KEY }}
         run: |
-          echo "UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY}" 
+          export UNSPLASH_ACCESS_KEY=${{ secrets.UNSPLASH_ACCESS_KEY }}
+          export UNSPLASH_SECRET_KEY=${{ secrets.UNSPLASH_SECRET_KEY }}
           cd cobra/cmd && go test -v
       - name: Run go build
         run: mkdir bin/ && go build -o bin/clencli
