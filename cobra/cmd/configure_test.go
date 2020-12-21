@@ -11,13 +11,11 @@ import (
 
 func TestMain(m *testing.M) {
 	tester.SetupAll()
-
 	// comment the line below if you want to keep the test results
-	// pwd, nwd := tester.SetupAll()
-
+	pwd, nwd := tester.SetupAll()
 	code := m.Run()
 	// comment the line below if you want to keep the test results
-	// tester.TeardownAll(pwd, nwd)
+	tester.TeardownAll(pwd, nwd)
 	os.Exit(code)
 }
 
@@ -30,7 +28,6 @@ func executeConfigure(args ...string) error {
 
 func TestConfigureEmpty(t *testing.T) {
 	err := executeConfigure("")
-	// assert.Contains(t, out, "Usage")
 	assert.Contains(t, err.Error(), "invalid argument")
 }
 
