@@ -1,4 +1,4 @@
-package cmd
+package tester
 
 // func createUnplashCredential() {
 // 	aid.DeleteConfigurationsDirectory()

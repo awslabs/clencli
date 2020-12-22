@@ -1,6 +1,7 @@
 package tester
 
 import (
+	"os"
 	"testing"
 
 	"github.com/awslabs/clencli/cobra/controller"
@@ -17,123 +18,92 @@ func TestInitWithEmptyArgs(t *testing.T) {
 	assert.Contains(t, err.Error(), "invalid argument")
 }
 
-// func TestInitWithInvalidArg(t *testing.T) {
-// 	err := executeCommand(controller.InitCmd(), "init", "foo")
-// 	assert.Contains(t, err.Error(), "invalid argument")
-// }
+func TestInitWithInvalidArg(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "foo")
+	assert.Contains(t, err.Error(), "invalid argument")
+}
 
-// func TestInitProjectWithNoName(t *testing.T) {
-// 	err := executeCommand(controller.InitCmd(), "init", "project")
-// 	assert.Contains(t, err.Error(), "required flag(s) \"name\" not set")
-// }
+func TestInitProjectWithNoName(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project")
+	assert.Contains(t, err.Error(), "required flag(s) \"name\" not set")
+}
 
-// func TestInitProjectWithEmptyName(t *testing.T) {
-// 	err := executeCommand(controller.InitCmd(), "init", "project", "--name")
-// 	assert.Contains(t, err.Error(), "flag needs an argument: --name")
-// }
+func TestInitProjectWithEmptyName(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name")
+	assert.Contains(t, err.Error(), "flag needs an argument: --name")
+}
 
-// func TestInitProjectWithName(t *testing.T) {
-// 	// pwd, nwd := tester.Setup(t)
-// 	pPath := pwd + "/" + nwd + "/" + "foo"
-// 	err := executeCommand(controller.InitCmd(), "init", "project", "--name", "foo")
+func assertBasicProject(t *testing.T, err error) (string, string) {
+	sep := string(os.PathSeparator)
+	dir := t.Name() + sep + "foo"
 
-// 	assert.Nil(t, err)
-// 	assert.DirExists(t, pPath)
-// 	assert.FileExists(t, pPath+"/.gitignore")
-// 	assert.DirExists(t, pPath+"/clencli")
+	assert.Nil(t, err)
+	assert.DirExists(t, dir)
+	assert.FileExists(t, dir+sep+".gitignore")
+	assert.DirExists(t, dir+sep+"clencli")
 
-// 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
-// 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
-// }
+	assert.FileExists(t, dir+sep+"clencli"+sep+"readme.tmpl")
+	assert.FileExists(t, dir+sep+"clencli"+sep+"readme.yaml")
 
-// func TestInitProjectWithNameAndEmptyType(t *testing.T) {
-// 	err := executeCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type")
-// 	assert.Contains(t, err.Error(), "flag needs an argument: --type")
-// }
+	return dir, sep
+}
 
-// func TestInitProjectWithNameAndWrongType(t *testing.T) {
-// 	err := executeCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "nil")
-// 	assert.Contains(t, err.Error(), "Unknown project type provided")
-// }
+func assertCloudProject(t *testing.T, err error) (string, string) {
+	dir, sep := assertBasicProject(t, err)
+	assert.FileExists(t, dir+sep+"clencli"+sep+"hld.tmpl")
+	assert.FileExists(t, dir+sep+"clencli"+sep+"hld.yaml")
+	return dir, sep
+}
 
-// func TestInitProjectWithNameAndBasicType(t *testing.T) {
-// 	// pwd, nwd := tester.Setup(t)
-// 	pPath := pwd + "/" + nwd + "/" + "foo"
-// 	err := executeCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "basic")
+func TestInitProjectWithName(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo")
+	assertBasicProject(t, err)
 
-// 	assert.Nil(t, err)
-// 	assert.DirExists(t, pPath)
-// 	assert.FileExists(t, pPath+"/.gitignore")
-// 	assert.DirExists(t, pPath+"/clencli")
+}
 
-// 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
-// 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
-// }
+func TestInitProjectWithNameAndEmptyType(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type")
+	assert.Contains(t, err.Error(), "flag needs an argument: --type")
+}
 
-// func TestInitProjectWithNameAndCloudType(t *testing.T) {
-// 	pwd, nwd := tester.Setup(t)
-// 	pPath := pwd + "/" + nwd + "/" + "foo"
-// 	err := executeCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "cloud")
+func TestInitProjectWithNameAndWrongType(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "nil")
+	assert.Contains(t, err.Error(), "unknown project type provided")
+}
 
-// 	assert.Nil(t, err)
-// 	assert.DirExists(t, pPath)
-// 	assert.FileExists(t, pPath+"/.gitignore")
-// 	assert.DirExists(t, pPath+"/clencli")
+func TestInitProjectWithNameAndBasicType(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "basic")
+	assertBasicProject(t, err)
+}
 
-// 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
-// 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
+func TestInitProjectWithNameAndCloudType(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "cloud")
+	assertCloudProject(t, err)
+}
 
-// 	assert.FileExists(t, pPath+"/clencli/hld.tmpl")
-// 	assert.FileExists(t, pPath+"/clencli/hld.yaml")
-// }
+func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "cloudformation")
+	dir, sep := assertCloudProject(t, err)
 
-// func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
-// 	pwd, nwd := tester.Setup(t)
-// 	pPath := pwd + "/" + nwd + "/" + "foo"
-// 	err := executeCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "cloudformation")
+	assert.DirExists(t, dir+sep+"environments"+sep+"dev")
+	assert.DirExists(t, dir+sep+"environments"+sep+"prod")
 
-// 	assert.Nil(t, err)
-// 	assert.DirExists(t, pPath)
-// 	assert.FileExists(t, pPath+"/.gitignore")
-// 	assert.DirExists(t, pPath+"/clencli")
+	assert.FileExists(t, dir+sep+"skeleton.yaml")
+	assert.FileExists(t, dir+sep+"skeleton.json")
+}
 
-// 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
-// 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
+func TestInitProjectWithNameAndTerraformType(t *testing.T) {
+	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "terraform")
+	dir, sep := assertCloudProject(t, err)
 
-// 	assert.FileExists(t, pPath+"/clencli/hld.tmpl")
-// 	assert.FileExists(t, pPath+"/clencli/hld.yaml")
+	assert.FileExists(t, dir+sep+"main.tf")
+	assert.FileExists(t, dir+sep+"variables.tf")
+	assert.FileExists(t, dir+sep+"outputs.tf")
 
-// 	assert.DirExists(t, pPath+"/environments/dev")
-// 	assert.DirExists(t, pPath+"/environments/prod")
+	assert.DirExists(t, dir+sep+"environments")
+	assert.FileExists(t, dir+sep+"environments"+sep+"dev.tf")
+	assert.FileExists(t, dir+sep+"environments"+sep+"prod.tf")
 
-// 	assert.FileExists(t, pPath+"/skeleton.yaml")
-// 	assert.FileExists(t, pPath+"/skeleton.json")
-// }
-
-// func TestInitProjectWithNameAndTerraformType(t *testing.T) {
-// 	pwd, nwd := tester.Setup(t)
-// 	pPath := pwd + "/" + nwd + "/" + "foo"
-// 	err := executeCommand(controller.InitCmd(), "init", "project", "--name", "foo", "--type", "terraform")
-
-// 	assert.Nil(t, err)
-// 	assert.DirExists(t, pPath)
-// 	assert.FileExists(t, pPath+"/.gitignore")
-// 	assert.DirExists(t, pPath+"/clencli")
-
-// 	assert.FileExists(t, pPath+"/clencli/readme.tmpl")
-// 	assert.FileExists(t, pPath+"/clencli/readme.yaml")
-
-// 	assert.FileExists(t, pPath+"/clencli/hld.tmpl")
-// 	assert.FileExists(t, pPath+"/clencli/hld.yaml")
-
-// 	assert.FileExists(t, pPath+"/main.tf")
-// 	assert.FileExists(t, pPath+"/variables.tf")
-// 	assert.FileExists(t, pPath+"/outputs.tf")
-
-// 	assert.DirExists(t, pPath+"/environments")
-// 	assert.FileExists(t, pPath+"/environments/dev.tf")
-// 	assert.FileExists(t, pPath+"/environments/prod.tf")
-
-// 	assert.FileExists(t, pPath+"/Makefile")
-// 	assert.FileExists(t, pPath+"/LICENSE")
-// }
+	assert.FileExists(t, dir+sep+"Makefile")
+	assert.FileExists(t, dir+sep+"LICENSE")
+}
