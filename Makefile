@@ -55,7 +55,6 @@ clencli/clean: ## Removes unnecessary files and directories
 	rm -rf generated-*/
 	rm -rf dist/
 	rm -rf build/
-	rm -rf test/
 
 .PHONY: clencli/update-readme
 clencli/update-readme: ## Renders template readme.tmpl with additional documents
