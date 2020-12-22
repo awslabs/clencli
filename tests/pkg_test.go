@@ -9,6 +9,7 @@ import (
 
 	"github.com/awslabs/clencli/cobra/controller"
 	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -84,23 +85,48 @@ func createAndEnterTestDirectory(t *testing.T) string {
 // ExecuteCommand execute `root` Cobra command and return its outputs
 func executeCommand(t *testing.T, cmd *cobra.Command, args []string) (output string, err error) {
 	wd := createAndEnterTestDirectory(t)
-	_, output, err = executeCommandC(cmd, args)
+	cmd, stdout, stderr, err := executeCommandC(cmd, args)
+	logrus.Debugf("Test %s has the following stdout:\n%s", t.Name(), stdout)
+	logrus.Debugf("Test %s has the following stderr:\n%s", t.Name(), stderr)
 	os.Chdir(wd)
 
 	return output, err
 }
 
-func executeCommandC(cmd *cobra.Command, args []string) (c *cobra.Command, output string, err error) {
-	buf := new(bytes.Buffer)
+func executeCommandR(t *testing.T, cmd *cobra.Command, args []string) (output string, err error) {
+	wd := createAndEnterTestDirectory(t)
 
 	rootCmd := controller.RootCmd()
 	rootCmd.AddCommand(cmd)
+	_, output, err = executeCommandRC(rootCmd, args)
+	logrus.Debugf("Test %s has the following stdout:\n%s", t.Name(), output)
+	os.Chdir(wd)
 
-	rootCmd.SetOutput(buf)
-	rootCmd.SetErr(buf)
+	return output, err
+}
+
+func executeCommandC(cmd *cobra.Command, args []string) (*cobra.Command, string, string, error) {
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+
+	rootCmd := controller.RootCmd()
+	rootCmd.AddCommand(cmd)
+	rootCmd.SetOut(stdout)
+	rootCmd.SetErr(stderr)
 	rootCmd.SetArgs(args)
 
-	c, err = rootCmd.ExecuteC()
+	cmd, err := rootCmd.ExecuteC()
+
+	return cmd, stdout.String(), stderr.String(), err
+}
+
+func executeCommandRC(cmd *cobra.Command, args []string) (c *cobra.Command, output string, err error) {
+	buf := new(bytes.Buffer)
+	cmd.SetOut(buf)
+	cmd.SetErr(buf)
+	cmd.SetArgs(args)
+
+	c, err = cmd.ExecuteC()
 
 	return c, buf.String(), err
 }
