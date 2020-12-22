@@ -26,8 +26,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ConfigurationDirectoryExist returns `true` if the configuration directory exist, `false` otherwise
-func ConfigurationDirectoryExist() bool {
+// ConfigurationsDirectoryExist returns `true` if the configuration directory exist, `false` otherwise
+func ConfigurationsDirectoryExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().ConfigurationsDir)
 }
 
@@ -36,11 +36,15 @@ func ConfigurationsFileExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().ConfigurationsPath)
 }
 
-// CreateConfigDir creates the configuration directory, returns `true` if the configuration directory exist, `false` otherwise
-func CreateConfigDir() bool {
+// CreateConfigurationsDirectory creates the configuration directory, returns `true` if the configuration directory exist, `false` otherwise
+func CreateConfigurationsDirectory() bool {
 	dir := GetAppInfo().ConfigurationsDir
-	fmt.Printf("CLENCLI configuration directory created at: \n%s\n", dir)
-	return helper.CreateDir(dir)
+	created := helper.CreateDir(dir)
+	if created {
+		fmt.Printf("CLENCLI configuration directory created at: \n%s\n", dir)
+	}
+
+	return created
 }
 
 // CredentialsFileExist returns `true` if the credentials file exist, `false` otherwise
@@ -86,4 +90,14 @@ func WriteInterfaceToFile(in interface{}, path string) error {
 // DeleteCredentialFile delete the credentials file
 func DeleteCredentialFile() error {
 	return helper.DeleteFile(GetAppInfo().CredentialsPath)
+}
+
+// DeleteConfigurationFile delete the credentials file
+func DeleteConfigurationFile() error {
+	return helper.DeleteFile(GetAppInfo().ConfigurationsPath)
+}
+
+// DeleteConfigurationsDirectory delete the configurations directory
+func DeleteConfigurationsDirectory() error {
+	return os.RemoveAll(GetAppInfo().ConfigurationsDir)
 }

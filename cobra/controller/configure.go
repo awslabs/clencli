@@ -49,14 +49,14 @@ func configureRun(cmd *cobra.Command, args []string) error {
 	// profile, _ := cmd.Flags().GetString("profile")
 
 	if len(args) == 0 {
-		if !aid.ConfigurationDirectoryExist() {
-			if aid.CreateConfigDir() {
+		if !aid.ConfigurationsDirectoryExist() {
+			if aid.CreateConfigurationsDirectory() {
 				// TODO: ask if user wants to setup credentials
 				dao.CreateCredentials(profile)
 				// TODO: ask if user wants to setup configurations
 				dao.CreateConfigurations(profile)
 			}
-		} else if aid.ConfigurationDirectoryExist() &&
+		} else if aid.ConfigurationsDirectoryExist() &&
 			(!aid.CredentialsFileExist() || !aid.ConfigurationsFileExist()) {
 
 			if !aid.CredentialsFileExist() {
@@ -67,7 +67,7 @@ func configureRun(cmd *cobra.Command, args []string) error {
 				dao.CreateConfigurations(profile)
 			}
 		} else {
-			if aid.ConfigurationDirectoryExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
+			if aid.ConfigurationsDirectoryExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
 				crp, err := dao.CredentialsProfileExist(profile)
 				if err != nil {
 					return err
@@ -93,7 +93,7 @@ func configureRun(cmd *cobra.Command, args []string) error {
 			}
 		}
 	} else if len(args) > 0 && args[0] == "delete" {
-		if !aid.ConfigurationDirectoryExist() {
+		if !aid.ConfigurationsDirectoryExist() {
 			return fmt.Errorf("clencli configuration directory not found")
 		}
 		if !aid.CredentialsFileExist() {
@@ -103,7 +103,7 @@ func configureRun(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("clencli configurations file not found")
 		}
 
-		if aid.ConfigurationDirectoryExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
+		if aid.ConfigurationsDirectoryExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
 			dao.DeleteCredentialProfile(profile)
 			dao.DeleteConfigurationProfile(profile)
 		}
