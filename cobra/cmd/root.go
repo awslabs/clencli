@@ -21,8 +21,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	aid "github.com/awslabs/clencli/cobra/aid"
-	controller "github.com/awslabs/clencli/cobra/controller"
+	"github.com/awslabs/clencli/cobra/aid"
+	"github.com/awslabs/clencli/cobra/controller"
+
 	"github.com/spf13/viper"
 )
 
@@ -54,5 +55,5 @@ func initConfig() {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 
-	aid.SetupLogging()
+	// aid.SetupLogging()
 }

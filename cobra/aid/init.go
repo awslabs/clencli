@@ -1,51 +1,62 @@
 package aid
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/awslabs/clencli/box"
 	"github.com/awslabs/clencli/helper"
+	h "github.com/awslabs/clencli/helper"
 )
 
 /* BASIC PROJECT */
 
 // CreateBasicProject creates a basic project
-func CreateBasicProject(name string) {
-	createProjectDir(name)
-	initBasicProject()
-	// helper.InitCustomProjectLayout(typee, "default")
-	// helper.InitCustomProjectLayout(typee, structure)
-	// helper.UpdateReadMe()
+func CreateBasicProject(name string) error {
+	err := createAndEnterProjectDir(name)
+	if err != nil {
+		return err
+	}
+
+	initalized := initProject()
+	if !initalized {
+		return fmt.Errorf("unable to initalize project \"%s\"", name)
+	}
+
+	// h.InitCustomProjectLayout(typee, "default")
+	// h.InitCustomProjectLayout(typee, structure)
+	// h.UpdateReadMe()
+	return nil
 }
 
-func createProjectDir(name string) {
+func createAndEnterProjectDir(name string) error {
 
-	// Create the project directory, only if doesn't exist
-	helper.CreateDir(name)
+	if !helper.MkDirsIfNotExist(name) {
+		return fmt.Errorf("unable to create directory %s", name)
+	}
+	fmt.Printf("directory \"%s\" created successfully ...\n", name)
 
-	// Change current directory to the project directory
-	os.Chdir(name)
+	err := os.Chdir(name)
+	if err != nil {
+		return fmt.Errorf("unable to enter directory %s", name)
+	}
+	fmt.Printf("changing current working directory to \"%s\"\n", name)
+
+	return nil
 }
 
 // create the basic configuration files
-func initBasicProject() {
+func initProject() bool {
 
 	// Create a directory for CLENCLI
-	helper.CreateDir("clencli")
+	a := h.MkDirsIfNotExist("clencli")
+	b := h.WriteFileFromBox("init", h.BuildPath("clencli/readme.yaml"))
+	c := h.WriteFileFromBox("init", h.BuildPath("clencli/readme.tmpl"))
+	d := h.WriteFileFromBox("init", h.BuildPath(".gitignore"))
+	e := h.WriteFileFromBox("init", h.BuildPath(".gitignoroooo"))
 
-	initReadme := "clencli/readme.yaml"
-	blobReadme, _ := box.Get("/init/clencli/readme.yaml")
-	helper.WriteFile(initReadme, blobReadme)
+	return (a && b && c && d && e)
 
-	// Gomplate
-	initReadMeTmpl := "clencli/readme.tmpl"
-	blobReadMeTmpl, _ := box.Get("/init/clencli/readme.tmpl")
-	helper.WriteFile(initReadMeTmpl, blobReadMeTmpl)
-
-	// Gitignore
-	initGitIgnore := ".gitignore"
-	blobGitIgnore, _ := box.Get("/init/.gitignore")
-	helper.WriteFile(initGitIgnore, blobGitIgnore)
 }
 
 /* CLOUD PROJECT */
@@ -60,11 +71,11 @@ func CreateCloudProject(name string) {
 func initCloudProject() {
 	initHLD := "clencli/hld.yaml"
 	blobHLD, _ := box.Get("/init/clencli/hld.yaml")
-	helper.WriteFile(initHLD, blobHLD)
+	h.WriteFile(initHLD, blobHLD)
 
 	initHLDTmpl := "clencli/hld.tmpl"
 	blobHLDTmpl, _ := box.Get("/init/clencli/hld.tmpl")
-	helper.WriteFile(initHLDTmpl, blobHLDTmpl)
+	h.WriteFile(initHLDTmpl, blobHLDTmpl)
 }
 
 /* CLOUDFORMATION PROJECT */
@@ -79,17 +90,17 @@ func CreateCloudFormationProject(name string) {
 // initialize a project with CloudFormation structure and copies template files
 func initCloudFormationProject() {
 
-	helper.CreateDir("environments")
-	helper.CreateDir("environments/dev")
-	helper.CreateDir("environments/prod")
+	h.MkDirsIfNotExist("environments")
+	h.MkDirsIfNotExist("environments/dev")
+	h.MkDirsIfNotExist("environments/prod")
 
 	initCFSkeleton := "skeleton.yaml"
 	blobCFSkeleton, _ := box.Get("/init/type/clouformation/skeleton.yaml")
-	helper.WriteFile(initCFSkeleton, blobCFSkeleton)
+	h.WriteFile(initCFSkeleton, blobCFSkeleton)
 
 	initCFSkeleton = "skeleton.json"
 	blobCFSkeleton, _ = box.Get("/init/type/clouformation/skeleton.json")
-	helper.WriteFile(initCFSkeleton, blobCFSkeleton)
+	h.WriteFile(initCFSkeleton, blobCFSkeleton)
 
 	/* TODO: copy a template to create standard tags for the entire stack easily
 	https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html
@@ -112,33 +123,33 @@ func CreateTerraformProject(name string) {
 func initTerraformProject() {
 	initMakefile := "Makefile"
 	blobMakefile, _ := box.Get("/init/type/terraform/Makefile")
-	helper.WriteFile(initMakefile, blobMakefile)
+	h.WriteFile(initMakefile, blobMakefile)
 
 	initLicense := "LICENSE"
 	blobLicense, _ := box.Get("/init/type/terraform/LICENSE")
-	helper.WriteFile(initLicense, blobLicense)
+	h.WriteFile(initLicense, blobLicense)
 
-	helper.CreateDir("environments")
+	h.MkDirsIfNotExist("environments")
 
 	initDevEnvironment := "environments/dev.tf"
 	blobDevEnvironment, _ := box.Get("/init/type/terraform/environments/dev.tf")
-	helper.WriteFile(initDevEnvironment, blobDevEnvironment)
+	h.WriteFile(initDevEnvironment, blobDevEnvironment)
 
 	initProdEnvironment := "environments/prod.tf"
 	blobProdEnvironment, _ := box.Get("/init/type/terraform/environments/prod.tf")
-	helper.WriteFile(initProdEnvironment, blobProdEnvironment)
+	h.WriteFile(initProdEnvironment, blobProdEnvironment)
 
 	initMainTF := "main.tf"
 	blobMainTF, _ := box.Get("/init/type/terraform/main.tf")
-	helper.WriteFile(initMainTF, blobMainTF)
+	h.WriteFile(initMainTF, blobMainTF)
 
 	initVariablesTF := "variables.tf"
 	blobVariablesTF, _ := box.Get("/init/type/terraform/variables.tf")
-	helper.WriteFile(initVariablesTF, blobVariablesTF)
+	h.WriteFile(initVariablesTF, blobVariablesTF)
 
 	initOutputsTF := "outputs.tf"
 	blobOutputsTF, _ := box.Get("/init/type/terraform/outputs.tf")
-	helper.WriteFile(initOutputsTF, blobOutputsTF)
+	h.WriteFile(initOutputsTF, blobOutputsTF)
 }
 
 // // InitCustomProjectLayout generates
@@ -162,7 +173,7 @@ func initTerraformProject() {
 
 // 				for _, f := range t.Files {
 // 					if f.File.State == "directory" {
-// 						CreateDir(f.File.Path)
+// 						MkDirsIfNotExist(f.File.Path)
 // 					} else if f.File.State == "file" {
 // 						dir, file := filepath.Split(f.File.Dest)
 // 						// in case it's the current directory
@@ -184,13 +195,13 @@ func initTerraformProject() {
 // }
 
 // func initCreateTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
-// 	helper.createProjectDir(name)
+// 	h.createAndEnter(name)
 // 	if !onlyCustomizedStructure {
-// 		helper.InitBasicProject()
-// 		helper.InitHLD(name)
-// 		helper.InitTerraform()
+// 		h.initProject()
+// 		h.InitHLD(name)
+// 		h.InitTerraform()
 // 	}
-// 	// helper.InitCustomProjectLayout(typee, "default")
-// 	// helper.InitCustomProjectLayout(typee, structure)
-// 	// helper.UpdateReadMe()
+// 	// h.InitCustomProjectLayout(typee, "default")
+// 	// h.InitCustomProjectLayout(typee, structure)
+// 	// h.UpdateReadMe()
 // }

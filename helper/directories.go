@@ -2,22 +2,27 @@ package helper
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
-// CreateDir create a directory given its name
-func CreateDir(name string) bool {
+// MkDirsIfNotExist creates a directory named path,
+// along with any necessary parents, and returns true, or else returns false.
+// The dirs have permission bits 511 (before umask) are used for all directories that this function creates.
+// If path is already a directory, the function does nothing and returns false.
+func MkDirsIfNotExist(name string) bool {
 	_, err := os.Stat(name)
 	if os.IsNotExist(err) {
-		errDir := os.MkdirAll(name, os.ModePerm)
-		if errDir != nil {
-			log.Fatal(err)
+		err = os.MkdirAll(BuildPath(name), os.ModePerm)
+		if err != nil {
+			log.Errorf("unable to create \"%s\" directory", name)
 			return false
 		}
+		return true
 	}
 
-	return true
+	return false
 }
 
 // CreateDirectoryNamedPath creates a directory named path, along with any necessary parents, and returns nil, or else returns an error.

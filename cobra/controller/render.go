@@ -56,11 +56,11 @@ func renderPreRun(cmd *cobra.Command, args []string) error {
 	}
 
 	if !function.FileExists("clencli/" + name + ".yaml") {
-		return errors.New("Missing database at clencli/" + name + ".yaml")
+		return errors.New("missing database at clencli/" + name + ".yaml")
 	}
 
 	if !function.FileExists("clencli/" + name + ".tmpl") {
-		return errors.New("Missing template at clencli/" + name + ".tmpl")
+		return errors.New("missing template at clencli/" + name + ".tmpl")
 	}
 
 	return nil

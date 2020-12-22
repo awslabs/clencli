@@ -51,21 +51,20 @@ func InitCmd() *cobra.Command {
 
 func initPreRun(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		return errors.New("this command requires one argument")
+		fmt.Print("something went wrong")
+		return fmt.Errorf("this command requires one argument")
 	}
 
-	err := validateProjectType(cmd, args)
-	return err
+	return validateProjectType(cmd, args)
 }
 
 func validateProjectType(cmd *cobra.Command, args []string) error {
 	// ensure the project types
 	if args[0] == "project" {
 		pType, err := cmd.Flags().GetString("type")
-		// flag accessed but not defined
 
 		if err != nil || pType == "" {
-			return errors.New("Project type must be defined")
+			return errors.New("project type must be defined")
 		}
 
 		if !helper.ContainsString(initValidProjectTypes, pType) {
@@ -88,7 +87,7 @@ func initRun(cmd *cobra.Command, args []string) error {
 
 	switch pType {
 	case "basic":
-		aid.CreateBasicProject(pName)
+		err = aid.CreateBasicProject(pName)
 	case "cloud":
 		aid.CreateCloudProject(pName)
 	case "cloudformation":
@@ -96,10 +95,10 @@ func initRun(cmd *cobra.Command, args []string) error {
 	case "terraform":
 		aid.CreateTerraformProject(pName)
 	default:
-		return errors.New("Unknow project type")
+		return errors.New("unknow project type")
 	}
 
-	return nil
+	return err
 }
 
 func initGetFlags(cmd *cobra.Command) (name string, typee string, structure string, onlyCustomizedStructure bool) {

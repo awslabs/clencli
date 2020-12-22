@@ -3,12 +3,22 @@ package helper
 import (
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"io"
-	"log"
 	"net/http"
 	"os"
+
+	log "github.com/sirupsen/logrus"
+
+	"github.com/awslabs/clencli/box"
 )
+
+// BuildPath changes the given path to a more cross platform friendly format
+func BuildPath(path string) string {
+	sep := string(os.PathSeparator)
+	return strings.ReplaceAll(path, "/", sep)
+}
 
 // WriteFile writes a file and return true if successful
 func WriteFile(filename string, data []byte) bool {
@@ -19,6 +29,20 @@ func WriteFile(filename string, data []byte) bool {
 		return false
 	}
 
+	return true
+}
+
+// WriteFileFromBox get the file from box's resources and write into the given destination, returns false if not able to.
+func WriteFileFromBox(source string, dest string) bool {
+	sep := string(os.PathSeparator)
+	path := sep + source + sep + dest
+	bytes, found := box.Get(path)
+	if !found {
+		log.Errorf("file \"%s\" not found under box/resources", path)
+		return false
+	}
+
+	WriteFile(dest, bytes)
 	return true
 }
 

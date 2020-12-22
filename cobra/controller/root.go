@@ -16,27 +16,42 @@ limitations under the License.
 package controller
 
 import (
+	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var profile string
 
+//The verbose flag value
+var verbosity string
+
 // RootCmd represents the base command when called without any subcommands
 func RootCmd() *cobra.Command {
 	man := helper.GetManual("root")
 	cmd := &cobra.Command{
-		Use:   man.Use,
-		Short: man.Short,
-		Long:  man.Long,
+		Use:               man.Use,
+		Short:             man.Short,
+		Long:              man.Long,
+		PersistentPreRunE: rootPersistentPreRun,
 	}
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here will be global for your application.
-	cmd.PersistentFlags().StringVar(&profile, "profile", "default", "Use a specific profile from your configurations file")
+	cmd.PersistentFlags().StringVarP(&profile, "profile", "p", "default", "Use a specific profile from your credentials and configurations file")
+	cmd.PersistentFlags().StringVarP(&verbosity, "verbosity", "v", logrus.InfoLevel.String(), "Valid log level:panic,fatal,error,warn,info,debug,trace)")
 
 	// Cobra also supports local flags, which will only run when this action is called directly.
 	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	return cmd
+}
+
+func rootPersistentPreRun(cmd *cobra.Command, args []string) error {
+	if err := aid.SetupLogging(verbosity); err != nil {
+		return err
+	}
+
+	return nil
 }

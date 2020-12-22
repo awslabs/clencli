@@ -21,7 +21,7 @@ import (
 
 	"github.com/awslabs/clencli/cobra/model"
 	"github.com/mitchellh/go-homedir"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // GetAppInfo return information about CLENCLI settings
@@ -63,16 +63,24 @@ func getHomeDir() string {
 }
 
 // SetupLogging set up logging for the application
-func SetupLogging() {
+func SetupLogging(level string) error {
 	app := GetAppInfo()
-	if _, err := os.Stat(app.LogsDir); os.IsExist(err) {
-		// If the file doesn't exist, create it or append to the file
-		file, err := os.OpenFile(app.LogsPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
-		if err != nil {
-			fmt.Printf("Unexpected error while opening log file\n%v", err)
-			os.Exit(1)
-		}
-		log.SetFormatter(&log.JSONFormatter{})
-		log.SetOutput(file)
+	file, err := os.OpenFile(app.LogsPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	if err != nil {
+		fmt.Printf("Unexpected error while opening log file\n%v", err)
+		os.Exit(1)
 	}
+
+	lvl, err := logrus.ParseLevel(level)
+	if err != nil {
+		fmt.Printf("Unexpected error while parsing log level\n%v", err)
+		os.Exit(1)
+	}
+
+	logrus.SetLevel(lvl)
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetOutput(file)
+
+	return nil
+
 }
