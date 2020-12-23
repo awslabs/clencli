@@ -47,7 +47,7 @@ func RenderCmd() *cobra.Command {
 
 func renderPreRun(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		return fmt.Errorf("one the following arguments are required: %s", renderValidArgs)
+		return fmt.Errorf("error: one the following arguments are required: %s", renderValidArgs)
 	}
 
 	name, err := cmd.Flags().GetString("name")
@@ -69,17 +69,17 @@ func renderPreRun(cmd *cobra.Command, args []string) error {
 func renderRun(cmd *cobra.Command, args []string) error {
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
-		return fmt.Errorf("unable to render template "+name+"\n%v", err)
+		return fmt.Errorf("error: unable to render template "+name+"\n%v", err)
 	}
 
 	// err = helper.UpdateReadMe()
 	// if err != nil {
-	// 	return fmt.Errorf("Unable to update local config with global config values \n%v", err)
+	// 	return fmt.Errorf("error: Unable to update local config with global config values \n%v", err)
 	// }
 
 	// err = helper.UpdateReadMeLogoURL()
 	// if err != nil {
-	// 	return fmt.Errorf("Unable to update local config with new URL from Unsplash \n%v", err)
+	// 	return fmt.Errorf("error: Unable to update local config with new URL from Unsplash \n%v", err)
 	// }
 
 	err = initGomplate(name)

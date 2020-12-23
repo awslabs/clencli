@@ -11,23 +11,33 @@ import (
 func TestInitCmd(t *testing.T) {
 	tests := map[string]struct {
 		args []string
-		want string
+		out  string
+		err  string
 	}{
-		"empty":           {args: []string{"init"}, want: "this command requires one argument"},
-		"empty arg":       {args: []string{"init", ""}, want: "invalid argument"},
-		"wrong arg":       {args: []string{"init", "foo"}, want: "invalid argument"},
-		"no flag name":    {args: []string{"init", "project"}, want: "required flag(s) \"name\" not set"},
-		"wrong flag":      {args: []string{"init", "project", "--foo"}, want: "unknown flag: --foo"},
-		"emtpy flag name": {args: []string{"init", "project", "--name"}, want: "flag needs an argument"},
-		"with name":       {args: []string{"init", "project", "--name", "foo"}, want: ""},
+		// argument
+		"empty":     {args: []string{"init"}, out: "", err: "this command requires one argument"},
+		"empty arg": {args: []string{"init", ""}, out: "", err: "invalid argument"},
+		"wrong arg": {args: []string{"init", "foo"}, out: "", err: "invalid argument"},
+
+		// flags
+		"wrong flag": {args: []string{"init", "project", "--foo"}, out: "", err: "unknown flag: --foo"},
+
+		// # projects
+		"no project name": {args: []string{"init", "project"}, out: "", err: "project name must be defined"},
+
+		// ## --project-name
+		"emtpy project name": {args: []string{"init", "project", "--project-name"}, out: "", err: "flag needs an argument"},
+		"with name":          {args: []string{"init", "project", "--project-name", "foo"}, out: "", err: ""},
+
+		// ## --project-type
+		"empty project type": {args: []string{"init", "project", "--project-type"}, out: "", err: "flag needs an argument"},
 	}
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			sout, serr, err := executeCommand(t, controller.InitCmd(), tc.args)
-			assert.Contains(t, sout, tc.want)
-			assert.Contains(t, serr, tc.want)
-			assert.Contains(t, err.Error(), tc.want)
+			out, err := executeCommand(t, controller.InitCmd(), tc.args)
+			assert.Contains(t, out, tc.out)
+			assert.Contains(t, err.Error(), tc.err)
 		})
 	}
 }
@@ -54,11 +64,13 @@ func assertCloudProject(t *testing.T, err error) (string, string) {
 	return dir, sep
 }
 
-// func TestInitProjectWithName(t *testing.T) {
-// 	args := []string{"init", "project", "--name", "foo"}
-// 	_, err := executeCommand(t, controller.InitCmd(), args)
-// 	assertBasicProject(t, err)
-// }
+func TestInitProjectWithName(t *testing.T) {
+	args := []string{"init", "project", "--project-name", "foo"}
+	out, err := executeCommand(t, controller.InitCmd(), args)
+	assert.Nil(t, out)
+	assert.Nil(t, err)
+	assertBasicProject(t, err)
+}
 
 // func TestInitProjectWithNameAndEmptyType(t *testing.T) {
 // 	args := []string{"init", "project", "--name", "foo", "--type"}

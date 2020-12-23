@@ -44,7 +44,7 @@ func versionRun(cmd *cobra.Command, args []string) error {
 	version, found := box.Get("/VERSION")
 	if !found {
 		logrus.Errorf("unable to find VERSION file under box/resources")
-		return fmt.Errorf("version not available")
+		return fmt.Errorf("error: version not available")
 	}
 
 	goOS := runtime.GOOS

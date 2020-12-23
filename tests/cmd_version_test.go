@@ -10,8 +10,7 @@ import (
 func TestVersionCmd(t *testing.T) {
 	args := []string{"version"}
 	cmd := controller.VersionCmd()
-	sout, serr, err := executeCommand(t, cmd, args)
+	out, err := executeCommand(t, cmd, args)
 	assert.Nil(t, err)
-	assert.Empty(t, serr)
-	assert.Contains(t, sout, "CLENCLI v")
+	assert.Contains(t, out, "CLENCLI v")
 }

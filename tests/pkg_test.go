@@ -34,12 +34,12 @@ func TestMain(m *testing.M) {
 
 /* COBRA */
 
-func executeCommand(t *testing.T, cmd *cobra.Command, args []string) (stdout string, stderr string, err error) {
+func executeCommand(t *testing.T, cmd *cobra.Command, args []string) (stdout string, err error) {
 	wd := createAndEnterTestDirectory(t)
-	_, stdout, stderr, err = executeCommandC(cmd, args)
+	_, stdout, err = executeCommandC(cmd, args)
 	os.Chdir(wd)
 
-	return stdout, stderr, err
+	return stdout, err
 }
 
 // return the current working directory, useful to return to the previous directory
@@ -64,20 +64,18 @@ func createTestDirectory(t *testing.T) string {
 	return t.Name()
 }
 
-func executeCommandC(cmd *cobra.Command, args []string) (command *cobra.Command, stdout string, stderr string, err error) {
-	bOut := new(bytes.Buffer)
-	bErr := new(bytes.Buffer)
+func executeCommandC(cmd *cobra.Command, args []string) (command *cobra.Command, stdout string, err error) {
+	buf := new(bytes.Buffer)
 
 	rootCmd := controller.RootCmd()
 	rootCmd.AddCommand(cmd)
-	rootCmd.SetOut(bOut)
-	rootCmd.SetErr(bErr)
+	rootCmd.SetOut(buf)
+	rootCmd.SetErr(buf)
 	rootCmd.SetArgs(args)
 
 	command, err = rootCmd.ExecuteC()
-	stdout = bOut.String()
-	stderr = bErr.String()
-	return command, stdout, stderr, err
+	stdout = buf.String()
+	return command, stdout, err
 }
 
 // InitRootAndChildCmd initializes Cobra `root` command and add the `childCmd` to it

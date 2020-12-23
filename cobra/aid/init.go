@@ -20,7 +20,7 @@ func CreateBasicProject(name string) error {
 
 	initalized := initProject()
 	if !initalized {
-		return fmt.Errorf("unable to initalize project \"%s\"", name)
+		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
 	}
 
 	// h.InitCustomProjectLayout(typee, "default")
@@ -32,13 +32,13 @@ func CreateBasicProject(name string) error {
 func createAndEnterProjectDir(name string) error {
 
 	if !helper.MkDirsIfNotExist(name) {
-		return fmt.Errorf("unable to create directory %s", name)
+		return fmt.Errorf("error: unable to create directory %s", name)
 	}
 	fmt.Printf("directory \"%s\" created successfully ...\n", name)
 
 	err := os.Chdir(name)
 	if err != nil {
-		return fmt.Errorf("unable to enter directory %s", name)
+		return fmt.Errorf("error: unable to enter directory %s", name)
 	}
 	fmt.Printf("changing current working directory to \"%s\"\n", name)
 
@@ -62,9 +62,10 @@ func initProject() bool {
 /* CLOUD PROJECT */
 
 // CreateCloudProject copies the necessary templates for cloud projects
-func CreateCloudProject(name string) {
+func CreateCloudProject(name string) error {
 	CreateBasicProject(name)
 	initCloudProject()
+	return nil
 }
 
 // copies the High Level Design template file
@@ -81,10 +82,11 @@ func initCloudProject() {
 /* CLOUDFORMATION PROJECT */
 
 // CreateCloudFormationProject creates an AWS CloudFormation project
-func CreateCloudFormationProject(name string) {
+func CreateCloudFormationProject(name string) error {
 	CreateBasicProject(name)
 	initCloudProject()
 	initCloudFormationProject()
+	return nil
 }
 
 // initialize a project with CloudFormation structure and copies template files
@@ -113,10 +115,11 @@ func initCloudFormationProject() {
 /* TERRAFORM PROJECT */
 
 // CreateTerraformProject creates a HashiCorp Terraform project
-func CreateTerraformProject(name string) {
+func CreateTerraformProject(name string) error {
 	CreateBasicProject(name)
 	initCloudProject()
 	initTerraformProject()
+	return nil
 }
 
 // InitTerraform initialize a project with Terraform structure

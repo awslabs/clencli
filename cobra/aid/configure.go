@@ -63,7 +63,7 @@ func ReadConfig(name string) (*viper.Viper, error) {
 
 	err := v.ReadInConfig()
 	if err != nil {
-		return v, fmt.Errorf("error when trying to read local configurations \n%s", err)
+		return v, fmt.Errorf("error: error when trying to read local configurations \n%s", err)
 	}
 	return v, err
 
@@ -75,13 +75,13 @@ func WriteInterfaceToFile(in interface{}, path string) error {
 	if err != nil {
 		_, ok := err.(*json.UnsupportedTypeError)
 		if ok {
-			return fmt.Errorf("tried to marshal an invalid Type")
+			return fmt.Errorf("error: tried to marshal an invalid Type")
 		}
 	}
 
 	err = ioutil.WriteFile(path, b, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("unable to update: %s \n%v", path, err)
+		return fmt.Errorf("error: unable to update: %s \n%v", path, err)
 	}
 
 	return err

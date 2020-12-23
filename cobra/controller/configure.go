@@ -94,13 +94,13 @@ func configureRun(cmd *cobra.Command, args []string) error {
 		}
 	} else if len(args) > 0 && args[0] == "delete" {
 		if !aid.ConfigurationsDirectoryExist() {
-			return fmt.Errorf("clencli configuration directory not found")
+			return fmt.Errorf("error: clencli configuration directory not found")
 		}
 		if !aid.CredentialsFileExist() {
-			return fmt.Errorf("clencli credentials file not found")
+			return fmt.Errorf("error: clencli credentials file not found")
 		}
 		if !aid.ConfigurationsFileExist() {
-			return fmt.Errorf("clencli configurations file not found")
+			return fmt.Errorf("error: clencli configurations file not found")
 		}
 
 		if aid.ConfigurationsDirectoryExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {

@@ -55,7 +55,7 @@ func unsplashPreRun(cmd *cobra.Command, args []string) error {
 
 	params := aid.GetModelFromFlags(cmd)
 	if !helper.ContainsString(unsplashPhotoSizes, params.Size) {
-		return fmt.Errorf("unknown photo size provided: %s", params.Size)
+		return fmt.Errorf("error: unknown photo size provided: %s", params.Size)
 	}
 
 	return nil
@@ -69,7 +69,7 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 	}
 
 	if (model.Credential{}) == cred {
-		return fmt.Errorf("no unsplash credential found or no profile enabled")
+		return fmt.Errorf("error: no unsplash credential found or no profile enabled")
 	}
 
 	return aid.DownloadPhoto(params, cred, unsplashPhotoSizes)

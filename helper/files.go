@@ -112,13 +112,13 @@ func FileSize(path string) (int64, error) {
 		info, err := os.Stat(path)
 		if err != nil {
 			if err != nil {
-				return size, fmt.Errorf("unable to obtain information about file: %s\n%s", path, err)
+				return size, fmt.Errorf("error: unable to obtain information about file: %s\n%s", path, err)
 			}
 			return size, err
 		}
 		size = info.Size()
 	} else {
-		return size, fmt.Errorf("file does not exist")
+		return size, fmt.Errorf("error: file does not exist")
 	}
 	return size, nil
 }
