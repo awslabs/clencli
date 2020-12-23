@@ -79,25 +79,38 @@ clencli/help: ## This HELP message
 
 split = $(word $2,$(subst $3, ,$1))
 word-slash = $(word $2,$(subst /, ,$1))
+word-dot = $(word $2,$(subst ., ,$1))
 
 CURRENT_BRANCH := $(shell git branch --show-current)
 CURRENT_COMMIT := $(shell git rev-parse --short HEAD)
 LATEST_TAG := $(shell git describe --tags --abbrev=0)
+LATEST_CANDIDATE_TAG := $(shell git describe --tags --match "*-rc.*" --abbrev=4 HEAD)
 
 RELEASE_VERSION=v$(call word-slash,$(CURRENT_BRANCH),2)
-CANDIDATE_VERSION=$(LATEST_TAG)-rc.
+CANDIDATE_VERSION=$(LATEST_TAG)-rc
+
 
 .PHONY: clencli/release
 clencli/release: go/mod/tidy
 	@echo CURRENT BRANCH IS: $(CURRENT_BRANCH)
 	@echo CURRENT COMMIT IS: $(CURRENT_COMMIT)
 	@echo LATEST TAG IS: $(LATEST_TAG)
+	@echo LATEST_CANDIDATE_TAG IS : $(LATEST_CANDIDATE_TAG)
 ifneq (,$(findstring release,$(CURRENT_BRANCH)))
 	@echo RELEASE FINAL VERSION
 	git tag $(RELEASE_VERSION)
 else ifneq (,$(findstring develop,$(CURRENT_BRANCH)))
 	@echo RELEASE CANDIDATE VERSION
-	@echo git tag $(CANDIDATE_VERSION)
+ifeq ($(strip $(LATEST_CANDIDATE_TAG)),) # not found
+	git tag $(CANDIDATE_VERSION).1
+else
+	@echo NEW_CANDIDATE_VERSION IS : $(NEW_CANDIDATE_VERSION)
+	$(eval n_release_candidates=$(call word-dot,$(LATEST_CANDIDATE_TAG),4))
+	@echo $(n_release_candidates)
+	$(eval n_release_candidates=$(shell echo $$(($(n_release_candidates)+1))))
+	@echo $(n_release_candidates)
+	git tag $(CANDIDATE_VERSION).$(n_release_candidates)
+endif
 else ifneq (,$(findstring feature,$(CURRENT_BRANCH)))
 	@echo RELEASE DEV SNAPSTHO
 else
