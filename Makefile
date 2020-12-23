@@ -82,11 +82,13 @@ clencli/help: ## This HELP message
 
 CURRENT_BRANCH := $(shell git branch --show-current)
 CURRENT_COMMIT := $(shell git rev-parse --short HEAD)
+LATEST_TAG := $(shell git describe --tags --abbrev=0)
 .PHONY: clencli/version
 clencli/version:
 	@echo CURRENT BRANCH IS: $(CURRENT_BRANCH)
 	@echo CURRENT COMMIT IS: $(CURRENT_COMMIT)
-ifneq (,$(findstring master,$(CURRENT_BRANCH)))
+	@echo LATEST TAG IS: $(LATEST_TAG)
+ifneq (,$(findstring ,$(CURRENT_BRANCH)))
     @echo RELEASE FINAL VERSION
 else ifneq (,$(findstring develop,$(CURRENT_BRANCH)))
 	@echo RELEASE CANDIDATE VERSION
