@@ -84,7 +84,8 @@ word-dot = $(word $2,$(subst ., ,$1))
 CURRENT_BRANCH := $(shell git branch --show-current)
 CURRENT_COMMIT := $(shell git rev-parse --short HEAD)
 LATEST_TAG := $(shell git describe --tags --abbrev=0)
-LATEST_CANDIDATE_TAG := $(shell git describe --tags --match "*-rc.*" --abbrev=4 HEAD)
+# LATEST_TAG := $(shell git describe --tags `git rev-list --tags --max-count=1`)  # gets tags across all branches, not just the current branch
+LATEST_CANDIDATE_TAG := $(shell git describe --tags --abbrev=0 --match "*-rc.*")
 
 RELEASE_VERSION=v$(call word-slash,$(CURRENT_BRANCH),2)
 CANDIDATE_VERSION=$(LATEST_TAG)-rc
@@ -104,12 +105,13 @@ else ifneq (,$(findstring develop,$(CURRENT_BRANCH)))
 ifeq ($(strip $(LATEST_CANDIDATE_TAG)),) # not found
 	git tag $(CANDIDATE_VERSION).1
 else
-	@echo NEW_CANDIDATE_VERSION IS : $(NEW_CANDIDATE_VERSION)
+	$(eval major=$(call word-dot,$(LATEST_CANDIDATE_TAG),1))
+	$(eval minor=$(call word-dot,$(LATEST_CANDIDATE_TAG),2))
+	$(eval patch=$(call word-dot,$(LATEST_CANDIDATE_TAG),3))
+
 	$(eval n_release_candidates=$(call word-dot,$(LATEST_CANDIDATE_TAG),4))
-	@echo $(n_release_candidates)
 	$(eval n_release_candidates=$(shell echo $$(($(n_release_candidates)+1))))
-	@echo $(n_release_candidates)
-	git tag $(CANDIDATE_VERSION).$(n_release_candidates)
+	git tag $(major).$(minor).$(patch).$(n_release_candidates)
 endif
 else ifneq (,$(findstring feature,$(CURRENT_BRANCH)))
 	@echo RELEASE DEV SNAPSTHO
