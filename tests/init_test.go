@@ -29,7 +29,12 @@ func TestInitCmd(t *testing.T) {
 		"emtpy project name": {args: []string{"init", "project", "--project-name"}, out: "", err: "flag needs an argument"},
 
 		// ## --project-type
-		"empty project type": {args: []string{"init", "project", "--project-type"}, out: "", err: "flag needs an argument"},
+		"empty project type":   {args: []string{"init", "project", "--project-type"}, out: "", err: "flag needs an argument"},
+		"invalid project type": {args: []string{"init", "project", "--project-type", "nil"}, out: "", err: "--project-name must be defined"},
+
+		// ## --project-name && --project-type
+		"with project name and empty project type":   {args: []string{"init", "project", "--project-name", "foo", "--project-type"}, out: "", err: "flag needs an argument"},
+		"with project name and invalid project type": {args: []string{"init", "project", "--project-name", "foo", "--project-type", "bar"}, out: "", err: "unknow project type"},
 	}
 
 	for name, tc := range tests {
@@ -70,17 +75,6 @@ func TestInitProjectWithName(t *testing.T) {
 	assert.Contains(t, out, "initialized with success")
 	assertBasicProject(t, err)
 }
-
-// func TestInitProjectWithNameAndEmptyType(t *testing.T) {
-// 	args := []string{"init", "project", "--name", "foo", "--type"}
-// 	_, err := executeCommand(t, controller.InitCmd(), args)
-// 	assert.Contains(t, err.Error(), "flag needs an argument: --type")
-// }
-
-// func TestInitProjectWithNameAndWrongType(t *testing.T) {
-// 	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "nil")
-// 	assert.Contains(t, err.Error(), "unknown project type provided")
-// }
 
 // func TestInitProjectWithNameAndBasicType(t *testing.T) {
 // 	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "basic")
