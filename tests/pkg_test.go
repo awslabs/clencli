@@ -71,6 +71,7 @@ func executeCommandC(cmd *cobra.Command, args []string) (command *cobra.Command,
 	rootCmd.AddCommand(cmd)
 	rootCmd.SetOut(buf)
 	rootCmd.SetErr(buf)
+	// args = append(args, "--verbosity", "trace")
 	rootCmd.SetArgs(args)
 
 	command, err = rootCmd.ExecuteC()

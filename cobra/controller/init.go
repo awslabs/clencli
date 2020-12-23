@@ -22,6 +22,7 @@ import (
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -50,95 +51,52 @@ func InitCmd() *cobra.Command {
 }
 
 func initPreRun(cmd *cobra.Command, args []string) error {
-	if err := validateInitArgs(args); err != nil {
+	logrus.Traceln("start: command init pre-run")
+
+	if err := helper.ValidateCmdArgs(cmd, args, "init"); err != nil {
 		return err
 	}
 
-	if err := validateProjectName(cmd, args); err != nil {
+	if err := helper.ValidateCmdArgAndFlag(cmd, args, "init", "project", "project-name"); err != nil {
 		return err
 	}
 
-	if err := validateProjectType(cmd, args); err != nil {
+	if err := helper.ValidateCmdArgAndFlag(cmd, args, "init", "project", "project-type"); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func validateInitArgs(args []string) error {
-	if len(args) == 0 {
-		return fmt.Errorf("error: this command requires one argument")
-	}
-
-	if len(args) > 1 {
-		return fmt.Errorf("error: this command accepts only one argument at a time")
-	}
-
-	if !helper.ContainsString(initValidArgs, args[0]) {
-		return fmt.Errorf("error: unknown argument provided: %s", args[0])
-	}
-
-	return nil
-}
-
-func validateProjectName(cmd *cobra.Command, args []string) error {
-	if args[0] == "project" {
-		pName, err := cmd.Flags().GetString("project-name")
-		if err != nil {
-			return err
-		}
-
-		if pName == "" {
-			return errors.New("project name must be defined")
-		}
-	} else {
-		return fmt.Errorf("error: unknown argument provided: %s", args[0])
-	}
-
-	return nil
-}
-
-func validateProjectType(cmd *cobra.Command, args []string) error {
-	// ensure the project types
-	if args[0] == "project" {
-		pType, err := cmd.Flags().GetString("project-type")
-
-		if err != nil || pType == "" {
-			return errors.New("project type must be defined")
-		}
-
-		if !helper.ContainsString(initValidProjectTypes, pType) {
-			return fmt.Errorf("error: unknown project type provided: %s", pType)
-		}
-	} else {
-		return fmt.Errorf("error: unknown argument provided: %s", args[0])
-	}
-
+	logrus.Traceln("end: command init pre-run")
 	return nil
 }
 
 func initRun(cmd *cobra.Command, args []string) error {
+	logrus.Traceln("start: command init run")
+
 	cmd.SilenceUsage = true
+
 	if args[0] == "project" {
+
 		pName, err := cmd.Flags().GetString("project-name")
 		if err != nil {
-			return fmt.Errorf("error: something went wrong \n%s", err)
+			logrus.Errorf("unable to access --project-name\n%s", err.Error())
+			return fmt.Errorf("error: unable to access --project-name\n%s", err.Error())
 		}
 
 		pType, err := cmd.Flags().GetString("project-type")
 		if err != nil {
-			return fmt.Errorf("error: something went wrong \n%s", err)
+			logrus.Errorf("unable to access --project-type\n%s", err.Error())
+			return fmt.Errorf("error: unable to access --project-type\n%s", err.Error())
 		}
 
 		switch pType {
 		case "basic":
-			err = aid.CreateBasicProject(pName)
+			err = aid.CreateBasicProject(cmd, pName)
 		case "cloud":
-			err = aid.CreateCloudProject(pName)
+			err = aid.CreateCloudProject(cmd, pName)
 		case "cloudformation":
-			err = aid.CreateCloudFormationProject(pName)
+			err = aid.CreateCloudFormationProject(cmd, pName)
 		case "terraform":
-			err = aid.CreateTerraformProject(pName)
+			err = aid.CreateTerraformProject(cmd, pName)
 		default:
 			return errors.New("unknow project type")
 		}
@@ -148,6 +106,7 @@ func initRun(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	logrus.Traceln("end: command init run")
 	return nil
 }
 

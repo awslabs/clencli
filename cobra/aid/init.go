@@ -7,12 +7,14 @@ import (
 	"github.com/awslabs/clencli/box"
 	"github.com/awslabs/clencli/helper"
 	h "github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 /* BASIC PROJECT */
 
 // CreateBasicProject creates a basic project
-func CreateBasicProject(name string) error {
+func CreateBasicProject(cmd *cobra.Command, name string) error {
 	err := createAndEnterProjectDir(name)
 	if err != nil {
 		return err
@@ -22,6 +24,8 @@ func CreateBasicProject(name string) error {
 	if !initalized {
 		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
 	}
+
+	cmd.Printf("basic project \"%s\" was initialized with success\n", name)
 
 	// h.InitCustomProjectLayout(typee, "default")
 	// h.InitCustomProjectLayout(typee, structure)
@@ -34,13 +38,17 @@ func createAndEnterProjectDir(name string) error {
 	if !helper.MkDirsIfNotExist(name) {
 		return fmt.Errorf("error: unable to create directory %s", name)
 	}
-	fmt.Printf("directory \"%s\" created successfully ...\n", name)
 
 	err := os.Chdir(name)
 	if err != nil {
 		return fmt.Errorf("error: unable to enter directory %s", name)
 	}
-	fmt.Printf("changing current working directory to \"%s\"\n", name)
+
+	wd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("error: unable to returns a rooted path name corresponding to the current directory:\n%s", err.Error())
+	}
+	logrus.Infof("current working directory changed to %s", wd)
 
 	return nil
 }
@@ -53,17 +61,16 @@ func initProject() bool {
 	b := h.WriteFileFromBox("init", h.BuildPath("clencli/readme.yaml"))
 	c := h.WriteFileFromBox("init", h.BuildPath("clencli/readme.tmpl"))
 	d := h.WriteFileFromBox("init", h.BuildPath(".gitignore"))
-	e := h.WriteFileFromBox("init", h.BuildPath(".gitignoroooo"))
 
-	return (a && b && c && d && e)
+	return (a && b && c && d)
 
 }
 
 /* CLOUD PROJECT */
 
 // CreateCloudProject copies the necessary templates for cloud projects
-func CreateCloudProject(name string) error {
-	CreateBasicProject(name)
+func CreateCloudProject(cmd *cobra.Command, name string) error {
+	CreateBasicProject(cmd, name)
 	initCloudProject()
 	return nil
 }
@@ -82,8 +89,8 @@ func initCloudProject() {
 /* CLOUDFORMATION PROJECT */
 
 // CreateCloudFormationProject creates an AWS CloudFormation project
-func CreateCloudFormationProject(name string) error {
-	CreateBasicProject(name)
+func CreateCloudFormationProject(cmd *cobra.Command, name string) error {
+	CreateBasicProject(cmd, name)
 	initCloudProject()
 	initCloudFormationProject()
 	return nil
@@ -115,8 +122,8 @@ func initCloudFormationProject() {
 /* TERRAFORM PROJECT */
 
 // CreateTerraformProject creates a HashiCorp Terraform project
-func CreateTerraformProject(name string) error {
-	CreateBasicProject(name)
+func CreateTerraformProject(cmd *cobra.Command, name string) error {
+	CreateBasicProject(cmd, name)
 	initCloudProject()
 	initTerraformProject()
 	return nil

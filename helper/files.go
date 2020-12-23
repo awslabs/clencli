@@ -37,13 +37,13 @@ func WriteFileFromBox(source string, dest string) bool {
 	sep := string(os.PathSeparator)
 	path := sep + source + sep + dest
 	bytes, found := box.Get(path)
+
 	if !found {
 		log.Errorf("file \"%s\" not found under box/resources", path)
 		return false
 	}
 
-	WriteFile(dest, bytes)
-	return true
+	return WriteFile(dest, bytes)
 }
 
 // DownloadFile downloads a file and saves into the given directory with the given file name

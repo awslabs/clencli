@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // MkDirsIfNotExist creates a directory named path,
@@ -14,11 +14,13 @@ import (
 func MkDirsIfNotExist(name string) bool {
 	_, err := os.Stat(name)
 	if os.IsNotExist(err) {
+		logrus.Infof("creating directory %s", name)
 		err = os.MkdirAll(BuildPath(name), os.ModePerm)
 		if err != nil {
-			log.Errorf("unable to create \"%s\" directory", name)
+			logrus.Errorf("unable to create %s directory", name)
 			return false
 		}
+		logrus.Infof("directory %s created", name)
 		return true
 	}
 
@@ -30,7 +32,7 @@ func MkDirsIfNotExist(name string) bool {
 func CreateDirectoryNamedPath(path string) (string, error) {
 	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
-		log.Fatal("Unable to create directory (and its parents)", err)
+		logrus.Fatal("Unable to create directory (and its parents)", err)
 	}
 
 	return path, err
@@ -41,7 +43,7 @@ func CreateDirectoryNamedPath(path string) (string, error) {
 func CreateTempDir(dir string, pattern string) string {
 	dir, err := ioutil.TempDir(dir, pattern)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	return dir

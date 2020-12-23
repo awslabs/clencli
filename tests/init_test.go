@@ -23,11 +23,10 @@ func TestInitCmd(t *testing.T) {
 		"wrong flag": {args: []string{"init", "project", "--foo"}, out: "", err: "unknown flag: --foo"},
 
 		// # projects
-		"no project name": {args: []string{"init", "project"}, out: "", err: "project name must be defined"},
+		"no project name": {args: []string{"init", "project"}, out: "", err: "--project-name must be defined"},
 
 		// ## --project-name
 		"emtpy project name": {args: []string{"init", "project", "--project-name"}, out: "", err: "flag needs an argument"},
-		"with name":          {args: []string{"init", "project", "--project-name", "foo"}, out: "", err: ""},
 
 		// ## --project-type
 		"empty project type": {args: []string{"init", "project", "--project-type"}, out: "", err: "flag needs an argument"},
@@ -67,8 +66,8 @@ func assertCloudProject(t *testing.T, err error) (string, string) {
 func TestInitProjectWithName(t *testing.T) {
 	args := []string{"init", "project", "--project-name", "foo"}
 	out, err := executeCommand(t, controller.InitCmd(), args)
-	assert.Nil(t, out)
 	assert.Nil(t, err)
+	assert.Contains(t, out, "initialized with success")
 	assertBasicProject(t, err)
 }
 
