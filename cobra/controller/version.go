@@ -25,8 +25,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// VersionCmd command to display CLENCLI current version
+func VersionCmd() *cobra.Command {
+	man := helper.GetManual("version")
+
+	return &cobra.Command{
+		Use:   man.Use,
+		Short: man.Short,
+		Long:  man.Long,
+		RunE:  versionRun,
+	}
+}
+
+// So our RunE functions look something like this:
+
+// do some additional checks on args - in case of error return, usage gets displayed
+// set cmd.SilenceUsage to true to avoid displaying usage on other errors
+// proceed with function execution, in case of error return, no usage gets displayed
+
 func versionRun(cmd *cobra.Command, args []string) error {
 	// Get the version defined in the VERSION file
+	cmd.SilenceUsage = true
+
 	version, found := box.Get("/VERSION")
 	if !found {
 		logrus.Errorf("unable to find VERSION file under box/resources")
@@ -40,16 +60,4 @@ func versionRun(cmd *cobra.Command, args []string) error {
 	cmd.Printf("CLENCLI v%s %s %s %s\n", version, goVersion, goOS, goArch)
 
 	return nil
-}
-
-// VersionCmd command to display CLENCLI current version
-func VersionCmd() *cobra.Command {
-	man := helper.GetManual("version")
-
-	return &cobra.Command{
-		Use:   man.Use,
-		Short: man.Short,
-		Long:  man.Long,
-		RunE:  versionRun,
-	}
 }

@@ -6,7 +6,7 @@ include lib/make/*/Makefile
 clencli/test: go/test
 
 .PHONY: clencli/build
-clencli/build: go/mod/tidy go/version go/get go/fmt go/generate go/build ## Builds the app
+clencli/build: clencli/version go/mod/tidy go/version go/get go/fmt go/generate go/build ## Builds the app
 
 .PHONY: clencli/install
 clencli/install: go/get go/fmt go/generate go/install ## Builds the app and install all dependencies
@@ -79,3 +79,19 @@ clencli/test: go/test
 .PHONY: clencli/help
 clencli/help: ## This HELP message
 	@fgrep -h ": ##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+CURRENT_BRANCH := $(shell git branch --show-current)
+CURRENT_COMMIT := $(shell git rev-parse --short HEAD)
+.PHONY: clencli/version
+clencli/version:
+	@echo CURRENT BRANCH IS: $(CURRENT_BRANCH)
+	@echo CURRENT COMMIT IS: $(CURRENT_COMMIT)
+ifneq (,$(findstring master,$(CURRENT_BRANCH)))
+    @echo RELEASE FINAL VERSION
+else ifneq (,$(findstring develop,$(CURRENT_BRANCH)))
+	@echo RELEASE CANDIDATE VERSION
+else ifneq (,$(findstring feature,$(CURRENT_BRANCH)))
+	@echo RELEASE DEV SNAPSTHO
+else
+# Not found
+endif
