@@ -68,9 +68,6 @@ clencli/update-readme: ## Renders template readme.tmpl with additional documents
 	@echo "COMMANDS.md generated successfully"
 	@clencli render template --name readme
 
-.PHONY: clencli/release
-clencli/release: go/mod
-
 .PHONY: clencli/test
 clencli/test: go/test
 
@@ -80,20 +77,29 @@ clencli/test: go/test
 clencli/help: ## This HELP message
 	@fgrep -h ": ##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
+split = $(word $2,$(subst $3, ,$1))
+word-slash = $(word $2,$(subst /, ,$1))
+
 CURRENT_BRANCH := $(shell git branch --show-current)
 CURRENT_COMMIT := $(shell git rev-parse --short HEAD)
 LATEST_TAG := $(shell git describe --tags --abbrev=0)
-.PHONY: clencli/version
-clencli/version:
+
+RELEASE_VERSION=v$(call word-slash,$(CURRENT_BRANCH),2)
+CANDIDATE_VERSION=$(LATEST_TAG)-rc.
+
+.PHONY: clencli/release
+clencli/release: go/mod/tidy
 	@echo CURRENT BRANCH IS: $(CURRENT_BRANCH)
 	@echo CURRENT COMMIT IS: $(CURRENT_COMMIT)
 	@echo LATEST TAG IS: $(LATEST_TAG)
-ifneq (,$(findstring ,$(CURRENT_BRANCH)))
-    @echo RELEASE FINAL VERSION
+ifneq (,$(findstring release,$(CURRENT_BRANCH)))
+	@echo RELEASE FINAL VERSION
+	git tag $(RELEASE_VERSION)
 else ifneq (,$(findstring develop,$(CURRENT_BRANCH)))
 	@echo RELEASE CANDIDATE VERSION
+	@echo git tag $(CANDIDATE_VERSION)
 else ifneq (,$(findstring feature,$(CURRENT_BRANCH)))
 	@echo RELEASE DEV SNAPSTHO
 else
-# Not found
+	@echo Not found
 endif
