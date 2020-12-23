@@ -6,7 +6,7 @@ include lib/make/*/Makefile
 clencli/test: go/test
 
 .PHONY: clencli/build
-clencli/build: clencli/version go/mod/tidy go/version go/get go/fmt go/generate go/build ## Builds the app
+clencli/build: go/mod/tidy go/version go/get go/fmt go/generate go/build ## Builds the app
 
 .PHONY: clencli/install
 clencli/install: go/get go/fmt go/generate go/install ## Builds the app and install all dependencies
@@ -113,8 +113,4 @@ else
 	$(eval n_release_candidates=$(shell echo $$(($(n_release_candidates)+1))))
 	git tag $(major).$(minor).$(patch).$(n_release_candidates)
 endif
-else ifneq (,$(findstring feature,$(CURRENT_BRANCH)))
-	@echo RELEASE DEV SNAPSTHO
-else
-	@echo Not found
 endif

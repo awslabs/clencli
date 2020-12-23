@@ -37,12 +37,6 @@ func VersionCmd() *cobra.Command {
 	}
 }
 
-// So our RunE functions look something like this:
-
-// do some additional checks on args - in case of error return, usage gets displayed
-// set cmd.SilenceUsage to true to avoid displaying usage on other errors
-// proceed with function execution, in case of error return, no usage gets displayed
-
 func versionRun(cmd *cobra.Command, args []string) error {
 	// Get the version defined in the VERSION file
 	cmd.SilenceUsage = true
