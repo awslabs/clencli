@@ -19,13 +19,13 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
 	"github.com/awslabs/clencli/helper"
 	function "github.com/awslabs/clencli/helper"
 	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -86,7 +86,7 @@ func renderRun(cmd *cobra.Command, args []string) error {
 	if err == nil {
 		fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
 	} else {
-		log.Fatalf("Unexpected error: %v", err)
+		logrus.Fatalf("Unexpected error: %v", err)
 	}
 
 	return nil
@@ -114,7 +114,7 @@ func initGomplate(name string) error {
 
 	err := gomplateV3.RunTemplates(&config)
 	if err != nil {
-		log.Fatalf("Gomplate.RunTemplates() failed with %s\n", err)
+		logrus.Fatalf("Gomplate.RunTemplates() failed with %s\n", err)
 	}
 
 	return err
@@ -123,19 +123,19 @@ func initGomplate(name string) error {
 func writeInputs() error {
 	variables, err := os.Open("variables.tf")
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 	defer variables.Close()
 
 	// create INPUTS.md
 	inputs, err := os.OpenFile("INPUTS.md", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Println(err)
+		logrus.Println(err)
 	}
 	defer inputs.Close()
 
 	if _, err := inputs.WriteString("| Name | Description | Type | Default | Required |\n|------|-------------|:----:|:-----:|:-----:|\n"); err != nil {
-		log.Println(err)
+		logrus.Println(err)
 	}
 
 	var varName, varType, varDescription, varDefault string
@@ -200,7 +200,7 @@ func writeInputs() error {
 					}
 
 					if _, err := inputs.WriteString(result); err != nil {
-						log.Println(err)
+						logrus.Println(err)
 					}
 					varName, varType, varDescription, varDefault, varRequired = "", "", "", "", "no"
 				}
@@ -211,7 +211,7 @@ func writeInputs() error {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 
 	}
 	return err
@@ -220,19 +220,19 @@ func writeInputs() error {
 func writeOutputs() error {
 	outputs, err := os.Open("outputs.tf")
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 	defer outputs.Close()
 
 	// create INPUTS.md
 	outs, err := os.OpenFile("OUTPUTS.md", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Println(err)
+		logrus.Println(err)
 	}
 	defer outs.Close()
 
 	if _, err := outs.WriteString("| Name | Description |\n|------|-------------|\n"); err != nil {
-		log.Println(err)
+		logrus.Println(err)
 	}
 
 	var outName, outDescription string
@@ -267,7 +267,7 @@ func writeOutputs() error {
 					result := fmt.Sprintf("| %s | %s | |\n", outName, outDescription)
 
 					if _, err := outs.WriteString(result); err != nil {
-						log.Println(err)
+						logrus.Println(err)
 					}
 					outName, outDescription = "", ""
 				}
@@ -278,7 +278,7 @@ func writeOutputs() error {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 
 	}
 	return err

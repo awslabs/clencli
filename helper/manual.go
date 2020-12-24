@@ -2,9 +2,9 @@ package helper
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/awslabs/clencli/box"
+	"github.com/sirupsen/logrus"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -26,7 +26,7 @@ func GetManual(command string) Manual {
 			fmt.Println("Not able to decode YAML file, error:", err)
 		}
 	} else {
-		log.Fatal("Not able to read manual from box")
+		logrus.Fatal("Not able to read manual from box")
 	}
 
 	return man

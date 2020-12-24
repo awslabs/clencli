@@ -62,25 +62,31 @@ func getHomeDir() string {
 	return home
 }
 
-// SetupLogging set up logging for the application
-func SetupLogging(level string) error {
-	app := GetAppInfo()
-	file, err := os.OpenFile(app.LogsPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
-	if err != nil {
-		fmt.Printf("Unexpected error while opening log file\n%v", err)
-		os.Exit(1)
+// SetupLoggingOutput set logrun output file
+func SetupLoggingOutput(path string) error {
+	if path == "" {
+		app := GetAppInfo()
+		path = app.LogsPath
 	}
 
-	lvl, err := logrus.ParseLevel(level)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if err != nil {
-		fmt.Printf("Unexpected error while parsing log level\n%v", err)
-		os.Exit(1)
+		return fmt.Errorf("unable to open log file\n%v", err)
 	}
 
-	logrus.SetLevel(lvl)
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetOutput(file)
 
 	return nil
+}
 
+// SetupLoggingLevel set logrus level
+func SetupLoggingLevel(level string) error {
+	lvl, err := logrus.ParseLevel(level)
+	if err != nil {
+		return fmt.Errorf("unable to set log level\n%v", err)
+	}
+
+	logrus.SetLevel(lvl)
+	return nil
 }

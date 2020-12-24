@@ -18,7 +18,6 @@ package controller
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/helper"
@@ -113,7 +112,7 @@ func initRun(cmd *cobra.Command, args []string) error {
 func initGetFlags(cmd *cobra.Command) (name string, typee string, structure string, onlyCustomizedStructure bool) {
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
-		log.Fatal("required flag name not set")
+		logrus.Fatal("required flag name not set")
 	}
 
 	return name, typee, structure, onlyCustomizedStructure
