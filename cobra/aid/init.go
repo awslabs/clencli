@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/awslabs/clencli/box"
 	"github.com/awslabs/clencli/helper"
 	h "github.com/awslabs/clencli/helper"
 	"github.com/sirupsen/logrus"
@@ -99,7 +98,7 @@ func CreateCloudFormationProject(cmd *cobra.Command, name string) error {
 	}
 
 	if initialized := initCloudFormationProject(); !initialized {
-		logrus.Errorf("unable to initialize cloud project")
+		logrus.Errorf("unable to initialize cloudformation project")
 		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
 	}
 
@@ -129,43 +128,39 @@ func initCloudFormationProject() bool {
 
 // CreateTerraformProject creates a HashiCorp Terraform project
 func CreateTerraformProject(cmd *cobra.Command, name string) error {
-	CreateBasicProject(cmd, name)
-	initCloudProject()
-	initTerraformProject()
+	if err := CreateBasicProject(cmd, name); err != nil {
+		return nil
+	}
+
+	if initialized := initCloudProject(); !initialized {
+		logrus.Errorf("unable to initialize terraform project")
+		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+	}
+
+	if initialized := initTerraformProject(); !initialized {
+		logrus.Errorf("unable to initialize cloud project")
+		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+	}
+
 	return nil
 }
 
 // InitTerraform initialize a project with Terraform structure
-func initTerraformProject() {
-	initMakefile := "Makefile"
-	blobMakefile, _ := box.Get("/init/type/terraform/Makefile")
-	h.WriteFile(initMakefile, blobMakefile)
+func initTerraformProject() bool {
+	a := h.WriteFileFromBox("/init/project/type/terraform/Makefile", "Makefile")
+	b := h.WriteFileFromBox("/init/project/type/terraform/LICENSE", "LICENSE")
 
-	initLicense := "LICENSE"
-	blobLicense, _ := box.Get("/init/type/terraform/LICENSE")
-	h.WriteFile(initLicense, blobLicense)
+	c := h.MkDirsIfNotExist("environments")
+	d := h.WriteFileFromBox("/init/project/type/terraform/environments/dev.tf", "environments/dev.tf")
+	e := h.WriteFileFromBox("/init/project/type/terraform/environments/prod.tf", "environments/prod.tf")
 
-	h.MkDirsIfNotExist("environments")
+	f := h.WriteFileFromBox("/init/project/type/terraform/main.tf", "main.tf")
+	g := h.WriteFileFromBox("/init/project/type/terraform/variables.tf", "variables.tf")
+	h := h.WriteFileFromBox("/init/project/type/terraform/outputs.tf", "outputs.tf")
+	
 
-	initDevEnvironment := "environments/dev.tf"
-	blobDevEnvironment, _ := box.Get("/init/type/terraform/environments/dev.tf")
-	h.WriteFile(initDevEnvironment, blobDevEnvironment)
+	return (a && b && c && d && e && f && g && h)
 
-	initProdEnvironment := "environments/prod.tf"
-	blobProdEnvironment, _ := box.Get("/init/type/terraform/environments/prod.tf")
-	h.WriteFile(initProdEnvironment, blobProdEnvironment)
-
-	initMainTF := "main.tf"
-	blobMainTF, _ := box.Get("/init/type/terraform/main.tf")
-	h.WriteFile(initMainTF, blobMainTF)
-
-	initVariablesTF := "variables.tf"
-	blobVariablesTF, _ := box.Get("/init/type/terraform/variables.tf")
-	h.WriteFile(initVariablesTF, blobVariablesTF)
-
-	initOutputsTF := "outputs.tf"
-	blobOutputsTF, _ := box.Get("/init/type/terraform/outputs.tf")
-	h.WriteFile(initOutputsTF, blobOutputsTF)
 }
 
 // // InitCustomProjectLayout generates

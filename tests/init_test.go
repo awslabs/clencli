@@ -110,9 +110,26 @@ func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
 	assert.FileExists(t, dir+sep+"skeleton.json")
 }
 
-// func TestInitProjectWithNameAndTerraformType(t *testing.T) {
-// 	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "terraform")
-// 	dir, sep := assertCloudProject(t, err)
+/* PROJECT: TERRAFORM */
+
+func TestInitProjectWithNameAndTerraformType(t *testing.T) {
+	args := []string{"init", "project", "--project-name", "foo", "--project-type", "terraform"}
+	out, err := executeCommand(t, controller.InitCmd(), args)
+	assert.Contains(t, out, "was successfully initialized as a terraform project")
+
+	dir, sep := assertCloudProject(t, err)
+
+	assert.FileExists(t, dir+sep+"Makefile")
+	assert.FileExists(t, dir+sep+"LICENSE")
+
+	assert.DirExists(t, dir+sep+"environments")
+	assert.FileExists(t, dir+sep+"environments"+sep+"dev.tf")
+	assert.FileExists(t, dir+sep+"environments"+sep+"prod.tf")
+
+	assert.FileExists(t, dir+sep+"main.tf")
+	assert.FileExists(t, dir+sep+"variables.tf")
+	assert.FileExists(t, dir+sep+"outputs.tf")
+}
 
 // 	assert.FileExists(t, dir+sep+"main.tf")
 // 	assert.FileExists(t, dir+sep+"variables.tf")
