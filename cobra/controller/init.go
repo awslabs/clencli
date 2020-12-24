@@ -110,12 +110,3 @@ func initRun(cmd *cobra.Command, args []string) error {
 	logrus.Traceln("end: command init run")
 	return nil
 }
-
-func initGetFlags(cmd *cobra.Command) (name string, typee string, structure string, onlyCustomizedStructure bool) {
-	name, err := cmd.Flags().GetString("name")
-	if err != nil {
-		logrus.Fatal("required flag name not set")
-	}
-
-	return name, typee, structure, onlyCustomizedStructure
-}

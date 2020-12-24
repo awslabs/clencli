@@ -157,62 +157,9 @@ func initTerraformProject() bool {
 	f := h.WriteFileFromBox("/init/project/type/terraform/main.tf", "main.tf")
 	g := h.WriteFileFromBox("/init/project/type/terraform/variables.tf", "variables.tf")
 	h := h.WriteFileFromBox("/init/project/type/terraform/outputs.tf", "outputs.tf")
-	
 
 	return (a && b && c && d && e && f && g && h)
 
 }
 
-// // InitCustomProjectLayout generates
-// func InitCustomProjectLayout(projectType string, projectStructureName string) error {
-// 	var g GlobalConfig
-// 	err := viper.Unmarshal(&g)
-// 	if err != nil {
-// 		log.Fatalf("Unable to decode into struct, %v", err)
-// 	}
-
-// 	for i := 0; i < len(g.Config.Init.Types); i++ {
-// 		t := g.Config.Init.Types[i]
-// 		// match the project type
-// 		if projectType == t.Type {
-// 			// only create if project structure is enabled
-// 			if t.Enabled {
-// 				log.Println("Creating customized project structure")
-// 				if projectStructureName == t.Name {
-// 					log.Printf("Using project structure: %s\n", t.Name)
-// 				}
-
-// 				for _, f := range t.Files {
-// 					if f.File.State == "directory" {
-// 						MkDirsIfNotExist(f.File.Path)
-// 					} else if f.File.State == "file" {
-// 						dir, file := filepath.Split(f.File.Dest)
-// 						// in case it's the current directory
-// 						if dir == "" {
-// 							dir = "."
-// 						}
-// 						if strings.Contains(f.File.Src, "http") {
-// 							DownloadFile(f.File.Src, dir, file)
-// 						} else {
-// 							CopyFile(f.File.Src, f.File.Dest)
-// 						}
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-
-// 	return nil
-// }
-
-// func initCreateTerraformProject(name string, typee string, structure string, onlyCustomizedStructure bool) {
-// 	h.createAndEnter(name)
-// 	if !onlyCustomizedStructure {
-// 		h.initProject()
-// 		h.InitHLD(name)
-// 		h.InitTerraform()
-// 	}
-// 	// h.InitCustomProjectLayout(typee, "default")
-// 	// h.InitCustomProjectLayout(typee, structure)
-// 	// h.UpdateReadMe()
-// }
+// TODO: allow users to inform additional files to be added to their project initialization
