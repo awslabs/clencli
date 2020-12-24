@@ -21,6 +21,4 @@ var renderCmd = controller.RenderCmd()
 
 func init() {
 	rootCmd.AddCommand(renderCmd)
-	renderCmd.Flags().StringP("name", "n", "readme", "Template name to be rendered")
-	renderCmd.Flags().StringP("unsplash-profile", "u", "default", "Unsplash profile ")
 }

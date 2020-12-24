@@ -23,7 +23,6 @@ import (
 	"strings"
 
 	"github.com/awslabs/clencli/helper"
-	function "github.com/awslabs/clencli/helper"
 	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -34,7 +33,7 @@ var renderValidArgs = []string{"template"}
 // RenderCmd command to render templates
 func RenderCmd() *cobra.Command {
 	man := helper.GetManual("render")
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
 		Long:      man.Long,
@@ -43,52 +42,56 @@ func RenderCmd() *cobra.Command {
 		PreRunE:   renderPreRun,
 		RunE:      renderRun,
 	}
+
+	cmd.Flags().StringP("name", "n", "readme", "Database file name of the template to be rendered (it must be under clencli/ directory.")
+
+	return cmd
 }
 
 func renderPreRun(cmd *cobra.Command, args []string) error {
-	if len(args) == 0 {
-		return fmt.Errorf("error: one the following arguments are required: %s", renderValidArgs)
+	logrus.Traceln("start: command render pre-run")
+
+	if err := helper.ValidateCmdArgs(cmd, args, "render"); err != nil {
+		return err
 	}
 
-	name, err := cmd.Flags().GetString("name")
-	if err != nil {
-		return errors.New("required flag name not set")
+	if err := helper.ValidateCmdArgAndFlag(cmd, args, "render", "template", "name"); err != nil {
+		return err
 	}
 
-	if !function.FileExists("clencli/" + name + ".yaml") {
+	name, _ := cmd.Flags().GetString("name")
+
+	if !helper.FileExists("clencli/" + name + ".yaml") {
 		return errors.New("missing database at clencli/" + name + ".yaml")
 	}
 
-	if !function.FileExists("clencli/" + name + ".tmpl") {
+	if !helper.FileExists("clencli/" + name + ".tmpl") {
 		return errors.New("missing template at clencli/" + name + ".tmpl")
 	}
 
+	logrus.Traceln("end: command render pre-run")
 	return nil
 }
 
 func renderRun(cmd *cobra.Command, args []string) error {
+	logrus.Traceln("start: command render run")
+
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
+		logrus.Errorf("error: unable to render template "+name+"\n%v", err)
 		return fmt.Errorf("error: unable to render template "+name+"\n%v", err)
 	}
 
-	// err = helper.UpdateReadMe()
-	// if err != nil {
-	// 	return fmt.Errorf("error: Unable to update local config with global config values \n%v", err)
-	// }
+	// TODO: update readme and logo url based on global configuration
 
-	// err = helper.UpdateReadMeLogoURL()
-	// if err != nil {
-	// 	return fmt.Errorf("error: Unable to update local config with new URL from Unsplash \n%v", err)
-	// }
-
-	err = initGomplate(name)
-	if err == nil {
-		fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
-	} else {
-		logrus.Fatalf("Unexpected error: %v", err)
+	if err := initGomplate(name); err != nil {
+		logrus.Errorf("Unexpected error: %v", err)
+		return fmt.Errorf("error: unable to render template "+name+"\n%v", err)
 	}
 
+	cmd.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
+
+	logrus.Traceln("end: command render run")
 	return nil
 }
 
@@ -96,7 +99,7 @@ func initGomplate(name string) error {
 	var inputFiles = []string{}
 	var outputFiles = []string{}
 
-	if function.FileExists("clencli/" + name + ".tmpl") {
+	if helper.FileExists("clencli/" + name + ".tmpl") {
 		inputFiles = append(inputFiles, "clencli/"+name+".tmpl")
 		outputFiles = append(outputFiles, strings.ToUpper(name)+".md")
 	}
@@ -106,7 +109,7 @@ func initGomplate(name string) error {
 	config.OutputFiles = outputFiles
 
 	dataSources := []string{}
-	if function.FileExists("clencli/" + name + ".yaml") {
+	if helper.FileExists("clencli/" + name + ".yaml") {
 		dataSources = append(dataSources, "db=./clencli/"+name+".yaml")
 	}
 
@@ -149,7 +152,7 @@ func writeInputs() error {
 		// skip empty lines
 		if len(line) > 0 {
 			if strings.Contains(line, "variable") && strings.Contains(line, "{") {
-				out, found := function.GetStringBetweenDoubleQuotes(line)
+				out, found := helper.GetStringBetweenDoubleQuotes(line)
 				if found {
 					varName = out
 				}
@@ -157,20 +160,20 @@ func writeInputs() error {
 			}
 
 			if strings.Contains(line, "type") && strings.Contains(line, "=") {
-				slc := function.GetStringTrimmed(line, "=")
+				slc := helper.GetStringTrimmed(line, "=")
 				if slc[0] == "type" {
 					varType = slc[1]
 					if strings.Contains(varType, "({") {
-						slc = function.GetStringTrimmed(varType, "({")
+						slc = helper.GetStringTrimmed(varType, "({")
 						varType = slc[0]
 					}
 				}
 			}
 
 			if strings.Contains(line, "description") && strings.Contains(line, "=") {
-				slc := function.GetStringTrimmed(line, "=")
+				slc := helper.GetStringTrimmed(line, "=")
 				if slc[0] == "description" {
-					out, found := function.GetStringBetweenDoubleQuotes(slc[1])
+					out, found := helper.GetStringBetweenDoubleQuotes(slc[1])
 					if found {
 						varDescription = out
 					}
@@ -178,7 +181,7 @@ func writeInputs() error {
 			}
 
 			if strings.Contains(line, "default") && strings.Contains(line, "=") {
-				slc := function.GetStringTrimmed(line, "=")
+				slc := helper.GetStringTrimmed(line, "=")
 				if slc[0] == "default" {
 					varDefault = slc[1]
 					if strings.Contains(varDefault, "{") {
@@ -244,16 +247,16 @@ func writeOutputs() error {
 		// skip empty lines
 		if len(line) > 0 {
 			if strings.Contains(line, "output") && strings.Contains(line, "{") {
-				out, found := function.GetStringBetweenDoubleQuotes(line)
+				out, found := helper.GetStringBetweenDoubleQuotes(line)
 				if found {
 					outName = out
 				}
 			}
 
 			if strings.Contains(line, "description") && strings.Contains(line, "=") {
-				slc := function.GetStringTrimmed(line, "=")
+				slc := helper.GetStringTrimmed(line, "=")
 				if slc[0] == "description" {
-					out, found := function.GetStringBetweenDoubleQuotes(slc[1])
+					out, found := helper.GetStringBetweenDoubleQuotes(slc[1])
 					if found {
 						outDescription = out
 					}

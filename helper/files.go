@@ -67,8 +67,8 @@ func DownloadFile(url string, dirPath string, filename string) error {
 
 // FileExists checks if a file exists and is not a directory before we
 // try using it to prevent further errors.
-func FileExists(filename string) bool {
-	info, err := os.Stat(filename)
+func FileExists(path string) bool {
+	info, err := os.Stat(BuildPath(path))
 	if os.IsNotExist(err) {
 		return false
 	}

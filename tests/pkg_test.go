@@ -2,13 +2,13 @@ package tests
 
 import (
 	"bytes"
-	"log"
 	"os"
 	"testing"
 	"time"
 
 	"github.com/awslabs/clencli/cobra/controller"
 	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +23,7 @@ func beforeSetup() {
 	// enter the new directory
 	err := os.Chdir(dir)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 }
 
@@ -42,11 +42,25 @@ func executeCommand(t *testing.T, cmd *cobra.Command, args []string) (stdout str
 	return stdout, err
 }
 
+func executeCommandGetWorkingDirectory(t *testing.T, cmd *cobra.Command, args []string) (wd string, stdout string, err error) {
+	wd = createAndEnterTestDirectory(t)
+	_, stdout, err = executeCommandC(cmd, args)
+	os.Chdir(wd)
+
+	return wd, stdout, err
+}
+
+// executeCommandOnly only executes the given command without changing the current directory, useful for combined tests
+func executeCommandOnly(t *testing.T, cmd *cobra.Command, args []string) (stdout string, err error) {
+	_, stdout, err = executeCommandC(cmd, args)
+	return stdout, err
+}
+
 // return the current working directory, useful to return to the previous directory
 func createAndEnterTestDirectory(t *testing.T) string {
 	wd, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("unable to get current working directory")
+		logrus.Fatalf("unable to get current working directory")
 	}
 
 	dir := createTestDirectory(t)
@@ -58,7 +72,7 @@ func createAndEnterTestDirectory(t *testing.T) string {
 func createTestDirectory(t *testing.T) string {
 	created := helper.MkDirsIfNotExist(t.Name())
 	if !created {
-		log.Fatal("Unable to create directory")
+		logrus.Infoln("directory already exist, skipping...")
 	}
 
 	return t.Name()
