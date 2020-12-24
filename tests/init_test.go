@@ -130,15 +130,3 @@ func TestInitProjectWithNameAndTerraformType(t *testing.T) {
 	assert.FileExists(t, dir+sep+"variables.tf")
 	assert.FileExists(t, dir+sep+"outputs.tf")
 }
-
-// 	assert.FileExists(t, dir+sep+"main.tf")
-// 	assert.FileExists(t, dir+sep+"variables.tf")
-// 	assert.FileExists(t, dir+sep+"outputs.tf")
-
-// 	assert.DirExists(t, dir+sep+"environments")
-// 	assert.FileExists(t, dir+sep+"environments"+sep+"dev.tf")
-// 	assert.FileExists(t, dir+sep+"environments"+sep+"prod.tf")
-
-// 	assert.FileExists(t, dir+sep+"Makefile")
-// 	assert.FileExists(t, dir+sep+"LICENSE")
-// }
