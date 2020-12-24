@@ -103,6 +103,8 @@ func initRun(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("error: unable to initialize project sucessfully \n%s", err)
 		}
+
+		cmd.Printf("%s was successfully initialized as a %s project\n", pName, pType)
 	}
 
 	logrus.Traceln("end: command init run")

@@ -34,16 +34,14 @@ func WriteFile(filename string, data []byte) bool {
 
 // WriteFileFromBox get the file from box's resources and write into the given destination, returns false if not able to.
 func WriteFileFromBox(source string, dest string) bool {
-	sep := string(os.PathSeparator)
-	path := sep + source + sep + dest
-	bytes, found := box.Get(path)
+	bytes, found := box.Get(BuildPath(source))
 
 	if !found {
-		log.Errorf("file \"%s\" not found under box/resources", path)
+		log.Errorf("file \"%s\" not found under box/resources", BuildPath(source))
 		return false
 	}
 
-	return WriteFile(dest, bytes)
+	return WriteFile(BuildPath(dest), bytes)
 }
 
 // DownloadFile downloads a file and saves into the given directory with the given file name

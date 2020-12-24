@@ -20,16 +20,11 @@ func CreateBasicProject(cmd *cobra.Command, name string) error {
 		return err
 	}
 
-	initalized := initProject()
-	if !initalized {
+	if initalized := initProject(); !initalized {
+		logrus.Errorf("unable to initialize basic project")
 		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
 	}
 
-	cmd.Printf("basic project \"%s\" was initialized with success\n", name)
-
-	// h.InitCustomProjectLayout(typee, "default")
-	// h.InitCustomProjectLayout(typee, structure)
-	// h.UpdateReadMe()
 	return nil
 }
 
@@ -58,9 +53,9 @@ func initProject() bool {
 
 	// Create a directory for CLENCLI
 	a := h.MkDirsIfNotExist("clencli")
-	b := h.WriteFileFromBox("init", h.BuildPath("clencli/readme.yaml"))
-	c := h.WriteFileFromBox("init", h.BuildPath("clencli/readme.tmpl"))
-	d := h.WriteFileFromBox("init", h.BuildPath(".gitignore"))
+	b := h.WriteFileFromBox("/init/clencli/readme.yaml", "clencli/readme.yaml")
+	c := h.WriteFileFromBox("/init/clencli/readme.tmpl", "clencli/readme.tmpl")
+	d := h.WriteFileFromBox("/init/.gitignore", ".gitignore")
 
 	return (a && b && c && d)
 
@@ -70,46 +65,55 @@ func initProject() bool {
 
 // CreateCloudProject copies the necessary templates for cloud projects
 func CreateCloudProject(cmd *cobra.Command, name string) error {
-	CreateBasicProject(cmd, name)
-	initCloudProject()
+	if err := CreateBasicProject(cmd, name); err != nil {
+		return nil
+	}
+
+	if initialized := initCloudProject(); !initialized {
+		logrus.Errorf("unable to initialize cloud project")
+		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+	}
+
 	return nil
 }
 
 // copies the High Level Design template file
-func initCloudProject() {
-	initHLD := "clencli/hld.yaml"
-	blobHLD, _ := box.Get("/init/clencli/hld.yaml")
-	h.WriteFile(initHLD, blobHLD)
+func initCloudProject() bool {
+	a := h.WriteFileFromBox("/init/clencli/hld.yaml", "clencli/hld.yaml")
+	b := h.WriteFileFromBox("/init/clencli/hld.tmpl", "clencli/hld.tmpl")
 
-	initHLDTmpl := "clencli/hld.tmpl"
-	blobHLDTmpl, _ := box.Get("/init/clencli/hld.tmpl")
-	h.WriteFile(initHLDTmpl, blobHLDTmpl)
+	return (a && b)
 }
 
 /* CLOUDFORMATION PROJECT */
 
 // CreateCloudFormationProject creates an AWS CloudFormation project
 func CreateCloudFormationProject(cmd *cobra.Command, name string) error {
-	CreateBasicProject(cmd, name)
-	initCloudProject()
-	initCloudFormationProject()
+	if err := CreateBasicProject(cmd, name); err != nil {
+		return nil
+	}
+
+	if initialized := initCloudProject(); !initialized {
+		logrus.Errorf("unable to initialize cloud project")
+		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+	}
+
+	if initialized := initCloudFormationProject(); !initialized {
+		logrus.Errorf("unable to initialize cloud project")
+		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+	}
+
 	return nil
 }
 
 // initialize a project with CloudFormation structure and copies template files
-func initCloudFormationProject() {
+func initCloudFormationProject() bool {
 
-	h.MkDirsIfNotExist("environments")
-	h.MkDirsIfNotExist("environments/dev")
-	h.MkDirsIfNotExist("environments/prod")
-
-	initCFSkeleton := "skeleton.yaml"
-	blobCFSkeleton, _ := box.Get("/init/type/clouformation/skeleton.yaml")
-	h.WriteFile(initCFSkeleton, blobCFSkeleton)
-
-	initCFSkeleton = "skeleton.json"
-	blobCFSkeleton, _ = box.Get("/init/type/clouformation/skeleton.json")
-	h.WriteFile(initCFSkeleton, blobCFSkeleton)
+	a := h.MkDirsIfNotExist("environments")
+	b := h.MkDirsIfNotExist("environments/dev")
+	c := h.MkDirsIfNotExist("environments/prod")
+	d := h.WriteFileFromBox("/init/project/type/clouformation/skeleton.yaml", "skeleton.yaml")
+	e := h.WriteFileFromBox("/init/project/type/clouformation/skeleton.json", "skeleton.json")
 
 	/* TODO: copy a template to create standard tags for the entire stack easily
 	https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html
@@ -117,6 +121,8 @@ func initCloudFormationProject() {
 
 	/* TODO: copy Makefile */
 	/* TODO: copy LICENSE */
+
+	return (a && b && c && d && e)
 }
 
 /* TERRAFORM PROJECT */

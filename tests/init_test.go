@@ -68,34 +68,47 @@ func assertCloudProject(t *testing.T, err error) (string, string) {
 	return dir, sep
 }
 
-func TestInitProjectWithName(t *testing.T) {
+/* PROJECT: BASIC */
+
+func TestInitBasicProjectWithNameOnly(t *testing.T) {
 	args := []string{"init", "project", "--project-name", "foo"}
 	out, err := executeCommand(t, controller.InitCmd(), args)
 	assert.Nil(t, err)
-	assert.Contains(t, out, "initialized with success")
+	assert.Contains(t, out, "was successfully initialized as a basic project")
 	assertBasicProject(t, err)
 }
 
-// func TestInitProjectWithNameAndBasicType(t *testing.T) {
-// 	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "basic")
-// 	assertBasicProject(t, err)
-// }
+func TestInitBasicProjectWithNameAndType(t *testing.T) {
+	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
+	out, err := executeCommand(t, controller.InitCmd(), args)
+	assert.Nil(t, err)
+	assert.Contains(t, out, "was successfully initialized as a basic project")
+	assertBasicProject(t, err)
+}
 
-// func TestInitProjectWithNameAndCloudType(t *testing.T) {
-// 	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "cloud")
-// 	assertCloudProject(t, err)
-// }
+/* PROJECT: CLOUD */
 
-// func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
-// 	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "cloudformation")
-// 	dir, sep := assertCloudProject(t, err)
+func TestInitCloudProjectWithName(t *testing.T) {
+	args := []string{"init", "project", "--project-name", "foo", "--project-type", "cloud"}
+	out, err := executeCommand(t, controller.InitCmd(), args)
+	assert.Contains(t, out, "was successfully initialized as a cloud project")
+	assertCloudProject(t, err)
+}
 
-// 	assert.DirExists(t, dir+sep+"environments"+sep+"dev")
-// 	assert.DirExists(t, dir+sep+"environments"+sep+"prod")
+/* PROJECT: CLOUDFORMATION */
 
-// 	assert.FileExists(t, dir+sep+"skeleton.yaml")
-// 	assert.FileExists(t, dir+sep+"skeleton.json")
-// }
+func TestInitProjectWithNameAndCloudFormationType(t *testing.T) {
+	args := []string{"init", "project", "--project-name", "foo", "--project-type", "cloudformation"}
+	out, err := executeCommand(t, controller.InitCmd(), args)
+	assert.Contains(t, out, "was successfully initialized as a cloudformation project")
+
+	dir, sep := assertCloudProject(t, err)
+	assert.DirExists(t, dir+sep+"environments"+sep+"dev")
+	assert.DirExists(t, dir+sep+"environments"+sep+"prod")
+
+	assert.FileExists(t, dir+sep+"skeleton.yaml")
+	assert.FileExists(t, dir+sep+"skeleton.json")
+}
 
 // func TestInitProjectWithNameAndTerraformType(t *testing.T) {
 // 	err := executeCommand(t, controller.InitCmd(), "init", "project", "--name", "foo", "--type", "terraform")
