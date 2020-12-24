@@ -36,11 +36,13 @@ func TestRenderCmd(t *testing.T) {
 
 // /* README */
 
-func initBasicProject(t *testing.T) {
-	args := []string{"init", "project", "--project-name", "foo"}
+func initProject(t *testing.T, pType string) {
+	args := []string{"init", "project", "--project-name", "foo", "--project-type", pType}
 	wd, out, err := executeCommandGetWorkingDirectory(t, controller.InitCmd(), args)
+
 	assert.Nil(t, err)
-	assert.Contains(t, out, "was successfully initialized as a basic project")
+	assert.Contains(t, out, "was successfully initialized")
+
 	if err := os.Chdir(helper.BuildPath(wd + "/" + t.Name() + "/" + "foo")); err != nil {
 		logrus.Fatal("unable to change current working directory")
 	}
@@ -48,12 +50,30 @@ func initBasicProject(t *testing.T) {
 }
 
 func TestRenderDefault(t *testing.T) {
-	initBasicProject(t)
+	initProject(t, "basic")
 
 	args := []string{"render", "template"}
 	out, err := executeCommandOnly(t, controller.RenderCmd(), args)
 	assert.Nil(t, err)
 	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
+}
+
+func TestRenderReadme(t *testing.T) {
+	initProject(t, "basic")
+
+	args := []string{"render", "template", "--name", "readme"}
+	out, err := executeCommandOnly(t, controller.RenderCmd(), args)
+	assert.Nil(t, err)
+	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
+}
+
+func TestRenderHLD(t *testing.T) {
+	initProject(t, "cloud")
+
+	args := []string{"render", "template", "--name", "hld"}
+	out, err := executeCommandOnly(t, controller.RenderCmd(), args)
+	assert.Nil(t, err)
+	assert.Contains(t, out, "Template hld.tmpl rendered as HLD.md")
 }
 
 // func assertBasicProject(t *testing.T, err error) (string, string) {
