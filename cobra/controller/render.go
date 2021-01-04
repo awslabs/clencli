@@ -60,10 +60,12 @@ func renderPreRun(cmd *cobra.Command, args []string) error {
 	name, _ := cmd.Flags().GetString("name")
 
 	if !helper.FileExists("clencli/" + name + ".yaml") {
+		logrus.Errorf("missing database at clencli/" + name + ".yaml")
 		return errors.New("missing database at clencli/" + name + ".yaml")
 	}
 
 	if !helper.FileExists("clencli/" + name + ".tmpl") {
+		logrus.Errorf("missing template at clencli/" + name + ".tmpl")
 		return errors.New("missing template at clencli/" + name + ".tmpl")
 	}
 
