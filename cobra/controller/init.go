@@ -18,6 +18,7 @@ package controller
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/helper"
@@ -30,7 +31,12 @@ var initValidProjectTypes = []string{"basic", "cloud", "cloudformation", "terraf
 
 // InitCmd command to initialize projects
 func InitCmd() *cobra.Command {
-	man := helper.GetManual("init")
+	man, err := helper.GetManual("init")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
@@ -77,14 +83,14 @@ func initRun(cmd *cobra.Command, args []string) error {
 
 		pName, err := cmd.Flags().GetString("project-name")
 		if err != nil {
-			logrus.Errorf("unable to access --project-name\n%s", err.Error())
-			return fmt.Errorf("error: unable to access --project-name\n%s", err.Error())
+			logrus.Errorf("unable to access --project-name\n%v", err)
+			return fmt.Errorf("unable to access --project-name\n%v", err)
 		}
 
 		pType, err := cmd.Flags().GetString("project-type")
 		if err != nil {
-			logrus.Errorf("unable to access --project-type\n%s", err.Error())
-			return fmt.Errorf("error: unable to access --project-type\n%s", err.Error())
+			logrus.Errorf("unable to access --project-type\n%v", err)
+			return fmt.Errorf("unable to access --project-type\n%v", err)
 		}
 
 		switch pType {
@@ -101,7 +107,7 @@ func initRun(cmd *cobra.Command, args []string) error {
 		}
 
 		if err != nil {
-			return fmt.Errorf("error: unable to initialize project sucessfully \n%s", err)
+			return fmt.Errorf("unable to initialize project sucessfully \n%s", err)
 		}
 
 		cmd.Printf("%s was successfully initialized as a %s project\n", pName, pType)

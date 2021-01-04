@@ -17,17 +17,18 @@ type Manual struct {
 }
 
 // GetManual retrieve information about the given command
-func GetManual(command string) Manual {
+func GetManual(command string) (Manual, error) {
 	var man Manual
+	var err error
 	manualBlob, status := box.Get("/manual/" + command + ".yaml")
 	if status {
-		err := yaml.Unmarshal(manualBlob, &man)
+		err = yaml.Unmarshal(manualBlob, &man)
 		if err != nil {
-			fmt.Println("Not able to decode YAML file, error:", err)
+			return man, fmt.Errorf("unable to decode YAML file, error:\n%v", err)
 		}
 	} else {
-		logrus.Fatal("Not able to read manual from box")
+		logrus.Fatal("unable to read manual from box")
 	}
 
-	return man
+	return man, err
 }

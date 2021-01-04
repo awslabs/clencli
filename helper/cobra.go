@@ -13,18 +13,18 @@ func ValidateCmdArgs(cmd *cobra.Command, args []string, cmdName string) error {
 
 	if len(args) == 0 {
 		logrus.Error("no arguments passed")
-		return fmt.Errorf("error: this command requires one argument")
+		return fmt.Errorf("this command requires one argument")
 	}
 
 	if len(args) > 1 {
 		logrus.Errorf("more than one argument passed: %v", args)
-		return fmt.Errorf("error: this command accepts only one argument at a time")
+		return fmt.Errorf("this command accepts only one argument at a time")
 	}
 
 	if !ContainsString(cmd.ValidArgs, args[0]) {
 		logrus.Errorf("unknow argument passed: %v", args)
 		logrus.Errorf("command %s only accepts the following arguments: %v", cmdName, args)
-		return fmt.Errorf("error: unknown argument provided: %s", args[0])
+		return fmt.Errorf("unknown argument provided: %s", args[0])
 	}
 
 	logrus.Tracef("end: validate command %s arguments", cmdName)
@@ -47,7 +47,7 @@ func ValidateCmdArgAndFlag(cmd *cobra.Command, args []string, cmdName string, ar
 		}
 	} else {
 		logrus.Errorf("unknow argument passed: %v", args)
-		return fmt.Errorf("error: unknown argument provided: %s", args[0])
+		return fmt.Errorf("unknown argument provided: %s", args[0])
 	}
 	logrus.Tracef("end: validate command %s --%s", cmdName, flag)
 	return nil

@@ -41,7 +41,7 @@ func CreateConfigurationsDirectory() bool {
 	dir := GetAppInfo().ConfigurationsDir
 	created := helper.MkDirsIfNotExist(dir)
 	if created {
-		fmt.Printf("CLENCLI configuration directory created at: \n%s\n", dir)
+		fmt.Printf("clencli configuration directory created at %s", dir)
 	}
 
 	return created
@@ -63,7 +63,7 @@ func ReadConfig(name string) (*viper.Viper, error) {
 
 	err := v.ReadInConfig()
 	if err != nil {
-		return v, fmt.Errorf("error: error when trying to read local configurations \n%s", err)
+		return v, fmt.Errorf("unable to read configuration:%s\n%v", name, err)
 	}
 	return v, err
 
@@ -75,13 +75,13 @@ func WriteInterfaceToFile(in interface{}, path string) error {
 	if err != nil {
 		_, ok := err.(*json.UnsupportedTypeError)
 		if ok {
-			return fmt.Errorf("error: tried to marshal an invalid Type")
+			return fmt.Errorf("json unsupported type error")
 		}
 	}
 
 	err = ioutil.WriteFile(path, b, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("error: unable to update: %s \n%v", path, err)
+		return fmt.Errorf("unable to update:%s\n%v", path, err)
 	}
 
 	return err

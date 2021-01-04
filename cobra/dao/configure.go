@@ -202,12 +202,12 @@ func GetConfigurations() (model.Configurations, error) {
 	var confs model.Configurations
 	v, err := aid.ReadConfig(aid.GetAppInfo().ConfigurationsName)
 	if err != nil {
-		return confs, fmt.Errorf("error: unable to read configurations\n%v", err)
+		return confs, fmt.Errorf("unable to read configurations\n%v", err)
 	}
 
 	err = v.Unmarshal(&confs)
 	if err != nil {
-		return confs, fmt.Errorf("error: unable to unmarshall configurations \n%v", err)
+		return confs, fmt.Errorf("unable to unmarshall configurations\n%v", err)
 	}
 
 	return confs, err
@@ -218,12 +218,12 @@ func GetCredentials() (model.Credentials, error) {
 	var creds model.Credentials
 	v, err := aid.ReadConfig(aid.GetAppInfo().CredentialsName)
 	if err != nil {
-		return creds, fmt.Errorf("error: unable to read credentials\n%v", err)
+		return creds, fmt.Errorf("unable to read credentials\n%v", err)
 	}
 
 	err = v.Unmarshal(&creds)
 	if err != nil {
-		return creds, fmt.Errorf("error: unable to unmarshall credentials \n%v", err)
+		return creds, fmt.Errorf("unable to unmarshall credentials\n%v", err)
 	}
 
 	return creds, err
@@ -250,6 +250,7 @@ func GetCredentialByProvider(profile string, provider string) (model.Credential,
 	if err != nil {
 		return (model.Credential{}), err
 	}
+
 	for _, c := range cp.Credentials {
 		if c.Provider == provider {
 			return c, err

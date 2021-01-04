@@ -16,6 +16,9 @@ limitations under the License.
 package controller
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/helper"
 	"github.com/sirupsen/logrus"
@@ -33,7 +36,12 @@ var logFilePath string
 
 // RootCmd represents the base command when called without any subcommands
 func RootCmd() *cobra.Command {
-	man := helper.GetManual("root")
+	man, err := helper.GetManual("root")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	cmd := &cobra.Command{
 		Use:               man.Use,
 		Short:             man.Short,

@@ -17,11 +17,13 @@ package controller
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/dao"
 	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +31,12 @@ var unsplashPhotoSizes = []string{"all", "thumb", "small", "regular", "full", "r
 
 // UnsplashCmd command to download photos from Unsplash.com
 func UnsplashCmd() *cobra.Command {
-	man := helper.GetManual("unsplash")
+	man, err := helper.GetManual("unsplash")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	cmd := &cobra.Command{
 		Use:     man.Use,
 		Short:   man.Short,
@@ -39,29 +46,33 @@ func UnsplashCmd() *cobra.Command {
 		RunE:    unsplashRun,
 	}
 
-	cmd.Flags().StringP("collections", "c", "", "Public collection ID(‘s) to filter selection. If multiple, comma-separated")
-	cmd.Flags().BoolP("featured", "f", false, "Limit selection to featured photos. Valid values: false, true.")
-	cmd.Flags().StringP("filter", "l", "low", "Limit results by content safety. Default: low. Valid values are low and high.")
-	cmd.Flags().StringP("orientation", "", "landscape", "Filter by photo orientation. Valid values: landscape, portrait, squarish.")
-	cmd.Flags().StringP("query", "q", "mountains", "Limit selection to photos matching a search term.")
-	cmd.Flags().StringP("size", "s", "all", "Photos size. Valid values: all, thumb, small, regular, full, raw. Default: all")
-	cmd.Flags().StringP("username", "u", "", "Limit selection to a single user.")
+	cmd.Flags().String("collections", "", "Public collection ID(‘s) to filter selection. If multiple, comma-separated")
+	cmd.Flags().Bool("featured", false, "Limit selection to featured photos. Valid values: false, true.")
+	cmd.Flags().String("filter", "low", "Limit results by content safety. Default: low. Valid values are low and high.")
+	cmd.Flags().String("orientation", "landscape", "Filter by photo orientation. Valid values: landscape, portrait, squarish.")
+	cmd.Flags().String("query", "mountains", "Limit selection to photos matching a search term.")
+	cmd.Flags().String("size", "all", "Photos size. Valid values: all, thumb, small, regular, full, raw. Default: all")
+	cmd.Flags().String("username", "", "Limit selection to a single user.")
 
 	return cmd
 }
 
 func unsplashPreRun(cmd *cobra.Command, args []string) error {
-	// TODO: validate all fields
+	logrus.Traceln("start: command unsplash pre-run")
 
 	params := aid.GetModelFromFlags(cmd)
 	if !helper.ContainsString(unsplashPhotoSizes, params.Size) {
-		return fmt.Errorf("error: unknown photo size provided: %s", params.Size)
+		return fmt.Errorf("unknown photo size provided: %s", params.Size)
 	}
+
+	logrus.Traceln("end: command unsplash pre-run")
 
 	return nil
 }
 
 func unsplashRun(cmd *cobra.Command, args []string) error {
+	logrus.Traceln("start: command unsplash run")
+
 	params := aid.GetModelFromFlags(cmd)
 	cred, err := dao.GetCredentialByProvider(profile, "unsplash")
 	if err != nil {
@@ -69,8 +80,15 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 	}
 
 	if (model.Credential{}) == cred {
-		return fmt.Errorf("error: no unsplash credential found or no profile enabled")
+		return fmt.Errorf("no unsplash credential found or no profile enabled")
 	}
 
-	return aid.DownloadPhoto(params, cred, unsplashPhotoSizes)
+	err = aid.DownloadPhoto(params, cred, unsplashPhotoSizes)
+	if err != nil {
+		logrus.Errorf("unable to download photo\n%v", err)
+		return err
+	}
+
+	logrus.Traceln("end: command unsplash run")
+	return err
 }

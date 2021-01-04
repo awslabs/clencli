@@ -17,6 +17,7 @@ package controller
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/dao"
@@ -27,9 +28,14 @@ import (
 
 var configureValidArgs = []string{"delete"}
 
-// ConfigureCmd command to display CLENCLI current version
+// ConfigureCmd command to display clencli current version
 func ConfigureCmd() *cobra.Command {
-	man := helper.GetManual("configure")
+	man, err := helper.GetManual("configure")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
@@ -39,8 +45,6 @@ func ConfigureCmd() *cobra.Command {
 		Args:      cobra.OnlyValidArgs,
 		RunE:      configureRun,
 	}
-
-	// cmd.Flags().StringP("profile", "p", "default", "Profile name")
 
 	return cmd
 }
@@ -94,13 +98,13 @@ func configureRun(cmd *cobra.Command, args []string) error {
 		}
 	} else if len(args) > 0 && args[0] == "delete" {
 		if !aid.ConfigurationsDirectoryExist() {
-			return fmt.Errorf("error: clencli configuration directory not found")
+			return fmt.Errorf("clencli configuration directory not found")
 		}
 		if !aid.CredentialsFileExist() {
-			return fmt.Errorf("error: clencli credentials file not found")
+			return fmt.Errorf("clencli credentials file not found")
 		}
 		if !aid.ConfigurationsFileExist() {
-			return fmt.Errorf("error: clencli configurations file not found")
+			return fmt.Errorf("clencli configurations file not found")
 		}
 
 		if aid.ConfigurationsDirectoryExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {

@@ -24,7 +24,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// GetAppInfo return information about CLENCLI settings
+// GetAppInfo return information about clencli settings
 func GetAppInfo() model.App {
 	var err error
 	var app model.App

@@ -18,6 +18,7 @@ package controller
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/awslabs/clencli/cobra/aid"
@@ -30,7 +31,12 @@ var renderValidArgs = []string{"template"}
 
 // RenderCmd command to render templates
 func RenderCmd() *cobra.Command {
-	man := helper.GetManual("render")
+	man, err := helper.GetManual("render")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
@@ -57,7 +63,11 @@ func renderPreRun(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, _ := cmd.Flags().GetString("name")
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		logrus.Errorf("error: unable to access flag name\n%v", err)
+		return fmt.Errorf("unable to access flag name\n%v", err)
+	}
 
 	if !helper.FileExists("clencli/" + name + ".yaml") {
 		logrus.Errorf("missing database at clencli/" + name + ".yaml")
@@ -79,14 +89,14 @@ func renderRun(cmd *cobra.Command, args []string) error {
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
 		logrus.Errorf("error: unable to render template "+name+"\n%v", err)
-		return fmt.Errorf("error: unable to render template "+name+"\n%v", err)
+		return fmt.Errorf("unable to render template "+name+"\n%v", err)
 	}
 
 	// TODO: update readme and logo url based on global configuration
 
 	if err := aid.BuildTemplate(name); err != nil {
 		logrus.Errorf("Unexpected error: %v", err)
-		return fmt.Errorf("error: unable to render template "+name+"\n%v", err)
+		return fmt.Errorf("unable to render template "+name+"\n%v", err)
 	}
 
 	cmd.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")

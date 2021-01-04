@@ -91,14 +91,14 @@ func CopyFile(sourceFile string, destinationFile string) {
 	input, err := ioutil.ReadFile(sourceFile)
 	if err != nil {
 		fmt.Println(err)
-		return
+		os.Exit(1)
 	}
 
 	err = ioutil.WriteFile(destinationFile, input, 0644)
 	if err != nil {
 		fmt.Println("Error creating", destinationFile)
 		fmt.Println(err)
-		return
+		os.Exit(1)
 	}
 }
 
@@ -110,13 +110,13 @@ func FileSize(path string) (int64, error) {
 		info, err := os.Stat(path)
 		if err != nil {
 			if err != nil {
-				return size, fmt.Errorf("error: unable to obtain information about file: %s\n%s", path, err)
+				return size, fmt.Errorf("unable to obtain information about file: %s\n%s", path, err)
 			}
 			return size, err
 		}
 		size = info.Size()
 	} else {
-		return size, fmt.Errorf("error: file does not exist")
+		return size, fmt.Errorf("file does not exist")
 	}
 	return size, nil
 }

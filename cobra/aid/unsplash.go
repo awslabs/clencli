@@ -130,14 +130,14 @@ func requestRandomPhoto(params model.UnsplashRandomPhotoParameters, cred model.C
 	var client http.Client
 	resp, err := client.Get(url)
 	if err != nil {
-		return response, fmt.Errorf("error: unexpected error while performing GET on Unsplash API \n%v", err)
+		return response, fmt.Errorf("unexpected error while performing GET on Unsplash API \n%v", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
 		bodyBytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return response, fmt.Errorf("error: unexpected error while reading Unsplash response \n%v", err)
+			return response, fmt.Errorf("unexpected error while reading Unsplash response \n%v", err)
 		}
 
 		json.Unmarshal(bodyBytes, &response)

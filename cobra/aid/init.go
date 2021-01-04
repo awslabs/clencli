@@ -21,7 +21,7 @@ func CreateBasicProject(cmd *cobra.Command, name string) error {
 
 	if initalized := initProject(); !initalized {
 		logrus.Errorf("unable to initialize basic project")
-		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+		return fmt.Errorf("unable to initalize project %s", name)
 	}
 
 	return nil
@@ -30,17 +30,17 @@ func CreateBasicProject(cmd *cobra.Command, name string) error {
 func createAndEnterProjectDir(name string) error {
 
 	if !helper.MkDirsIfNotExist(name) {
-		return fmt.Errorf("error: unable to create directory %s", name)
+		return fmt.Errorf("unable to create directory %s", name)
 	}
 
 	err := os.Chdir(name)
 	if err != nil {
-		return fmt.Errorf("error: unable to enter directory %s", name)
+		return fmt.Errorf("unable to enter directory %s", name)
 	}
 
 	wd, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("error: unable to returns a rooted path name corresponding to the current directory:\n%s", err.Error())
+		return fmt.Errorf("unable to returns a rooted path name corresponding to the current directory:\n%v", err)
 	}
 	logrus.Infof("current working directory changed to %s", wd)
 
@@ -50,7 +50,7 @@ func createAndEnterProjectDir(name string) error {
 // create the basic configuration files
 func initProject() bool {
 
-	// Create a directory for CLENCLI
+	// Create a directory for clencli
 	a := h.MkDirsIfNotExist("clencli")
 	b := h.WriteFileFromBox("/init/clencli/readme.yaml", "clencli/readme.yaml")
 	c := h.WriteFileFromBox("/init/clencli/readme.tmpl", "clencli/readme.tmpl")
@@ -70,7 +70,7 @@ func CreateCloudProject(cmd *cobra.Command, name string) error {
 
 	if initialized := initCloudProject(); !initialized {
 		logrus.Errorf("unable to initialize cloud project")
-		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+		return fmt.Errorf("unable to initalize project %s", name)
 	}
 
 	return nil
@@ -94,12 +94,12 @@ func CreateCloudFormationProject(cmd *cobra.Command, name string) error {
 
 	if initialized := initCloudProject(); !initialized {
 		logrus.Errorf("unable to initialize cloud project")
-		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+		return fmt.Errorf("unable to initalize project %s", name)
 	}
 
 	if initialized := initCloudFormationProject(); !initialized {
 		logrus.Errorf("unable to initialize cloudformation project")
-		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+		return fmt.Errorf("unable to initalize project %s", name)
 	}
 
 	return nil
@@ -134,12 +134,12 @@ func CreateTerraformProject(cmd *cobra.Command, name string) error {
 
 	if initialized := initCloudProject(); !initialized {
 		logrus.Errorf("unable to initialize terraform project")
-		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+		return fmt.Errorf("unable to initalize project %s", name)
 	}
 
 	if initialized := initTerraformProject(); !initialized {
 		logrus.Errorf("unable to initialize cloud project")
-		return fmt.Errorf("error: unable to initalize project \"%s\"", name)
+		return fmt.Errorf("unable to initalize project %s", name)
 	}
 
 	return nil

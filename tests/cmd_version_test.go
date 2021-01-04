@@ -12,5 +12,5 @@ func TestVersionCmd(t *testing.T) {
 	cmd := controller.VersionCmd()
 	out, err := executeCommand(t, cmd, args)
 	assert.Nil(t, err)
-	assert.Contains(t, out, "CLENCLI v")
+	assert.Contains(t, out, "clencli v")
 }
