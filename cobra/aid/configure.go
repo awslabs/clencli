@@ -37,14 +37,9 @@ func ConfigurationsFileExist() bool {
 }
 
 // CreateConfigurationsDirectory creates the configuration directory, returns `true` if the configuration directory exist, `false` otherwise
-func CreateConfigurationsDirectory() bool {
+func CreateConfigurationsDirectory() (bool, string) {
 	dir := GetAppInfo().ConfigurationsDir
-	created := helper.MkDirsIfNotExist(dir)
-	if created {
-		fmt.Printf("clencli configuration directory created at %s", dir)
-	}
-
-	return created
+	return helper.MkDirsIfNotExist(dir), dir
 }
 
 // CredentialsFileExist returns `true` if the credentials file exist, `false` otherwise

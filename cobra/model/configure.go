@@ -32,14 +32,15 @@ type CredentialProfile struct {
 
 // Credential model
 type Credential struct {
-	Name        string `yaml:"name,omitempty"`
-	Description string `yaml:"description,omitempty"`
-	Enabled     bool   `yaml:"enabled"`
-	CreatedAt   string `yaml:"createdAt"`
-	UpdatedAt   string `yaml:"updatedAt"`
-	Provider    string `yaml:"provider"`
-	AccessKey   string `yaml:"accessKey"`
-	SecretKey   string `yaml:"secretkey"`
+	Name         string `yaml:"name,omitempty"`
+	Description  string `yaml:"description,omitempty"`
+	Enabled      bool   `yaml:"enabled"`
+	CreatedAt    string `yaml:"createdAt"`
+	UpdatedAt    string `yaml:"updatedAt"`
+	Provider     string `yaml:"provider"`
+	AccessKey    string `yaml:"accessKey"`
+	SecretKey    string `yaml:"secretKey"`
+	SessionToken string `yaml:"sessionToken"`
 }
 
 // Configurations model
