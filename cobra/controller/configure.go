@@ -53,28 +53,27 @@ func configureRun(cmd *cobra.Command, args []string) error {
 	if !aid.ConfigurationsDirectoryExist() {
 		if created, dir := aid.CreateConfigurationsDirectory(); created {
 			cmd.Printf("clencli configuration directory created at %s\n", dir)
-
-			answer := view.GetUserInputAsBool(cmd, "Would you like to setup credentials?", false)
-			if answer {
-				credentials := view.CreateCredentials(cmd, profile)
-				dao.SaveCredentials(credentials)
-			}
-
-			answer = view.GetUserInputAsBool(cmd, "Would you like to setup configurations?", false)
-			if answer {
-				configurations := view.CreateConfigurations(cmd, profile)
-				dao.SaveConfigurations(configurations)
-			}
+			createCredentials(cmd)
+			createConfigurations(cmd)
 		}
+	} else {
+		// configurations directory exist
+		if !aid.CredentialsFileExist() {
+			createCredentials(cmd)
+		} else {
+			updateCredentials(cmd)
+		}
+
+		if !aid.ConfigurationsFileExist() {
+			createConfigurations(cmd)
+		} else {
+			updateConfigurations(cmd)
+		}
+
 	}
 
 	// clencli configure credential --profile abc
 	// clencli configure configuration --profile abc
-
-	// |- config dir doesnt exist
-	// |--  create config dir
-	// |--  create credentials file and add default cred profile
-	// |--  create configurations file and add default config profile
 
 	// |- config dir exist
 	// |--  add cred profile if profile doesnt exist
@@ -85,4 +84,36 @@ func configureRun(cmd *cobra.Command, args []string) error {
 
 	// config dir exist
 	return nil
+}
+
+func createCredentials(cmd *cobra.Command) {
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to setup credentials?", false)
+	if answer {
+		credentials := view.CreateCredentials(cmd, profile)
+		dao.SaveCredentials(credentials)
+	}
+}
+
+func updateCredentials(cmd *cobra.Command) {
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to update credentials?", false)
+	if answer {
+		credentials := view.UpdateCredentials(cmd, profile)
+		dao.SaveCredentials(credentials)
+	}
+}
+
+func createConfigurations(cmd *cobra.Command) {
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to setup configurations?", false)
+	if answer {
+		configurations := view.CreateConfigurations(cmd, profile)
+		dao.SaveConfigurations(configurations)
+	}
+}
+
+func updateConfigurations(cmd *cobra.Command) {
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to update configurations?", false)
+	if answer {
+		configurations := view.UpdateConfigurations(cmd, profile)
+		dao.SaveConfigurations(configurations)
+	}
 }

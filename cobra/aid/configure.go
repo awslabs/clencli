@@ -16,12 +16,17 @@ limitations under the License.
 package aid
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/awslabs/clencli/helper"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
@@ -95,4 +100,83 @@ func DeleteConfigurationFile() error {
 // DeleteConfigurationsDirectory delete the configurations directory
 func DeleteConfigurationsDirectory() error {
 	return os.RemoveAll(GetAppInfo().ConfigurationsDir)
+}
+
+// GetSensitiveUserInput get sensitive input as string
+func GetSensitiveUserInput(cmd *cobra.Command, text string, info string) (string, error) {
+	return getUserInput(cmd, text+" ["+maskString(info, 3)+"]", "")
+}
+
+func maskString(s string, showLastChars int) string {
+	maskSize := len(s) - showLastChars
+	if maskSize <= 0 {
+		return s
+	}
+
+	return strings.Repeat("*", maskSize) + s[maskSize:]
+}
+
+// GetSensitiveUserInputAsString get sensitive input as string
+func GetSensitiveUserInputAsString(cmd *cobra.Command, text string, info string) string {
+	answer, err := GetSensitiveUserInput(cmd, text, info)
+	if err != nil {
+		log.Fatalf("unable to get user input about profile's name\n%v", err)
+	}
+
+	// if user typed ENTER, keep the current value
+	if answer != "" {
+		return answer
+	}
+
+	return info
+}
+
+func getUserInput(cmd *cobra.Command, text string, info string) (string, error) {
+	reader := bufio.NewReader(os.Stdin)
+
+	if info == "" {
+		cmd.Print(text + ": ")
+	} else {
+		cmd.Print(text + " [" + info + "]: ")
+	}
+
+	input, err := reader.ReadString('\n')
+	// convert CRLF to LF
+	input = strings.Replace(input, "\n", "", -1)
+	if err != nil {
+		return input, fmt.Errorf("unable to read user input\n%v", err)
+	}
+
+	return input, err
+}
+
+// GetUserInputAsBool prints `text` on console and return answer as `boolean`
+func GetUserInputAsBool(cmd *cobra.Command, text string, info bool) bool {
+	answer, err := getUserInput(cmd, text, strconv.FormatBool(info))
+	if err != nil {
+		log.Fatalf("unable to get user input as boolean\n%s", err)
+	}
+
+	if answer == "true" {
+		return true
+	} else if answer == "false" {
+		return false
+	}
+
+	return info
+}
+
+// GetUserInputAsString prints `text` on console and return answer as `string`
+func GetUserInputAsString(cmd *cobra.Command, text string, info string) string {
+	answer, err := getUserInput(cmd, text, info)
+	if err != nil {
+		log.Fatalf("unable to get user input about profile's name\n%v", err)
+	}
+
+	// if user typed ENTER, keep the current value
+	if answer != "" {
+		return answer
+	}
+
+	return info
 }

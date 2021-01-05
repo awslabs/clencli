@@ -156,21 +156,21 @@ import (
 // 	return nil
 // }
 
-// // GetConfigurations read the current configurations file and return its model
-// func GetConfigurations() (model.Configurations, error) {
-// 	var confs model.Configurations
-// 	v, err := aid.ReadConfig(aid.GetAppInfo().ConfigurationsName)
-// 	if err != nil {
-// 		return confs, fmt.Errorf("unable to read configurations\n%v", err)
-// 	}
+// GetConfigurations read the current configurations file and return its model
+func GetConfigurations() (model.Configurations, error) {
+	var confs model.Configurations
+	v, err := aid.ReadConfig(aid.GetAppInfo().ConfigurationsName)
+	if err != nil {
+		return confs, fmt.Errorf("unable to read configurations\n%v", err)
+	}
 
-// 	err = v.Unmarshal(&confs)
-// 	if err != nil {
-// 		return confs, fmt.Errorf("unable to unmarshall configurations\n%v", err)
-// 	}
+	err = v.Unmarshal(&confs)
+	if err != nil {
+		return confs, fmt.Errorf("unable to unmarshall configurations\n%v", err)
+	}
 
-// 	return confs, err
-// }
+	return confs, err
+}
 
 // GetCredentials read the current credentials file and return its model
 func GetCredentials() (model.Credentials, error) {
@@ -191,15 +191,17 @@ func GetCredentials() (model.Credentials, error) {
 // GetCredentialProfile returns credentials of a profile
 func GetCredentialProfile(name string) (model.CredentialProfile, error) {
 	credentials, err := GetCredentials()
+
 	if err != nil {
 		return (model.CredentialProfile{}), err
 	}
-	for _, profile := range credentials.Profiles {
 
+	for _, profile := range credentials.Profiles {
 		if profile.Name == name && profile.Enabled {
 			return profile, err
 		}
 	}
+
 	return (model.CredentialProfile{}), err
 }
 
