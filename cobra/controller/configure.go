@@ -53,14 +53,18 @@ func configureRun(cmd *cobra.Command, args []string) error {
 	if !aid.ConfigurationsDirectoryExist() {
 		if created, dir := aid.CreateConfigurationsDirectory(); created {
 			cmd.Printf("clencli configuration directory created at %s\n", dir)
-			credentials := view.CreateCredentials(cmd, profile)
-			dao.SaveCredentials(credentials)
 
-			// dao.CreateCredentials(profile)
-			// answer := view.GetUserInputAsBool("Would you like to setup configurations?", false)
-			// if answer {
-			// 	dao.CreateConfigurations(profile)
-			// }
+			answer := view.GetUserInputAsBool(cmd, "Would you like to setup credentials?", false)
+			if answer {
+				credentials := view.CreateCredentials(cmd, profile)
+				dao.SaveCredentials(credentials)
+			}
+
+			answer = view.GetUserInputAsBool(cmd, "Would you like to setup configurations?", false)
+			if answer {
+				configurations := view.CreateConfigurations(cmd, profile)
+				dao.SaveConfigurations(configurations)
+			}
 		}
 	}
 

@@ -28,6 +28,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// CREDENTIALS
+
 // CreateCredentials create the credentials
 func CreateCredentials(cmd *cobra.Command, name string) model.Credentials {
 	cmd.Println("> Credentials")
@@ -41,9 +43,10 @@ func createCredentialProfile(cmd *cobra.Command, name string) model.CredentialPr
 	cmd.Println(">> Profile: " + name)
 	var cProfile model.CredentialProfile
 	cProfile.Name = name
+	cProfile.Description = "managed by clencli"
+	cProfile.Enabled = true // enabling profile by default
 	cProfile.CreatedAt = time.Now().String()
 	cProfile.UpdatedAt = time.Now().String()
-	cProfile.Enabled = true // enabling profile by default
 
 	var credential model.Credential
 	credential.Enabled = true
@@ -51,7 +54,7 @@ func createCredentialProfile(cmd *cobra.Command, name string) model.CredentialPr
 	cProfile.Credentials = append(cProfile.Credentials, credential)
 
 	for {
-		answer := getUserInputAsBool(cmd, "Would you like to setup another credential?", false)
+		answer := GetUserInputAsBool(cmd, "Would you like to setup another credential?", false)
 		if answer {
 			var newCred model.Credential
 			newCred.Enabled = true
@@ -67,12 +70,12 @@ func createCredentialProfile(cmd *cobra.Command, name string) model.CredentialPr
 
 func createOrUpdateCredential(cmd *cobra.Command, credential model.Credential) model.Credential {
 	cmd.Println(">>> Credential")
-	credential.Name = getUserInputAsString(cmd, ">>>> Name", credential.Name)
-	credential.Description = getUserInputAsString(cmd, ">>>> Description", credential.Description)
-	credential.Enabled = getUserInputAsBool(cmd, ">>>> Enabled", credential.Enabled)
+	credential.Name = GetUserInputAsString(cmd, ">>>> Name", credential.Name)
+	credential.Description = GetUserInputAsString(cmd, ">>>> Description", credential.Description)
+	credential.Enabled = GetUserInputAsBool(cmd, ">>>> Enabled", credential.Enabled)
 	credential.CreatedAt = time.Now().String()
 	credential.UpdatedAt = time.Now().String()
-	credential.Provider = getUserInputAsString(cmd, ">>>> Provider", credential.Provider)
+	credential.Provider = GetUserInputAsString(cmd, ">>>> Provider", credential.Provider)
 	credential.AccessKey = getSensitiveUserInputAsString(cmd, ">>>> Access Key", credential.AccessKey)
 	credential.SecretKey = getSensitiveUserInputAsString(cmd, ">>>> Secret Key", credential.SecretKey)
 	credential.SessionToken = getSensitiveUserInputAsString(cmd, ">>>> Session Token", credential.SessionToken)
@@ -80,24 +83,124 @@ func createOrUpdateCredential(cmd *cobra.Command, credential model.Credential) m
 	return credential
 }
 
+// CONFIGURATIONS
+
+// CreateConfigurations create the configuration file with the given profile name
+func CreateConfigurations(cmd *cobra.Command, name string) model.Configurations {
+	cmd.Println("> Configurations")
+	var configurations model.Configurations
+	cProfile := createConfigurationProfile(cmd, name)
+	configurations.Profiles = append(configurations.Profiles, cProfile)
+	return configurations
+}
+
+// createConfigurationProfile create the given profile name into the configurations file, return the profile created
+func createConfigurationProfile(cmd *cobra.Command, name string) model.ConfigurationProfile {
+	cmd.Println(">> Profile: " + name)
+	var cProfile model.ConfigurationProfile
+	cProfile.Name = name
+	cProfile.Description = "managed by clencli"
+	cProfile.Enabled = true // enabling profile by default
+	cProfile.CreatedAt = time.Now().String()
+	cProfile.UpdatedAt = time.Now().String()
+
+	var configuration model.Configuration
+	configuration.Enabled = true
+	configuration = createOrUpdateConfiguration(cmd, configuration)
+	cProfile.Configurations = append(cProfile.Configurations, configuration)
+
+	for {
+		answer := GetUserInputAsBool(cmd, "Would you like to setup another configuration?", false)
+		if answer {
+			var newConf model.Configuration
+			newConf.Enabled = true
+			newConf = createOrUpdateConfiguration(cmd, newConf)
+			cProfile.Configurations = append(cProfile.Configurations, newConf)
+		} else {
+			break
+		}
+	}
+
+	return cProfile
+}
+
+func createOrUpdateConfiguration(cmd *cobra.Command, conf model.Configuration) model.Configuration {
+	cmd.Println(">>> Configuration")
+	conf.Name = GetUserInputAsString(cmd, ">>>> Name", conf.Name)
+	conf.Description = GetUserInputAsString(cmd, ">>>> Description", conf.Description)
+	conf.Enabled = GetUserInputAsBool(cmd, ">>>> Enabled", conf.Enabled)
+	conf.CreatedAt = time.Now().String()
+	conf.UpdatedAt = time.Now().String()
+	conf.Unsplash = createOrUpdateUnsplashConfiguration(cmd, conf.Unsplash)
+
+	// configuration.CreatedAt = time.Now().String()
+	// configuration = view.AskAboutConfiguration(configuration)
+
+	// profile.Configurations = append(profile.Configurations, configuration)
+
+	// for {
+	// 	answer := view.GetUserInputAsBool("Would you like to setup another configuration?", false)
+	// 	if answer {
+	// 		var newConf model.Configuration
+	// 		newConf = view.AskAboutConfiguration(newConf)
+	// 		profile.Configurations = append(profile.Configurations, newConf)
+	// 	} else {
+	// 		break
+	// 	}
+	// }
+
+	return conf
+}
+
 // AskAboutConfiguration ask user about configuration
-// func AskAboutConfiguration(conf model.Configuration) model.Configuration {
-// 	// configuration can have many types: Unsplash, AWS, etc
-// 	cmd.Println(">>> Configuration")
-// 	conf.Name = GetUserInputAsString(">>>> Name", conf.Name)
-// 	conf.Description = GetUserInputAsString(">>>> Description", conf.Description)
-// 	conf.Enabled = GetUserInputAsBool(">>>> Enabled", conf.Enabled)
-// 	conf.UpdatedAt = time.Now().String()
+func createOrUpdateUnsplashConfiguration(cmd *cobra.Command, unsplash model.Unsplash) model.Unsplash {
+	// configuration can have many types: Unsplash, AWS, etc
+	answer := GetUserInputAsBool(cmd, "Would you like to setup Unsplash configuration?", false)
+	if answer {
+		cmd.Println(">>> Unsplash")
+		unsplash.Name = GetUserInputAsString(cmd, ">>>>> Name", unsplash.Name)
+		unsplash.Description = GetUserInputAsString(cmd, ">>>>> Description", unsplash.Description)
+		unsplash.Enabled = GetUserInputAsBool(cmd, ">>>>> Enabled", unsplash.Enabled)
+		// unsplash.CreatedAt = time.Now().String()
+		unsplash.UpdatedAt = time.Now().String()
+		unsplash = createOrUpdateUnsplashRandomPhotoConfiguration(cmd, unsplash)
 
-// 	answer := GetUserInputAsBool("Would you like to setup Unsplash configuration?", false)
+	} else {
+		cmd.Println("Skipping Unplash configuration ...")
+	}
+	return unsplash
+}
 
-// 	if answer {
-// 		conf.Unsplash = askAboutUnsplashConfiguration(conf.Unsplash)
-// 	} else {
-// 		cmd.Println("Skipping Unplash configuration ...")
-// 	}
-// 	return conf
-// }
+func createOrUpdateUnsplashRandomPhotoConfiguration(cmd *cobra.Command, unsplash model.Unsplash) model.Unsplash {
+	// unsplash configuration may have multiple nested configuration, such as random photo, etc...
+	answer := GetUserInputAsBool(cmd, "Would you like to setup Unsplash Random Photo Parameters?", false)
+
+	if answer {
+		randomPhoto := unsplash.RandomPhoto
+		cmd.Println(">>>>> Random Photo")
+		randomPhoto.Name = GetUserInputAsString(cmd, ">>>>>> Name", randomPhoto.Name)
+		randomPhoto.Description = GetUserInputAsString(cmd, ">>>>>> Description", randomPhoto.Description)
+		randomPhoto.Enabled = GetUserInputAsBool(cmd, ">>>>>> Enabled", randomPhoto.Enabled)
+		randomPhoto.UpdatedAt = time.Now().String()
+		unsplash.RandomPhoto = randomPhoto
+
+		params := randomPhoto.Parameters
+		cmd.Println(">>>>>> Parameters")
+		params.Collections = GetUserInputAsString(cmd, ">>>>>>> Collections (Public collection ID to filter selection. If multiple, comma-separated) ", params.Collections)
+		params.Featured = GetUserInputAsBool(cmd, ">>>>>>> Featured (Limit selection to featured photos. Valid values: false and true)", params.Featured)
+		params.Filter = GetUserInputAsString(cmd, ">>>>>>> Filter (Limit results by content safety. Valid values are low and high)", params.Filter)
+		params.Orientation = GetUserInputAsString(cmd, ">>>>>>> Orientation (Filter by photo orientation. Valid values: landscape, portrait, squarish)", params.Orientation)
+		params.Query = GetUserInputAsString(cmd, ">>>>>>> Query (Limit selection to photos matching a search term)", params.Query)
+		params.Size = GetUserInputAsString(cmd, ">>>>>>> Size (Photos size. Valid values: all, thumb, small, regular, full, raw)", params.Size)
+		params.Username = GetUserInputAsString(cmd, ">>>>>>> Username (Limit selection to a single user)", params.Username)
+		unsplash.RandomPhoto.Parameters = params
+
+	} else {
+		cmd.Println("Skipping Unplash Random Photo configuration ...")
+	}
+
+	return unsplash
+}
 
 // AskAboutConfigurationProfile ask user about configuration profile
 // func AskAboutConfigurationProfile(profile model.ConfigurationProfile) model.ConfigurationProfile {
@@ -132,39 +235,8 @@ func createOrUpdateCredential(cmd *cobra.Command, credential model.Credential) m
 // 	return profile
 // }
 
-// func askAboutUnsplashConfiguration(unsplash model.Unsplash) model.Unsplash {
-// 	// unsplash configuration may have multiple nested configuration, such as random photo, etc...
-// 	cmd.Println(">>>> Unsplash")
-// 	unsplash.Name = GetUserInputAsString(">>>>> Name", unsplash.Name)
-// 	unsplash.Description = GetUserInputAsString(">>>>> Description", unsplash.Description)
-// 	unsplash.Enabled = GetUserInputAsBool(">>>>> Enabled", unsplash.Enabled)
-// 	unsplash.UpdatedAt = time.Now().String()
-
-// 	answer := GetUserInputAsBool("Would you like to setup Unsplash Random Photo Parameters?", false)
-
-// 	if answer {
-// 		cmd.Println(">>>>> Random Photo")
-// 		unsplash.RandomPhoto.Name = GetUserInputAsString(">>>>>> Name", unsplash.RandomPhoto.Name)
-// 		unsplash.RandomPhoto.Description = GetUserInputAsString(">>>>>> Description", unsplash.RandomPhoto.Description)
-// 		unsplash.RandomPhoto.Enabled = GetUserInputAsBool(">>>>>> Enabled", unsplash.RandomPhoto.Enabled)
-// 		unsplash.RandomPhoto.UpdatedAt = time.Now().String()
-// 		unsplash.RandomPhoto.Parameters = askAboutUnsplashRandomPhotoParameters(unsplash.RandomPhoto.Parameters)
-// 	} else {
-// 		cmd.Println("Skipping Unplash Random Photo configuration ...")
-// 	}
-
-// 	return unsplash
-// }
-
 // func askAboutUnsplashRandomPhotoParameters(params model.UnsplashRandomPhotoParameters) model.UnsplashRandomPhotoParameters {
-// 	cmd.Println(">>>>>> Parameters")
-// 	params.Collections = GetUserInputAsString(">>>>>>> Public collection ID(‘s) to filter selection. If multiple, comma-separated.\nCollections ", params.Collections)
-// 	params.Featured = GetUserInputAsBool(">>>>>>> Limit selection to featured photos. Valid values: false and true. Default: false\nFeatured", params.Featured)
-// 	params.Filter = GetUserInputAsString(">>>>>>> Limit results by content safety. Valid values are low and high.\nFilter", params.Filter)
-// 	params.Orientation = GetUserInputAsString(">>>>>>> Filter by photo orientation. Valid values: landscape, portrait, squarish.\nOrientation", params.Orientation)
-// 	params.Query = GetUserInputAsString(">>>>>>> Limit selection to photos matching a search term.\nQuery", params.Query)
-// 	params.Size = GetUserInputAsString(">>>>>>> Photos size. Valid values: all, thumb, small, regular, full, raw.\nSize", params.Size)
-// 	params.Username = GetUserInputAsString(">>>>>>> Limit selection to a single user.\nUsername", params.Username)
+
 // 	return params
 // }
 
@@ -206,7 +278,7 @@ func getUserInput(cmd *cobra.Command, text string, info string) (string, error) 
 }
 
 // GetUserInputAsBool prints `text` on console and return answer as `boolean`
-func getUserInputAsBool(cmd *cobra.Command, text string, info bool) bool {
+func GetUserInputAsBool(cmd *cobra.Command, text string, info bool) bool {
 	answer, err := getUserInput(cmd, text, strconv.FormatBool(info))
 	if err != nil {
 		log.Fatalf("unable to get user input as boolean\n%s", err)
@@ -219,8 +291,8 @@ func getUserInputAsBool(cmd *cobra.Command, text string, info bool) bool {
 	return false
 }
 
-// getUserInputAsString prints `text` on console and return answer as `string`
-func getUserInputAsString(cmd *cobra.Command, text string, info string) string {
+// GetUserInputAsString prints `text` on console and return answer as `string`
+func GetUserInputAsString(cmd *cobra.Command, text string, info string) string {
 	answer, err := getUserInput(cmd, text, info)
 	if err != nil {
 		log.Fatalf("unable to get user input about profile's name\n%v", err)

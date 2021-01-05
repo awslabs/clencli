@@ -59,45 +59,6 @@ import (
 
 // }
 
-// // CreateConfigurationProfile create the given profile name into the configurations file, return the profile created
-// func CreateConfigurationProfile(name string) model.ConfigurationProfile {
-// 	fmt.Println(">> Profile")
-// 	var profile model.ConfigurationProfile
-// 	profile.Name = name
-// 	profile.CreatedAt = time.Now().String()
-// 	profile.Enabled = true // enabling profile by default
-
-// 	var configuration model.Configuration
-// 	configuration.CreatedAt = time.Now().String()
-// 	configuration.Enabled = true // enabling configuration by default
-// 	configuration = view.AskAboutConfiguration(configuration)
-
-// 	profile.Configurations = append(profile.Configurations, configuration)
-
-// 	for {
-// 		answer := view.GetUserInputAsBool("Would you like to setup another configuration?", false)
-// 		if answer {
-// 			var newConf model.Configuration
-// 			newConf = view.AskAboutConfiguration(newConf)
-// 			profile.Configurations = append(profile.Configurations, newConf)
-// 		} else {
-// 			break
-// 		}
-// 	}
-
-// 	return profile
-// }
-
-// // CreateConfigurations create the configuration file with the given profile name
-// func CreateConfigurations(name string) {
-// 	fmt.Println("> Configurations")
-// 	var configurations model.Configurations
-// 	var profile model.ConfigurationProfile
-// 	profile = CreateConfigurationProfile(name)
-// 	configurations.Profiles = append(configurations.Profiles, profile)
-// 	saveConfigurations(configurations)
-// }
-
 // // CreateCredentialProfile create the given profile name into the credentials file, return the profile created
 // func CreateCredentialProfile(name string) model.CredentialProfile {
 // 	fmt.Println(">> Profile")
@@ -258,10 +219,10 @@ func GetCredentialByProvider(profile string, provider string) (model.Credential,
 	return (model.Credential{}), err
 }
 
-// // SaveConfigurations saves the given configuration onto the configurations file
-// func SaveConfigurations(configurations model.Configurations) error {
-// 	return aid.WriteInterfaceToFile(configurations, aid.GetAppInfo().ConfigurationsPath)
-// }
+// SaveConfigurations saves the given configuration onto the configurations file
+func SaveConfigurations(configurations model.Configurations) error {
+	return aid.WriteInterfaceToFile(configurations, aid.GetAppInfo().ConfigurationsPath)
+}
 
 // func saveConfigurations(configurations model.Configurations) error {
 // 	return aid.WriteInterfaceToFile(configurations, aid.GetAppInfo().ConfigurationsPath)
