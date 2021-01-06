@@ -69,20 +69,8 @@ func configureRun(cmd *cobra.Command, args []string) error {
 		} else {
 			updateConfigurations(cmd)
 		}
-
 	}
 
-	// clencli configure credential --profile abc
-	// clencli configure configuration --profile abc
-
-	// |- config dir exist
-	// |--  add cred profile if profile doesnt exist
-	// |----  update cred profile if profile exist
-	// |--  add config profile if profile doesnt exist
-	// |----  update config profile if profile exist
-	// |--  delete cred and config profile if profile
-
-	// config dir exist
 	return nil
 }
 
