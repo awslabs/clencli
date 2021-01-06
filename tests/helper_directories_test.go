@@ -13,28 +13,14 @@ func TestMkDir(t *testing.T) {
 		dir  string
 		want bool
 	}{
-		"empty":              {dir: "", want: false},
-		"single backslack":   {dir: "\\", want: true},
-		"multiple backslack": {dir: "\\\\\\", want: true},
-		"dollar sign":        {dir: "$", want: true},
-		"illegal char":       {dir: "/", want: false},
-		"illegal char \\":    {dir: "\\", want: true},
-		"illegal char /":     {dir: "/", want: false},
-		"illegal char :":     {dir: ":", want: true},
-		"illegal char *":     {dir: "*", want: true},
-		"illegal char ?":     {dir: "?", want: true},
-		"illegal char \" ":   {dir: "\"", want: true},
-		"illegal char <":     {dir: "<", want: true},
-		"illegal char >":     {dir: ">", want: true},
-		"illegal char |":     {dir: "|", want: true},
-		"single letter":      {dir: "a", want: true},
+		"foo": {dir: "foo", want: true},
 	}
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			wd := createAndEnterTestDirectory(t)
-			got := helper.MkDirsIfNotExist(tc.dir)
 			os.Chdir(wd)
+			got := helper.MkDirsIfNotExist(tc.dir)
 			assert.Equal(t, tc.want, got)
 
 		})
