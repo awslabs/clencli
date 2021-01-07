@@ -3,7 +3,6 @@ package tests
 import (
 	"testing"
 
-	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/controller"
 	"github.com/stretchr/testify/assert"
 )
@@ -36,7 +35,6 @@ func TestGitIgnoreCmd(t *testing.T) {
 }
 
 func TestGitIgnoreList(t *testing.T) {
-	aid.DeleteConfigurationsDirectory()
 	args := []string{"gitignore", "list"}
 	out, err := executeCommand(t, controller.GitIgnoreCmd(), args)
 	assert.NotNil(t, err)

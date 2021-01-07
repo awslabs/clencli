@@ -3,7 +3,8 @@
 include lib/make/*/Makefile
 
 .PHONY: clencli/test
-clencli/test: go/test
+clencli/test:
+	@cd tests && go test -v
 
 .PHONY: clencli/build
 clencli/build: go/mod/tidy go/version go/get go/fmt go/generate go/build ## Builds the app
