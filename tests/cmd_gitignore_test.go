@@ -38,7 +38,7 @@ func TestGitIgnoreCmd(t *testing.T) {
 func TestGitIgnoreList(t *testing.T) {
 	aid.DeleteConfigurationsDirectory()
 	args := []string{"gitignore", "list"}
-	out, err := executeCommand(t, controller.UnsplashCmd(), args)
+	out, err := executeCommand(t, controller.GitIgnoreCmd(), args)
 	assert.NotNil(t, err)
 	assert.NotEmpty(t, out)
 }
