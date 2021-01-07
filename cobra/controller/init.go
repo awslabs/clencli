@@ -21,6 +21,7 @@ import (
 	"os"
 
 	"github.com/awslabs/clencli/cobra/aid"
+	"github.com/awslabs/clencli/cobra/dao"
 	"github.com/awslabs/clencli/helper"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -106,11 +107,22 @@ func initRun(cmd *cobra.Command, args []string) error {
 			return errors.New("unknow project type")
 		}
 
+		config, err := dao.GetConfigurations()
+		if err != nil {
+			logrus.Errorf("unable to get configuration during initialization\n%v")
+			return fmt.Errorf("unable to initialize project based on configurations\n%v", err)
+		}
+
+		customized := aid.InitCustomized(profile, config)
+
 		if err != nil {
 			return fmt.Errorf("unable to initialize project sucessfully \n%s", err)
 		}
 
-		cmd.Printf("%s was successfully initialized as a %s project\n", pName, pType)
+		if err == nil && customized {
+			cmd.Printf("%s was successfully initialized as a %s project\n", pName, pType)
+		}
+
 	}
 
 	logrus.Traceln("end: command init run")

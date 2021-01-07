@@ -183,6 +183,7 @@ func askAboutConfiguration(cmd *cobra.Command, conf model.Configuration) model.C
 
 	conf.UpdatedAt = time.Now().String()
 	conf.Unsplash = askAboutUnsplashConfiguration(cmd, conf.Unsplash)
+	conf.Initialization = askAboutInitialization(cmd, conf.Initialization)
 	return conf
 }
 
@@ -244,6 +245,57 @@ func askAboutUnsplashRandomPhotoParameters(cmd *cobra.Command, params model.Unsp
 	params.Username = aid.GetUserInputAsString(cmd, ">>>>>>>> Username (Limit selection to a single user)", params.Username)
 
 	return params
+}
+
+func askAboutInitialization(cmd *cobra.Command, init model.Initialization) model.Initialization {
+	// configuration can have many types: Unsplash, AWS, etc
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to setup a customized initialization?", false)
+	if answer {
+
+		cmd.Println(">>>> Initialization")
+		init.Name = aid.GetUserInputAsString(cmd, ">>>> Name", init.Name)
+		init.Description = aid.GetUserInputAsString(cmd, ">>>> Description", init.Description)
+		init.Enabled = aid.GetUserInputAsBool(cmd, ">>>> Enabled", init.Enabled)
+		init.Type = aid.GetUserInputAsString(cmd, ">>>> Type", init.Type)
+
+		if init.CreatedAt == "" {
+			init.CreatedAt = time.Now().String()
+		}
+		init.UpdatedAt = time.Now().String()
+
+		if len(init.Files) == 0 {
+			var file model.File
+			file = askAboutInitializationFile(cmd, file)
+			init.Files = append(init.Files, file)
+		} else {
+			for i, f := range init.Files {
+				init.Files[i] = askAboutInitializationFile(cmd, f)
+			}
+		}
+
+		for {
+			answer = aid.GetUserInputAsBool(cmd, "Would you like to setup a new file?", false)
+			if answer {
+				var file model.File
+				file = askAboutInitializationFile(cmd, file)
+				init.Files = append(init.Files, file)
+			} else {
+				break
+			}
+		}
+
+	}
+
+	return init
+}
+
+func askAboutInitializationFile(cmd *cobra.Command, file model.File) model.File {
+	cmd.Println(">>>>> File")
+	file.Path = aid.GetUserInputAsString(cmd, ">>>>>> Path", file.Path)
+	file.Src = aid.GetUserInputAsString(cmd, ">>>>>> Source", file.Src)
+	file.Dest = aid.GetUserInputAsString(cmd, ">>>>>> Destination", file.Dest)
+	file.State = aid.GetUserInputAsString(cmd, ">>>>>> State", file.State)
+	return file
 }
 
 // UpdateConfigurations update the given configurations

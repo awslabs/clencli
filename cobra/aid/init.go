@@ -3,9 +3,10 @@ package aid
 import (
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
-	h "github.com/awslabs/clencli/helper"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -51,13 +52,38 @@ func createAndEnterProjectDir(name string) error {
 func initProject() bool {
 
 	// Create a directory for clencli
-	a := h.MkDirsIfNotExist("clencli")
-	b := h.WriteFileFromBox("/init/clencli/readme.yaml", "clencli/readme.yaml")
-	c := h.WriteFileFromBox("/init/clencli/readme.tmpl", "clencli/readme.tmpl")
-	d := h.WriteFileFromBox("/init/.gitignore", ".gitignore")
+	a := helper.MkDirsIfNotExist("clencli")
+	b := helper.WriteFileFromBox("/init/clencli/readme.yaml", "clencli/readme.yaml")
+	c := helper.WriteFileFromBox("/init/clencli/readme.tmpl", "clencli/readme.tmpl")
+	d := helper.WriteFileFromBox("/init/.gitignore", ".gitignore")
 
 	return (a && b && c && d)
+}
 
+// InitCustomized TODO...
+func InitCustomized(profile string, config model.Configurations) bool {
+
+	for _, p := range config.Profiles {
+		if p.Name == profile && p.Enabled {
+			for _, c := range p.Configurations {
+				if c.Enabled && c.Initialization.Enabled {
+					for _, f := range c.Initialization.Files {
+						if f.State == "directory" {
+							helper.MkDirsIfNotExist(f.Path)
+						} else if f.State == "file" {
+							if strings.Contains(f.Src, "http") {
+								helper.DownloadFileTo(f.Src, f.Dest)
+							} else {
+								helper.CopyFile(f.Src, f.Dest)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return true
 }
 
 /* CLOUD PROJECT */
@@ -78,8 +104,8 @@ func CreateCloudProject(cmd *cobra.Command, name string) error {
 
 // copies the High Level Design template file
 func initCloudProject() bool {
-	a := h.WriteFileFromBox("/init/clencli/hld.yaml", "clencli/hld.yaml")
-	b := h.WriteFileFromBox("/init/clencli/hld.tmpl", "clencli/hld.tmpl")
+	a := helper.WriteFileFromBox("/init/clencli/hld.yaml", "clencli/hld.yaml")
+	b := helper.WriteFileFromBox("/init/clencli/hld.tmpl", "clencli/hld.tmpl")
 
 	return (a && b)
 }
@@ -108,11 +134,11 @@ func CreateCloudFormationProject(cmd *cobra.Command, name string) error {
 // initialize a project with CloudFormation structure and copies template files
 func initCloudFormationProject() bool {
 
-	a := h.MkDirsIfNotExist("environments")
-	b := h.MkDirsIfNotExist("environments/dev")
-	c := h.MkDirsIfNotExist("environments/prod")
-	d := h.WriteFileFromBox("/init/project/type/clouformation/skeleton.yaml", "skeleton.yaml")
-	e := h.WriteFileFromBox("/init/project/type/clouformation/skeleton.json", "skeleton.json")
+	a := helper.MkDirsIfNotExist("environments")
+	b := helper.MkDirsIfNotExist("environments/dev")
+	c := helper.MkDirsIfNotExist("environments/prod")
+	d := helper.WriteFileFromBox("/init/project/type/clouformation/skeleton.yaml", "skeleton.yaml")
+	e := helper.WriteFileFromBox("/init/project/type/clouformation/skeleton.json", "skeleton.json")
 
 	/* TODO: copy a template to create standard tags for the entire stack easily
 	https://docs.aws.amazon.com/cli/latest/reference/cloudformation/create-stack.html
@@ -147,16 +173,16 @@ func CreateTerraformProject(cmd *cobra.Command, name string) error {
 
 // InitTerraform initialize a project with Terraform structure
 func initTerraformProject() bool {
-	a := h.WriteFileFromBox("/init/project/type/terraform/Makefile", "Makefile")
-	b := h.WriteFileFromBox("/init/project/type/terraform/LICENSE", "LICENSE")
+	a := helper.WriteFileFromBox("/init/project/type/terraform/Makefile", "Makefile")
+	b := helper.WriteFileFromBox("/init/project/type/terraform/LICENSE", "LICENSE")
 
-	c := h.MkDirsIfNotExist("environments")
-	d := h.WriteFileFromBox("/init/project/type/terraform/environments/dev.tf", "environments/dev.tf")
-	e := h.WriteFileFromBox("/init/project/type/terraform/environments/prod.tf", "environments/prod.tf")
+	c := helper.MkDirsIfNotExist("environments")
+	d := helper.WriteFileFromBox("/init/project/type/terraform/environments/dev.tf", "environments/dev.tf")
+	e := helper.WriteFileFromBox("/init/project/type/terraform/environments/prod.tf", "environments/prod.tf")
 
-	f := h.WriteFileFromBox("/init/project/type/terraform/main.tf", "main.tf")
-	g := h.WriteFileFromBox("/init/project/type/terraform/variables.tf", "variables.tf")
-	h := h.WriteFileFromBox("/init/project/type/terraform/outputs.tf", "outputs.tf")
+	f := helper.WriteFileFromBox("/init/project/type/terraform/main.tf", "main.tf")
+	g := helper.WriteFileFromBox("/init/project/type/terraform/variables.tf", "variables.tf")
+	h := helper.WriteFileFromBox("/init/project/type/terraform/outputs.tf", "outputs.tf")
 
 	return (a && b && c && d && e && f && g && h)
 

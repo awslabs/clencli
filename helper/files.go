@@ -44,6 +44,27 @@ func WriteFileFromBox(source string, dest string) bool {
 	return WriteFile(BuildPath(dest), bytes)
 }
 
+// DownloadFileTo downloads a file and saves into the given directory with the given file name
+func DownloadFileTo(url string, destination string) error {
+	// Get the data
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(BuildPath(destination))
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
+
 // DownloadFile downloads a file and saves into the given directory with the given file name
 func DownloadFile(url string, dirPath string, filename string) error {
 	// Get the data
