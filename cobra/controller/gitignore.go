@@ -54,15 +54,19 @@ func gitIgnorePreRun(cmd *cobra.Command, args []string) error {
 
 	if len(args) == 0 {
 		input, err := cmd.Flags().GetString("input")
+
 		if err != nil {
 			logrus.Errorf("unable to access flag input\n%v", err)
 			return err
 		}
 
 		if input == "" {
-			logrus.Errorln("empty value passed to --input")
-			return fmt.Errorf("--input must be defined")
+			logrus.Errorln("no flag or argument provided")
+			return fmt.Errorf("no flag or argument provided")
 		}
+	} else if len(args) == 1 && args[0] != "list" {
+		logrus.Errorf("unknow argument passed: %v", args)
+		return fmt.Errorf("unknown argument provided: %s", args[0])
 	}
 
 	logrus.Traceln("end: command gitignore pre-run")
@@ -95,9 +99,8 @@ func gitIgnoreRun(cmd *cobra.Command, args []string) error {
 		if downloaded {
 			cmd.Println(".gitignore created successfully")
 		}
-
-		logrus.Traceln("end: command gitignore run")
 	}
 
+	logrus.Traceln("end: command gitignore run")
 	return nil
 }
