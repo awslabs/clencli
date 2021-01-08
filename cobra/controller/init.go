@@ -110,7 +110,7 @@ func initRun(cmd *cobra.Command, args []string) error {
 		if aid.ConfigurationsDirectoryExist() && aid.ConfigurationsFileExist() {
 			config, err := dao.GetConfigurations()
 			if err != nil {
-				logrus.Errorf("unable to get configuration during initialization\n%v")
+				logrus.Errorf("unable to get configuration during initialization\n%v", err)
 				return fmt.Errorf("unable to initialize project based on configurations\n%v", err)
 			}
 

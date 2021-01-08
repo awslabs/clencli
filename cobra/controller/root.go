@@ -55,7 +55,7 @@ func RootCmd() *cobra.Command {
 
 	// TODO: allow users to pass their prefer location for clencli's configurations directory
 
-	cmd.PersistentFlags().StringVarP(&verbosity, "verbosity", "v", logrus.InfoLevel.String(), "Valid log level:panic,fatal,error,warn,info,debug,trace).")
+	cmd.PersistentFlags().StringVarP(&verbosity, "verbosity", "v", logrus.ErrorLevel.String(), "Valid log level:panic,fatal,error,warn,info,debug,trace).")
 	cmd.PersistentFlags().StringVarP(&log, "log", "l", "disable", "Enable or disable logs (found at $HOME/.clencli/logs.json). Log outputs will be shown on default output.")
 	cmd.PersistentFlags().StringVar(&logFilePath, "log-file-path", aid.GetAppInfo().LogsPath, "Log file path.")
 
