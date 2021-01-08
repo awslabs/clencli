@@ -11,7 +11,7 @@
 
 -->
 
-![Logo](https://images.unsplash.com/photo-1599227958302-7784b088545a?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
+![Logo](https://images.unsplash.com/photo-1585629220785-8039e6b5c009?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
 
@@ -45,28 +45,28 @@ A CLI built to assist Cloud Engineers.
   <summary>Expand</summary>
 
 CLENCLI enables you to quickly and predictably create, change, and improve your cloud projects by automating common tasks such as creating a new project, or updating its documentation.
-Modern software projects are composed of many repositories, and often worked upon by many development teams. Keeping consistency across the project is key to enable productivity and efficiency.
 
+Modern software projects are composed of many repositories, and often worked upon by many development teams. Keeping consistency across the project is key to enable productivity and efficiency.
 In a polyglot world where a team can choose it's programming language, often this flexibility can spill into chaos as every repo looks different. CLENCLI solves this issue by giving developers a quick and easy way to create a standardised repo structure and easily rendering documentation via a YAML file.
 
 ### Create a new project
 ```
-  $ clencli init project --name moon
+  $ clencli init project --project-name foo
   $ tree -a moon/
-  moon/
-  ├── .gitignore
-  └── clencli
-      ├── readme.tmpl
-      └── readme.yaml
+  foo/
+  ├── clencli
+  │   ├── readme.tmpl
+  │   └── readme.yaml
+  └── .gitignore
+
 ```
 
 ### Create a new CloudFormation project
 
 ```
-$ clencli init project --name sun --type cloudformation
+$ clencli init project --project-name foo --project-type cloudformation
 $ tree -a sun/
-  sun/
-  ├── README.md
+  foo/
   ├── clencli
   │   ├── hld.tmpl
   │   ├── hld.yaml
@@ -75,43 +75,135 @@ $ tree -a sun/
   ├── environments
   │   ├── dev
   │   └── prod
-  ├── nested.yaml
-  └── stack.yaml
+  ├── .gitignore
+  ├── skeleton.json
+  └── skeleton.yaml
 ```
-You can see a CloudFormation stack generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-cloudformation-project/examples/a-cloudformation-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-cloudformation-project/examples/a-cloudformation-project/HLD.md).
 
 ### Create a new Terraform project
 
 ```
-$ clencli init project --name mars --type terraform
-$ tree -a mars/
-mars/
+$ clencli init project --project-name foo --project-type terraform
+$ tree -a foo/
+foo/
+├── clencli
+│   ├── hld.tmpl
+│   ├── hld.yaml
+│   ├── readme.tmpl
+│   └── readme.yaml
+├── environments
+│   ├── dev.tf
+│   └── prod.tf
 ├── .gitignore
 ├── LICENSE
-├── Makefile
-├── clencli
-│   ├── hld.tmpl
-│   ├── hld.yaml
-│   ├── readme.tmpl
-│   └── readme.yaml
-├── environments
-│   ├── dev.tf
-│   └── prod.tf
 ├── main.tf
+├── Makefile
 ├── outputs.tf
 └── variables.tf
 ```
-You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-terraform-project/examples/a-terraform-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-terraform-project/examples/a-terraform-project/HLD.md).
 
-## Renders a template
+## Render a template
 ```
-clencli init project --name jupiter
-cd jupiter/
-clencli render template
-Template readme.tmpl rendered as README.md.
+$ clencli init project --project-name foo
+foo was successfully initialized as a basic project
+$ cd foo/
+$ clencli render template
+Template readme.tmpl rendered as README.md
 ```
 
-This `README.md` was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
+The `README.md` you are reading right now was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
+
+
+## Download random photos from [Unsplash][unsplash]
+```
+# first you need to inform your unsplash developer API credentials
+
+$ clencli configure
+clencli configuration directory created at /home/valter/.clencli
+Would you like to setup credentials? [false]: true
+> Credentials
+>> Profile: default
+>>>> Credential
+>>>>> Name: default
+>>>>> Description:   
+>>>>> Enabled [true]: 
+>>>>> Provider: unsplash
+>>>>> Access Key []: XXX
+>>>>> Secret Key []: XXX
+>>>>> Session Token []: 
+Would you like to setup another credential? [false]: 
+Would you like to setup configurations? [false]:
+
+$ clencli unsplash
+tree -a downloads/
+downloads/
+└── unsplash
+    └── mountains
+        ├── 3gz2hsA1T3s-full.jpeg
+        ├── 3gz2hsA1T3s-raw.jpeg
+        ├── 3gz2hsA1T3s-regular.jpeg
+        ├── 3gz2hsA1T3s-small.jpeg
+        └── 3gz2hsA1T3s-thumb.jpeg
+
+$ clencli unplash --query dog
+clencli unsplash --query dog --size full
+tree -a downloads/
+downloads/
+└── unsplash
+    └── dog
+        └── bbjSWtDtHbM.jpeg
+```
+
+## Download a .gitignore for your project
+```
+$ clencli gitignore --input terraform,vscode
+.gitignore created successfully
+$ less .gitignore
+
+# Created by https://www.toptal.com/developers/gitignore/api/terraform,vscode
+# Edit at https://www.toptal.com/developers/gitignore?templates=terraform,vscode
+
+### Terraform ###
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# Ignore any .tfvars files that are generated automatically for each Terraform run. Most
+# .tfvars files are managed as part of configuration and so should be included in
+# version control.
+#
+# example.tfvars
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include override files you do wish to add to version control using negated pattern
+# !example_override.tf
+
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+# example: *tfplan*
+
+### vscode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# End of https://www.toptal.com/developers/gitignore/api/terraform,vscode
+
+```
 </details>
 
 
@@ -136,24 +228,30 @@ Download the latest version [released](https://github.com/awslabs/clencli/releas
 
 ## Commands
 ```
-A CLI built to assist Cloud Engineers.
+The Cloud Engineer CLI
 
 Usage:
   clencli [command]
 
 Available Commands:
+  configure   Configures CLENCLI global settings
+  gitignore   Download .gitignore based on the given input
   help        Help about any command
   init        Initialize a project
-  render      Render template
-  unsplash    Downloads pictures from Unsplash.com
-  version     Show clencli version
+  render      Render a template
+  unsplash    Downloads random photos from Unsplash.com
+  version     Displays the version of CLENCLI and all installed plugins
 
 Flags:
-      --config string   config file (default is $HOME/.clencli.yaml)
-  -h, --help            help for clencli
-  -t, --toggle          Help message for toggle
+  -h, --help                   help for clencli
+  -l, --log string             Enable or disable logs (found at $HOME/.clencli/logs.json). Log outputs will be shown on default output. (default "disable")
+      --log-file-path string   Log file path. (default "/home/valter/.clencli/logs.json")
+  -p, --profile string         Use a specific profile from your credentials and configurations file. (default "default")
+  -t, --toggle                 Help message for toggle
+  -v, --verbosity string       Valid log level:panic,fatal,error,warn,info,debug,trace). (default "error")
 
 Use "clencli [command] --help" for more information about a command.
+
 ```
 
 
@@ -202,6 +300,7 @@ Gratitude for assistance:
   * [ttystudio](https://github.com/chjj/ttystudio) - A terminal-to-gif recorder minus the headaches.
   * [gihub-super-linter](https://github.com/github/super-linter) - GitHub Super Linter
   * [github-actions](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions) - GitHub Actions
+  * [Gitignore.io](https://www.toptal.com/developers/gitignore) - Create useful .gitignore files for your project
 
 
 </details>
