@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/controller"
 	"github.com/awslabs/clencli/helper"
 	"github.com/sirupsen/logrus"
@@ -37,6 +38,7 @@ func TestRenderCmd(t *testing.T) {
 // /* README */
 
 func initProject(t *testing.T, pType string) {
+	aid.DeleteConfigurationsDirectory()
 	args := []string{"init", "project", "--project-name", "foo", "--project-type", pType}
 	wd, out, err := executeCommandGetWorkingDirectory(t, controller.InitCmd(), args)
 

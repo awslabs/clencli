@@ -37,6 +37,6 @@ func TestGitIgnoreCmd(t *testing.T) {
 func TestGitIgnoreList(t *testing.T) {
 	args := []string{"gitignore", "list"}
 	out, err := executeCommand(t, controller.GitIgnoreCmd(), args)
-	assert.NotNil(t, err)
+	assert.Nil(t, err)
 	assert.NotEmpty(t, out)
 }
