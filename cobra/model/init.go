@@ -15,19 +15,21 @@ limitations under the License.
 
 package model
 
-// Init struct to initalize things: projects, etc
-type Init struct {
-	Types []struct {
-		Type    string `yaml:"type"`
-		Name    string `yaml:"name"`
-		Enabled bool   `yaml:"enabled"`
-		Files   []struct {
-			File struct {
-				Path  string `yaml:"path"`
-				Src   string `yaml:"src"`
-				Dest  string `yaml:"dest"`
-				State string `yaml:"state"`
-			} `yaml:"file,omitempty"`
-		} `yaml:"files"`
-	} `yaml:"types"`
+// Initialization struct to initalize things: projects, etc
+type Initialization struct {
+	Name        string `yaml:"name,omitempty"`
+	Description string `yaml:"description,omitempty"`
+	Enabled     bool   `yaml:"enabled"`
+	CreatedAt   string `yaml:"createdAt"`
+	UpdatedAt   string `yaml:"updatedAt"`
+	Type        string `yaml:"type"`
+	Files       []File `yaml:"files"`
+}
+
+// File ...
+type File struct {
+	Path  string `yaml:"path"`
+	Src   string `yaml:"src"`
+	Dest  string `yaml:"dest"`
+	State string `yaml:"state"`
 }

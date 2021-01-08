@@ -17,31 +17,22 @@ package controller
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 
 	"github.com/awslabs/clencli/box"
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-func versionRun(cmd *cobra.Command, args []string) error {
-	// Get the version defined in the VERSION file
-	version, status := box.Get("/VERSION")
-	if status {
-		goOS := runtime.GOOS
-		goVersion := runtime.Version()
-		goArch := runtime.GOARCH
-
-		fmt.Printf("CLENCLI v%s %s %s %s\n", version, goVersion, goOS, goArch)
-	} else {
-		return fmt.Errorf("Version not available")
-	}
-	return nil
-}
-
-// VersionCmd command to display CLENCLI current version
+// VersionCmd command to display clencli current version
 func VersionCmd() *cobra.Command {
-	man := helper.GetManual("version")
+	man, err := helper.GetManual("version")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	return &cobra.Command{
 		Use:   man.Use,
@@ -49,4 +40,23 @@ func VersionCmd() *cobra.Command {
 		Long:  man.Long,
 		RunE:  versionRun,
 	}
+}
+
+func versionRun(cmd *cobra.Command, args []string) error {
+	// Get the version defined in the VERSION file
+	cmd.SilenceUsage = true
+
+	version, found := box.Get("/VERSION")
+	if !found {
+		logrus.Errorf("unable to find VERSION file under box/resources")
+		return fmt.Errorf("version not available")
+	}
+
+	goOS := runtime.GOOS
+	goVersion := runtime.Version()
+	goArch := runtime.GOARCH
+
+	cmd.Printf("clencli v%s %s %s %s\n", version, goVersion, goOS, goArch)
+
+	return nil
 }

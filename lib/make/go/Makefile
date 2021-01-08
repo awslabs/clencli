@@ -18,6 +18,8 @@ endif
 .PHONY: go/fmt
 go/fmt: ## gofmt (reformat) package sources
 	go fmt github.com/awslabs/clencli/...
+	go fmt ./...
+	gofmt -s -w .
 
 .PHONY: go/generate
 go/generate: ## Generate Go files by processing source
@@ -47,8 +49,8 @@ go/version: ## Print Go version
 go/env: ## Print Go environment information
 	go env
 
+# GitHub actions doesn't allow egress internet connectivity
+# Therefore integration tests that needs to download/pull data from the internet can't be executed
 .PHONY: go/test
 go/test:
-	@echo "=== Testing commands"
-	@rm -rf test
-	@cd cmd && go test -v
+	@cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go helper_*_test.go

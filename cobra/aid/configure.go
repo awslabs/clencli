@@ -16,18 +16,23 @@ limitations under the License.
 package aid
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"strconv"
+	"strings"
 
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/helper"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
-// ConfigurationDirectoryExist returns `true` if the configuration directory exist, `false` otherwise
-func ConfigurationDirectoryExist() bool {
+// ConfigurationsDirectoryExist returns `true` if the configuration directory exist, `false` otherwise
+func ConfigurationsDirectoryExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().ConfigurationsDir)
 }
 
@@ -36,9 +41,10 @@ func ConfigurationsFileExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().ConfigurationsPath)
 }
 
-// CreateConfigDir creates the configuration directory, returns `true` if the configuration directory exist, `false` otherwise
-func CreateConfigDir() bool {
-	return helper.CreateDir(GetAppInfo().ConfigurationsDir)
+// CreateConfigurationsDirectory creates the configuration directory, returns `true` if the configuration directory exist, `false` otherwise
+func CreateConfigurationsDirectory() (bool, string) {
+	dir := GetAppInfo().ConfigurationsDir
+	return helper.MkDirsIfNotExist(dir), dir
 }
 
 // CredentialsFileExist returns `true` if the credentials file exist, `false` otherwise
@@ -57,7 +63,7 @@ func ReadConfig(name string) (*viper.Viper, error) {
 
 	err := v.ReadInConfig()
 	if err != nil {
-		return v, fmt.Errorf("Error when trying to read local configurations \n%s", err)
+		return v, fmt.Errorf("unable to read configuration:%s\n%v", name, err)
 	}
 	return v, err
 
@@ -69,14 +75,108 @@ func WriteInterfaceToFile(in interface{}, path string) error {
 	if err != nil {
 		_, ok := err.(*json.UnsupportedTypeError)
 		if ok {
-			return fmt.Errorf("Tried to marshal an invalid Type")
+			return fmt.Errorf("json unsupported type error")
 		}
 	}
 
 	err = ioutil.WriteFile(path, b, os.ModePerm)
 	if err != nil {
-		return fmt.Errorf("Unable to update: %s \n%v", path, err)
+		return fmt.Errorf("unable to update:%s\n%v", path, err)
 	}
 
 	return err
+}
+
+// DeleteCredentialFile delete the credentials file
+func DeleteCredentialFile() error {
+	return helper.DeleteFile(GetAppInfo().CredentialsPath)
+}
+
+// DeleteConfigurationFile delete the credentials file
+func DeleteConfigurationFile() error {
+	return helper.DeleteFile(GetAppInfo().ConfigurationsPath)
+}
+
+// DeleteConfigurationsDirectory delete the configurations directory
+func DeleteConfigurationsDirectory() error {
+	return os.RemoveAll(GetAppInfo().ConfigurationsDir)
+}
+
+// GetSensitiveUserInput get sensitive input as string
+func GetSensitiveUserInput(cmd *cobra.Command, text string, info string) (string, error) {
+	return getUserInput(cmd, text+" ["+maskString(info, 3)+"]", "")
+}
+
+func maskString(s string, showLastChars int) string {
+	maskSize := len(s) - showLastChars
+	if maskSize <= 0 {
+		return s
+	}
+
+	return strings.Repeat("*", maskSize) + s[maskSize:]
+}
+
+// GetSensitiveUserInputAsString get sensitive input as string
+func GetSensitiveUserInputAsString(cmd *cobra.Command, text string, info string) string {
+	answer, err := GetSensitiveUserInput(cmd, text, info)
+	if err != nil {
+		log.Fatalf("unable to get user input about profile's name\n%v", err)
+	}
+
+	// if user typed ENTER, keep the current value
+	if answer != "" {
+		return answer
+	}
+
+	return info
+}
+
+func getUserInput(cmd *cobra.Command, text string, info string) (string, error) {
+	reader := bufio.NewReader(os.Stdin)
+
+	if info == "" {
+		cmd.Print(text + ": ")
+	} else {
+		cmd.Print(text + " [" + info + "]: ")
+	}
+
+	input, err := reader.ReadString('\n')
+	// convert CRLF to LF
+	input = strings.Replace(input, "\n", "", -1)
+	if err != nil {
+		return input, fmt.Errorf("unable to read user input\n%v", err)
+	}
+
+	return input, err
+}
+
+// GetUserInputAsBool prints `text` on console and return answer as `boolean`
+func GetUserInputAsBool(cmd *cobra.Command, text string, info bool) bool {
+	answer, err := getUserInput(cmd, text, strconv.FormatBool(info))
+	if err != nil {
+		log.Fatalf("unable to get user input as boolean\n%s", err)
+	}
+
+	if answer == "true" {
+		return true
+	} else if answer == "false" {
+		return false
+	}
+
+	return info
+}
+
+// GetUserInputAsString prints `text` on console and return answer as `string`
+func GetUserInputAsString(cmd *cobra.Command, text string, info string) string {
+	answer, err := getUserInput(cmd, text, info)
+	if err != nil {
+		log.Fatalf("unable to get user input about profile's name\n%v", err)
+	}
+
+	// if user typed ENTER, keep the current value
+	if answer != "" {
+		return answer
+	}
+
+	return info
 }

@@ -13,24 +13,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controller
+package cmd
 
-import (
-	"testing"
+import "github.com/awslabs/clencli/cobra/controller"
 
-	helper "github.com/awslabs/clencli/helper"
-	"github.com/stretchr/testify/assert"
-)
+var gitignoreCmd = controller.GitIgnoreCmd()
 
-func TestConfigureCreateConfigDir(t *testing.T) {
-	pwd, nwd := helper.Setup(t)
-	createConfigDir()
-	helper.Teardown(pwd, nwd)
+func init() {
+	rootCmd.AddCommand(gitignoreCmd)
 }
-
-// to cover:
-// .. config dir doesn't exist
-// .. config dir exist but no files
-// .. config dir exist but only credentials
-// .. config dir exist but only config
-// .. config dir exist with both files

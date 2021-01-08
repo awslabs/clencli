@@ -13,24 +13,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controller
+package tests
 
 import (
 	"testing"
 
-	helper "github.com/awslabs/clencli/helper"
-
+	"github.com/awslabs/clencli/cobra/controller"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRootWithNoArgAndNoFlags(t *testing.T) {
-	rootCmd := RootCmd()
-	output, err := helper.ExecuteCommand(rootCmd)
-
-	assert.NotEqual(t, rootCmd.Use, "")
-	assert.NotEqual(t, rootCmd.Short, "")
-	assert.NotEqual(t, rootCmd.Long, "")
-	assert.NotEqual(t, output, "")
-	assert.Equal(t, err, nil)
-
+	args := []string{""}
+	out, err := executeCommand(t, controller.RootCmd(), args)
+	assert.Nil(t, err)
+	assert.Contains(t, out, "The Cloud Engineer CLI")
 }

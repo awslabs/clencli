@@ -17,205 +17,78 @@ package controller
 
 import (
 	"fmt"
-	"strings"
+	"os"
 
-	model "github.com/awslabs/clencli/cobra/model"
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/cobra/aid"
+	"github.com/awslabs/clencli/cobra/dao"
+	"github.com/awslabs/clencli/cobra/model"
+	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
+var unsplashPhotoSizes = []string{"all", "thumb", "small", "regular", "full", "raw"}
+
 // UnsplashCmd command to download photos from Unsplash.com
 func UnsplashCmd() *cobra.Command {
-	man := helper.GetManual("unsplash")
-	return &cobra.Command{
-		Use:   man.Use,
-		Short: man.Short,
-		Long:  man.Long,
-		RunE:  unsplashRun,
+	man, err := helper.GetManual("unsplash")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
+
+	cmd := &cobra.Command{
+		Use:     man.Use,
+		Short:   man.Short,
+		Long:    man.Long,
+		Example: man.Example,
+		PreRunE: unsplashPreRun,
+		RunE:    unsplashRun,
+	}
+
+	cmd.Flags().String("collections", "", "Public collection ID(‘s) to filter selection. If multiple, comma-separated")
+	cmd.Flags().Bool("featured", false, "Limit selection to featured photos. Valid values: false, true.")
+	cmd.Flags().String("filter", "low", "Limit results by content safety. Default: low. Valid values are low and high.")
+	cmd.Flags().String("orientation", "landscape", "Filter by photo orientation. Valid values: landscape, portrait, squarish.")
+	cmd.Flags().String("query", "mountains", "Limit selection to photos matching a search term.")
+	cmd.Flags().String("size", "all", "Photos size. Valid values: all, thumb, small, regular, full, raw. Default: all")
+	cmd.Flags().String("username", "", "Limit selection to a single user.")
+
+	return cmd
 }
 
-func unsplashRun(cmd *cobra.Command, args []string) error {
-	// params := getModelFromFlags(cmd)
+func unsplashPreRun(cmd *cobra.Command, args []string) error {
+	logrus.Traceln("start: command unsplash pre-run")
 
-	// unsplash, err := helper.GetRandomPhoto(
-	// 	query,
-	// 	collections,
-	// 	featured,
-	// 	username,
-	// 	orientation,
-	// 	filter)
-	// // size)
-	// if err != nil {
-	// 	return fmt.Errorf("Unexpected error while getting random photo from Unsplash \n%v", err)
-	// }
+	params := aid.GetModelFromFlags(cmd)
+	if !helper.ContainsString(unsplashPhotoSizes, params.Size) {
+		return fmt.Errorf("unknown photo size provided: %s", params.Size)
+	}
 
-	// if size == "thumb" || size == "all" {
-	// 	helper.DownloadPhoto(unsplash.Urls.Thumb, "thumb", query)
-	// }
-	// if size == "small" || size == "all" {
-	// 	helper.DownloadPhoto(unsplash.Urls.Small, "small", query)
-	// }
-	// if size == "regular" || size == "all" {
-	// 	helper.DownloadPhoto(unsplash.Urls.Regular, "regular", query)
-	// }
-	// if size == "full" || size == "all" {
-	// 	helper.DownloadPhoto(unsplash.Urls.Full, "full", query)
-	// }
-	// if size == "raw" || size == "all" {
-	// 	helper.DownloadPhoto(unsplash.Urls.Raw, "raw", query)
-	// }
+	logrus.Traceln("end: command unsplash pre-run")
+
 	return nil
 }
 
-func getModelFromFlags(cmd *cobra.Command) model.UnsplashRandomPhotoParameters {
-	var params model.UnsplashRandomPhotoParameters
+func unsplashRun(cmd *cobra.Command, args []string) error {
+	logrus.Traceln("start: command unsplash run")
 
-	params.Query, _ = cmd.Flags().GetString("query")
-	params.Collections, _ = cmd.Flags().GetString("collections")
-	params.Featured, _ = cmd.Flags().GetBool("featured")
-	params.Username, _ = cmd.Flags().GetString("username")
-	params.Orientation, _ = cmd.Flags().GetString("orientation")
-	params.Filter, _ = cmd.Flags().GetString("filter")
-	params.Size, _ = cmd.Flags().GetString("size")
-
-	return params
-}
-
-// requestRandomPhotoDefaults retrieves a single random photo with default values.
-// func requestRandomPhotoDefaults(query string) (UnsplashRandomPhotoResponse, error) {
-// 	// landscape orientation is better for README files
-// 	return requestRandomPhoto(query, "", "", "", "landscape", "low")
-// }
-
-// func hasCredentials(provider string, name string) (bool, error) {
-// 	global, err := getGlobalConfig()
-// 	if err != nil {
-// 		return false, fmt.Errorf("Unable to get global config \n%v", err)
-// 	}
-
-// 	for _, cred := range global.Credentials {
-// 		// verify if Unsplash credentials are set
-// 		if cred.Provider == "unsplash" {
-// 			if cred.AccessKey != "" && cred.SecretKey != "" {
-// 				return cred, nil
-// 			}
-// 		}
-
-// 	}
-
-// }
-
-// requestRandomPhoto retrieves a single random photo, given optional filters.
-func requestRandomPhoto(params model.UnsplashRandomPhotoParameters) (model.UnsplashRandomPhotoResponse, error) {
-	var response model.UnsplashRandomPhotoResponse
-
-	if (model.UnsplashRandomPhotoParameters{} == params) {
-		return response, fmt.Errorf("Unable to download Unsplash photo if all fields from query as empty")
+	params := aid.GetModelFromFlags(cmd)
+	cred, err := dao.GetCredentialByProvider(profile, "unsplash")
+	if err != nil {
+		return err
 	}
 
-	// gc, err := getGlobalConfig()
-	// if err != nil {
-	// 	return response, fmt.Errorf("Unexpected error while getting global configuration \n%v", err)
-	// }
-
-	// // check if Credentials has unsplash credential
-	// // return response, fmt.Errorf("No Unsplash credentials found in the global configuration \n%v", err)
-
-	// // check if config has Unsplash credentials
-	// for _, cred := range gc.Credentials {
-	// 	if cred.Provider == "unsplash" {
-	// 		if cred.AccessKey != "" && cred.SecretKey != "" {
-
-	// 			url := buildURL(params, cred.Credential)
-
-	// 			var client http.Client
-	// 			resp, err := client.Get(url)
-	// 			if err != nil {
-	// 				return response, fmt.Errorf("Unexpected error while performing GET on Unsplash API \n%v", err)
-	// 			}
-	// 			defer resp.Body.Close()
-
-	// 			if resp.StatusCode == http.StatusOK {
-	// 				bodyBytes, err := ioutil.ReadAll(resp.Body)
-	// 				if err != nil {
-	// 					return response, fmt.Errorf("Unexpected error while reading Unsplash response \n%v", err)
-	// 				}
-
-	// 				json.Unmarshal(bodyBytes, &response)
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	return response, nil
-}
-
-// func buildURL(params model.UnsplashRandomPhotoParameters, cred model.Credential) string {
-// 	clientID := cred.AccessKey
-// 	url := fmt.Sprintf("https://api.unsplash.com/photos/random?client_id=%s", clientID)
-
-// 	if len(params.Collections) > 0 {
-// 		url += fmt.Sprintf("&collections=%s", params.Collections)
-// 	}
-
-// 	if len(params.Query) > 0 {
-// 		url += fmt.Sprintf("&query=%s", params.Query)
-// 	}
-
-// 	url += fmt.Sprintf("&featured=%t", params.Featured)
-
-// 	if len(params.Username) > 0 {
-// 		url += fmt.Sprintf("&username=%s", params.Username)
-// 	}
-
-// 	if len(params.Orientation) > 0 {
-// 		url += fmt.Sprintf("&orientation=%s", params.Orientation)
-// 	}
-
-// 	if len(params.Filter) > 0 {
-// 		url += fmt.Sprintf("&filter=%s", params.Filter)
-// 	}
-
-// 	return url
-// }
-
-// DownloadPhoto downloads a photo and saves into downloads/unsplash/ folder
-// It creates the downloads/ folder if it doesn't exists
-func DownloadPhoto(url string, size string, query string) error {
-
-	// Get the photo identifier
-	start := strings.Index(url, "photo")
-	end := strings.Index(url, "?")
-
-	// Create a Rune from the URL
-	runes := []rune(url)
-
-	// Generate the directory path
-	dirPath := "downloads/unsplash/" + query
-
-	// Generate the filename
-	fileName := string(runes[start:end])
-	fileName += "-" + size + ".jpg"
-
-	return helper.DownloadFile(url, dirPath, fileName)
-}
-
-// GetPhotoURLBySize return the photo URL based on the given size
-func GetPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRandomPhotoResponse) string {
-	switch p.Size {
-	case "thumb":
-		return r.Urls.Thumb
-	case "small":
-		return r.Urls.Small
-	case "regular":
-		return r.Urls.Regular
-	case "full":
-		return r.Urls.Full
-	case "raw":
-		return r.Urls.Raw
-	default:
-		return r.Urls.Small
+	if (model.Credential{}) == cred {
+		return fmt.Errorf("no unsplash credential found or no profile enabled")
 	}
 
+	err = aid.DownloadPhoto(params, cred, unsplashPhotoSizes)
+	if err != nil {
+		logrus.Errorf("unable to download photo\n%v", err)
+		return err
+	}
+
+	logrus.Traceln("end: command unsplash run")
+	return err
 }

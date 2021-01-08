@@ -17,86 +17,91 @@ package controller
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/dao"
-
-	helper "github.com/awslabs/clencli/helper"
+	"github.com/awslabs/clencli/cobra/view"
+	"github.com/awslabs/clencli/helper"
 	"github.com/spf13/cobra"
 )
 
 var configureValidArgs = []string{"delete"}
 
-// ConfigureCmd command to display CLENCLI current version
+// ConfigureCmd command to display clencli current version
 func ConfigureCmd() *cobra.Command {
-	man := helper.GetManual("configure")
+	man, err := helper.GetManual("configure")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
 		Long:      man.Long,
+		Example:   man.Example,
 		ValidArgs: configureValidArgs,
 		Args:      cobra.OnlyValidArgs,
 		RunE:      configureRun,
 	}
+
+	return cmd
 }
 
 func configureRun(cmd *cobra.Command, args []string) error {
-	profile, _ := cmd.Flags().GetString("profile")
-
-	if len(args) == 0 {
-		// todo: cases to cover, configure --profile name
-
-		if !aid.ConfigurationDirectoryExist() {
-			if aid.CreateConfigDir() {
-				fmt.Println("CLENCLI configuration directory created")
-				dao.CreateCredentials(profile)
-				dao.CreateConfigurations(profile)
-			}
-		} else if aid.ConfigurationDirectoryExist() &&
-			(!aid.CredentialsFileExist() || !aid.ConfigurationsFileExist()) {
-
-			if !aid.CredentialsFileExist() {
-				dao.CreateCredentials(profile)
-			}
-
-			if !aid.ConfigurationsFileExist() {
-				dao.CreateConfigurations(profile)
-			}
-		} else {
-			if aid.ConfigurationDirectoryExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
-				if dao.CredentialsProfileExist(profile) && dao.ConfigurationsProfileExist(profile) {
-					dao.UpdateCredentials(profile)
-					dao.UpdateConfigurations(profile)
-				}
-
-				if !dao.CredentialsProfileExist(profile) {
-					dao.AddCredentialProfile(profile)
-				}
-
-				if !dao.ConfigurationsProfileExist(profile) {
-					dao.AddConfigurationProfile(profile)
-				}
-			}
+	if !aid.ConfigurationsDirectoryExist() {
+		if created, dir := aid.CreateConfigurationsDirectory(); created {
+			cmd.Printf("clencli configuration directory created at %s\n", dir)
+			createCredentials(cmd)
+			createConfigurations(cmd)
 		}
-	} else if len(args) > 0 && args[0] == "delete" {
-		if !aid.ConfigurationDirectoryExist() {
-			return fmt.Errorf("CLENCLI configuration directory not found")
-		}
+	} else {
+		// configurations directory exist
 		if !aid.CredentialsFileExist() {
-			return fmt.Errorf("CLENCLI credentials file not found")
+			createCredentials(cmd)
+		} else {
+			updateCredentials(cmd)
 		}
+
 		if !aid.ConfigurationsFileExist() {
-			return fmt.Errorf("CLENCLI configurations file not found")
+			createConfigurations(cmd)
+		} else {
+			updateConfigurations(cmd)
 		}
-
-		if aid.ConfigurationDirectoryExist() && aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
-			dao.DeleteCredentialProfile(profile)
-			dao.DeleteConfigurationProfile(profile)
-		}
-
 	}
 
 	return nil
+}
 
+func createCredentials(cmd *cobra.Command) {
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to setup credentials?", false)
+	if answer {
+		credentials := view.CreateCredentials(cmd, profile)
+		dao.SaveCredentials(credentials)
+	}
+}
+
+func updateCredentials(cmd *cobra.Command) {
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to update credentials?", false)
+	if answer {
+		credentials := view.UpdateCredentials(cmd, profile)
+		dao.SaveCredentials(credentials)
+	}
+}
+
+func createConfigurations(cmd *cobra.Command) {
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to setup configurations?", false)
+	if answer {
+		configurations := view.CreateConfigurations(cmd, profile)
+		dao.SaveConfigurations(configurations)
+	}
+}
+
+func updateConfigurations(cmd *cobra.Command) {
+	answer := aid.GetUserInputAsBool(cmd, "Would you like to update configurations?", false)
+	if answer {
+		configurations := view.UpdateConfigurations(cmd, profile)
+		dao.SaveConfigurations(configurations)
+	}
 }

@@ -17,20 +17,23 @@ package model
 
 // Unsplash does ...
 type Unsplash struct {
-	Name        string `yaml:"name,omitempty"`
-	Description string `yaml:"description,omitempty"`
-	Enabled     bool   `yaml:"enabled"`
-	CreatedAt   string `yaml:"createdAt"`
-	UpdatedAt   string `yaml:"updatedAt"`
-	RandomPhoto struct {
-		Name        string                        `yaml:"name,omitempty"`
-		Description string                        `yaml:"description,omitempty"`
-		Enabled     bool                          `yaml:"enabled"`
-		CreatedAt   string                        `yaml:"createdAt"`
-		UpdatedAt   string                        `yaml:"updatedAt"`
-		Parameters  UnsplashRandomPhotoParameters `yaml:"parameters"`
-		Response    UnsplashRandomPhotoResponse   `yaml:"response,omitempty"`
-	} `yaml:"random_photo"`
+	Name        string              `yaml:"name,omitempty"`
+	Description string              `yaml:"description,omitempty"`
+	Enabled     bool                `yaml:"enabled"`
+	CreatedAt   string              `yaml:"createdAt"`
+	UpdatedAt   string              `yaml:"updatedAt"`
+	RandomPhoto UnsplashRandomPhoto `yaml:"randomPhoto"`
+}
+
+// UnsplashRandomPhoto ...
+type UnsplashRandomPhoto struct {
+	Name        string                        `yaml:"name,omitempty"`
+	Description string                        `yaml:"description,omitempty"`
+	Enabled     bool                          `yaml:"enabled"`
+	CreatedAt   string                        `yaml:"createdAt"`
+	UpdatedAt   string                        `yaml:"updatedAt"`
+	Parameters  UnsplashRandomPhotoParameters `yaml:"parameters"`
+	Response    UnsplashRandomPhotoResponse   `yaml:"response,omitempty"`
 }
 
 // UnsplashRandomPhotoParameters struct from Unsplash command
@@ -47,14 +50,14 @@ type UnsplashRandomPhotoParameters struct {
 // UnsplashRandomPhotoResponse is a struct from Unsplash API Randm Request
 type UnsplashRandomPhotoResponse struct {
 	ID             string      `json:"id"`
-	CreatedAt      string      `json:"created_at"`
-	UpdatedAt      string      `json:"updated_at"`
-	PromotedAt     interface{} `json:"promoted_at"`
+	CreatedAt      string      `json:"createdAt"`
+	UpdatedAt      string      `json:"updatedAt"`
+	PromotedAt     interface{} `json:"promotedAt"`
 	Width          int         `json:"width"`
 	Height         int         `json:"height"`
 	Color          string      `json:"color"`
 	Description    string      `json:"description"`
-	AltDescription string      `json:"alt_description"`
+	AltDescription string      `json:"altDescription"`
 	Urls           struct {
 		Raw     string `json:"raw"`
 		Full    string `json:"full"`
@@ -66,22 +69,22 @@ type UnsplashRandomPhotoResponse struct {
 		Self             string `json:"self"`
 		HTML             string `json:"html"`
 		Download         string `json:"download"`
-		DownloadLocation string `json:"download_location"`
+		DownloadLocation string `json:"downloadLocation"`
 	} `json:"links"`
 	Categories             []interface{} `json:"categories"`
 	Likes                  int           `json:"likes"`
-	LikedByUser            bool          `json:"liked_by_user"`
-	CurrentUserCollections []interface{} `json:"current_user_collections"`
+	LikedByUser            bool          `json:"likedByUser"`
+	CurrentUserCollections []interface{} `json:"currentUserCollections"`
 	Sponsorship            interface{}   `json:"sponsorship"`
 	User                   struct {
 		ID              string `json:"id"`
-		UpdatedAt       string `json:"updated_at"`
+		UpdatedAt       string `json:"updatedAt"`
 		Username        string `json:"username"`
 		Name            string `json:"name"`
-		FirstName       string `json:"first_name"`
-		LastName        string `json:"last_name"`
-		TwitterUsername string `json:"twitter_username"`
-		PortfolioURL    string `json:"portfolio_url"`
+		FirstName       string `json:"firstName"`
+		LastName        string `json:"lastName"`
+		TwitterUsername string `json:"twitterUsername"`
+		PortfolioURL    string `json:"portfolioUrl"`
 		Bio             string `json:"bio"`
 		Location        string `json:"location"`
 		Links           struct {
@@ -97,19 +100,19 @@ type UnsplashRandomPhotoResponse struct {
 			Small  string `json:"small"`
 			Medium string `json:"medium"`
 			Large  string `json:"large"`
-		} `json:"profile_image"`
-		InstagramUsername string `json:"instagram_username"`
-		TotalCollections  int    `json:"total_collections"`
-		TotalLikes        int    `json:"total_likes"`
-		TotalPhotos       int    `json:"total_photos"`
-		AcceptedTos       bool   `json:"accepted_tos"`
+		} `json:"profileImage"`
+		InstagramUsername string `json:"instagramUsername"`
+		TotalCollections  int    `json:"totalCollections"`
+		TotalLikes        int    `json:"totalLikes"`
+		TotalPhotos       int    `json:"totalPhotos"`
+		AcceptedTos       bool   `json:"acceptedTos"`
 	} `json:"user"`
 	Exif struct {
 		Make         string `json:"make"`
 		Model        string `json:"model"`
-		ExposureTime string `json:"exposure_time"`
+		ExposureTime string `json:"exposureTime"`
 		Aperture     string `json:"aperture"`
-		FocalLength  string `json:"focal_length"`
+		FocalLength  string `json:"focalLength"`
 		Iso          int    `json:"iso"`
 	} `json:"exif"`
 	Location struct {

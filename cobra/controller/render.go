@@ -16,16 +16,14 @@ limitations under the License.
 package controller
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
-	function "github.com/awslabs/clencli/helper"
-	helper "github.com/awslabs/clencli/helper"
-	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
+	"github.com/awslabs/clencli/cobra/aid"
+	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -33,8 +31,13 @@ var renderValidArgs = []string{"template"}
 
 // RenderCmd command to render templates
 func RenderCmd() *cobra.Command {
-	man := helper.GetManual("render")
-	return &cobra.Command{
+	man, err := helper.GetManual("render")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	cmd := &cobra.Command{
 		Use:       man.Use,
 		Short:     man.Short,
 		Long:      man.Long,
@@ -43,243 +46,61 @@ func RenderCmd() *cobra.Command {
 		PreRunE:   renderPreRun,
 		RunE:      renderRun,
 	}
+
+	cmd.Flags().StringP("name", "n", "readme", "Database file name of the template to be rendered (it must be under clencli/ directory.")
+
+	return cmd
 }
 
 func renderPreRun(cmd *cobra.Command, args []string) error {
-	if len(args) == 0 {
-		return fmt.Errorf("one the following arguments are required: %s", renderValidArgs)
+	logrus.Traceln("start: command render pre-run")
+
+	if err := helper.ValidateCmdArgs(cmd, args, "render"); err != nil {
+		return err
+	}
+
+	if err := helper.ValidateCmdArgAndFlag(cmd, args, "render", "template", "name"); err != nil {
+		return err
 	}
 
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
-		return errors.New("required flag name not set")
+		logrus.Errorf("error: unable to access flag name\n%v", err)
+		return fmt.Errorf("unable to access flag name\n%v", err)
 	}
 
-	if !function.FileExists("clencli/" + name + ".yaml") {
-		return errors.New("Missing database at clencli/" + name + ".yaml")
+	if !helper.FileExists("clencli/" + name + ".yaml") {
+		logrus.Errorf("missing database at clencli/" + name + ".yaml")
+		return errors.New("missing database at clencli/" + name + ".yaml")
 	}
 
-	if !function.FileExists("clencli/" + name + ".tmpl") {
-		return errors.New("Missing template at clencli/" + name + ".tmpl")
+	if !helper.FileExists("clencli/" + name + ".tmpl") {
+		logrus.Errorf("missing template at clencli/" + name + ".tmpl")
+		return errors.New("missing template at clencli/" + name + ".tmpl")
 	}
 
+	logrus.Traceln("end: command render pre-run")
 	return nil
 }
 
 func renderRun(cmd *cobra.Command, args []string) error {
+	logrus.Traceln("start: command render run")
+
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
-		return fmt.Errorf("Unable to render template "+name+"\n%v", err)
+		logrus.Errorf("error: unable to render template "+name+"\n%v", err)
+		return fmt.Errorf("unable to render template "+name+"\n%v", err)
 	}
 
-	// err = helper.UpdateReadMe()
-	// if err != nil {
-	// 	return fmt.Errorf("Unable to update local config with global config values \n%v", err)
-	// }
+	// TODO: update readme and logo url based on global configuration
 
-	// err = helper.UpdateReadMeLogoURL()
-	// if err != nil {
-	// 	return fmt.Errorf("Unable to update local config with new URL from Unsplash \n%v", err)
-	// }
-
-	err = initGomplate(name)
-	if err == nil {
-		fmt.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
-	} else {
-		log.Fatalf("Unexpected error: %v", err)
+	if err := aid.BuildTemplate(name); err != nil {
+		logrus.Errorf("Unexpected error: %v", err)
+		return fmt.Errorf("unable to render template "+name+"\n%v", err)
 	}
 
+	cmd.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
+
+	logrus.Traceln("end: command render run")
 	return nil
-}
-
-func initGomplate(name string) error {
-	var inputFiles = []string{}
-	var outputFiles = []string{}
-
-	if function.FileExists("clencli/" + name + ".tmpl") {
-		inputFiles = append(inputFiles, "clencli/"+name+".tmpl")
-		outputFiles = append(outputFiles, strings.ToUpper(name)+".md")
-	}
-
-	var config gomplateV3.Config
-	config.InputFiles = inputFiles
-	config.OutputFiles = outputFiles
-
-	dataSources := []string{}
-	if function.FileExists("clencli/" + name + ".yaml") {
-		dataSources = append(dataSources, "db=./clencli/"+name+".yaml")
-	}
-
-	config.DataSources = dataSources
-
-	err := gomplateV3.RunTemplates(&config)
-	if err != nil {
-		log.Fatalf("Gomplate.RunTemplates() failed with %s\n", err)
-	}
-
-	return err
-}
-
-func writeInputs() error {
-	variables, err := os.Open("variables.tf")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer variables.Close()
-
-	// create INPUTS.md
-	inputs, err := os.OpenFile("INPUTS.md", os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Println(err)
-	}
-	defer inputs.Close()
-
-	if _, err := inputs.WriteString("| Name | Description | Type | Default | Required |\n|------|-------------|:----:|:-----:|:-----:|\n"); err != nil {
-		log.Println(err)
-	}
-
-	var varName, varType, varDescription, varDefault string
-	varRequired := "no"
-
-	// startBlock := false
-	scanner := bufio.NewScanner(variables)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		// skip empty lines
-		if len(line) > 0 {
-			if strings.Contains(line, "variable") && strings.Contains(line, "{") {
-				out, found := function.GetStringBetweenDoubleQuotes(line)
-				if found {
-					varName = out
-				}
-
-			}
-
-			if strings.Contains(line, "type") && strings.Contains(line, "=") {
-				slc := function.GetStringTrimmed(line, "=")
-				if slc[0] == "type" {
-					varType = slc[1]
-					if strings.Contains(varType, "({") {
-						slc = function.GetStringTrimmed(varType, "({")
-						varType = slc[0]
-					}
-				}
-			}
-
-			if strings.Contains(line, "description") && strings.Contains(line, "=") {
-				slc := function.GetStringTrimmed(line, "=")
-				if slc[0] == "description" {
-					out, found := function.GetStringBetweenDoubleQuotes(slc[1])
-					if found {
-						varDescription = out
-					}
-				}
-			}
-
-			if strings.Contains(line, "default") && strings.Contains(line, "=") {
-				slc := function.GetStringTrimmed(line, "=")
-				if slc[0] == "default" {
-					varDefault = slc[1]
-					if strings.Contains(varDefault, "{") {
-						varDefault = "<map>"
-					}
-				}
-			}
-
-			// end of the variable declaration
-			if strings.Contains(line, "}") && len(line) == 1 {
-				if len(varName) > 0 && len(varType) > 0 && len(varDescription) > 0 {
-
-					var result string
-					if len(varDefault) == 0 {
-						varRequired = "yes"
-						result = fmt.Sprintf("| %s | %s | %s | %s | %s |\n", varName, varDescription, varType, varDefault, varRequired)
-					} else {
-						result = fmt.Sprintf("| %s | %s | %s | `%s` | %s |\n", varName, varDescription, varType, varDefault, varRequired)
-					}
-
-					if _, err := inputs.WriteString(result); err != nil {
-						log.Println(err)
-					}
-					varName, varType, varDescription, varDefault, varRequired = "", "", "", "", "no"
-				}
-			}
-
-		}
-
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-
-	}
-	return err
-}
-
-func writeOutputs() error {
-	outputs, err := os.Open("outputs.tf")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer outputs.Close()
-
-	// create INPUTS.md
-	outs, err := os.OpenFile("OUTPUTS.md", os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Println(err)
-	}
-	defer outs.Close()
-
-	if _, err := outs.WriteString("| Name | Description |\n|------|-------------|\n"); err != nil {
-		log.Println(err)
-	}
-
-	var outName, outDescription string
-
-	scanner := bufio.NewScanner(outputs)
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		// skip empty lines
-		if len(line) > 0 {
-			if strings.Contains(line, "output") && strings.Contains(line, "{") {
-				out, found := function.GetStringBetweenDoubleQuotes(line)
-				if found {
-					outName = out
-				}
-			}
-
-			if strings.Contains(line, "description") && strings.Contains(line, "=") {
-				slc := function.GetStringTrimmed(line, "=")
-				if slc[0] == "description" {
-					out, found := function.GetStringBetweenDoubleQuotes(slc[1])
-					if found {
-						outDescription = out
-					}
-				}
-			}
-
-			// end of the output declaration
-			if strings.Contains(line, "}") && len(line) == 1 {
-				if len(outName) > 0 && len(outDescription) > 0 {
-
-					result := fmt.Sprintf("| %s | %s | |\n", outName, outDescription)
-
-					if _, err := outs.WriteString(result); err != nil {
-						log.Println(err)
-					}
-					outName, outDescription = "", ""
-				}
-			}
-
-		}
-
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-
-	}
-	return err
 }

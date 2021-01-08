@@ -17,7 +17,7 @@ package model
 
 import "os"
 
-// App represents the all the necessary information about CLENCLI
+// App represents the all the necessary information about clencli
 type App struct {
 	// Name of file to look for inside the path
 	Name                      string
