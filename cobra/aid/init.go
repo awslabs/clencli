@@ -69,12 +69,21 @@ func InitCustomized(profile string, config model.Configurations) bool {
 				if c.Enabled && c.Initialization.Enabled {
 					for _, f := range c.Initialization.Files {
 						if f.State == "directory" {
-							helper.MkDirsIfNotExist(f.Path)
+							if !helper.MkDirsIfNotExist(f.Path) {
+								logrus.Errorf("unable to create directory based on configuration")
+								return false
+							}
 						} else if f.State == "file" {
 							if strings.Contains(f.Src, "http") {
-								helper.DownloadFileTo(f.Src, f.Dest)
+								if err := helper.DownloadFileTo(f.Src, f.Dest); err != nil {
+									logrus.Errorf("unable to download file based on configuration")
+									return false
+								}
 							} else {
-								helper.CopyFile(f.Src, f.Dest)
+								if err := helper.CopyFileTo(f.Src, f.Dest); err != nil {
+									logrus.Errorf("unable to copy file based on configuration")
+									return false
+								}
 							}
 						}
 					}

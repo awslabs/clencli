@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/awslabs/clencli/box"
@@ -121,6 +122,23 @@ func CopyFile(sourceFile string, destinationFile string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+// CopyFileTo TODO...
+func CopyFileTo(sourceFile string, destinationFile string) error {
+	input, err := ioutil.ReadFile(sourceFile)
+	if err != nil {
+		logrus.Errorf("unable to copy file\n%v", err)
+		return err
+	}
+
+	err = ioutil.WriteFile(destinationFile, input, 0644)
+	if err != nil {
+		logrus.Errorf("unable to write file\n%v", err)
+		return err
+	}
+
+	return nil
 }
 
 // FileSize return the size of the give file path.
