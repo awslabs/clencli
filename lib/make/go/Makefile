@@ -1,5 +1,6 @@
 .PHONY: go/build
 go/build: ## Compile packages and dependencies
+	mkdir -p build
 	go build -o build/clencli
 
 .PHONY: go/install
