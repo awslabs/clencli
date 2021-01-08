@@ -107,21 +107,25 @@ func initRun(cmd *cobra.Command, args []string) error {
 			return errors.New("unknow project type")
 		}
 
-		config, err := dao.GetConfigurations()
-		if err != nil {
-			logrus.Errorf("unable to get configuration during initialization\n%v")
-			return fmt.Errorf("unable to initialize project based on configurations\n%v", err)
-		}
+		if aid.ConfigurationsDirectoryExist() && aid.ConfigurationsFileExist() {
+			config, err := dao.GetConfigurations()
+			if err != nil {
+				logrus.Errorf("unable to get configuration during initialization\n%v")
+				return fmt.Errorf("unable to initialize project based on configurations\n%v", err)
+			}
 
-		customized := aid.InitCustomized(profile, config)
+			created := aid.InitCustomized(profile, config)
+			if !created {
+				return fmt.Errorf("unable to initialize project based on configurations\n%s", err)
+			}
+
+		}
 
 		if err != nil {
 			return fmt.Errorf("unable to initialize project sucessfully \n%s", err)
 		}
 
-		if err == nil && customized {
-			cmd.Printf("%s was successfully initialized as a %s project\n", pName, pType)
-		}
+		cmd.Printf("%s was successfully initialized as a %s project\n", pName, pType)
 
 	}
 
