@@ -68,6 +68,21 @@ func ReadConfig(name string) (*viper.Viper, error) {
 	return v, err
 }
 
+// ReadConfigAsViper returns...
+func ReadConfigAsViper(configPath string, configName string, configType string) (*viper.Viper, error) {
+	v := viper.New()
+
+	v.AddConfigPath(configPath)
+	v.SetConfigName(configName)
+	v.SetConfigType(configType)
+
+	err := v.ReadInConfig()
+	if err != nil {
+		return v, fmt.Errorf("unable to read configuration as viper\n%v", err)
+	}
+	return v, err
+}
+
 // ReadTemplate read the given template under clencli/*.yaml
 func ReadTemplate(fileName string) (*viper.Viper, error) {
 	c := viper.New()

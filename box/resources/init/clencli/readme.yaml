@@ -1,13 +1,4 @@
 logo:
-  unsplash:
-    query: forest
-    collections: 
-    featured: 
-    username: 
-    orientation: 
-    filter: 
-    size: regular
-  label: Logo
   url: https://via.placeholder.com/512x90.png
 app:
   name: Application

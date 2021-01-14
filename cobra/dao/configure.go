@@ -17,6 +17,7 @@ package dao
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/model"
@@ -42,7 +43,16 @@ func GetConfigurations() (model.Configurations, error) {
 // GetReadMe TODO...
 func GetReadMe() (model.ReadMe, error) {
 	var readMe model.ReadMe
-	v, err := aid.ReadConfig(helper.BuildPath("clencli/readme.yaml"))
+	wd, err := os.Getwd()
+	if err != nil {
+		return readMe, fmt.Errorf("unable to get the current working directory:\n%v", err)
+	}
+
+	configPath := helper.BuildPath(wd + "/clencli")
+	configName := "readme"
+	configType := "yaml"
+
+	v, err := aid.ReadConfigAsViper(configPath, configName, configType)
 	if err != nil {
 		return readMe, fmt.Errorf("unable to read configurations\n%v", err)
 	}

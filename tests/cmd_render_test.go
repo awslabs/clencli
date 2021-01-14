@@ -90,9 +90,14 @@ func TestRenderUpdateLogo(t *testing.T) {
 	assert.Nil(t, err)
 
 	fmt.Println(wd)
+	os.Chdir("foo")
+
+	wd, _ = os.Getwd()
+	fmt.Println(wd)
 
 	args = []string{"render", "template"}
 	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
 	assert.Nil(t, err)
 	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
+	
 }

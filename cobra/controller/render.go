@@ -122,6 +122,11 @@ func updateLogo(profile string) error {
 			}
 
 			if cred.AccessKey != "" && cred.SecretKey != "" {
+				readMe, err := dao.GetReadMe()
+				if err != nil {
+					return fmt.Errorf("Unable to get local readme config\n%v", err)
+				}
+
 				params := dao.GetUnsplashRandomPhotoParameters(profile)
 				if (model.UnsplashRandomPhotoParameters{}) == params {
 					logrus.Warnf("no unsplash random photo parameters configuration found or enabled\n%v", err)
@@ -132,11 +137,6 @@ func updateLogo(profile string) error {
 				if err != nil {
 					logrus.Warnf("unable to fetch response from unsplash during render command\n%v", err)
 					return err
-				}
-
-				readMe, err := dao.GetReadMe()
-				if err != nil {
-					return fmt.Errorf("Unable to get local readme config\n%v", err)
 				}
 
 				err = aid.UpdateReadMeLogoURL(readMe, response)
