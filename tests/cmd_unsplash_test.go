@@ -33,6 +33,35 @@ func createUnplashCredential() {
 	aid.WriteInterfaceToFile(credentials, aid.GetAppInfo().CredentialsPath)
 }
 
+func createUnplashConfiguration() {
+	var configurations model.Configurations
+
+	var profile model.ConfigurationProfile
+	profile.Name = "default"
+	profile.Enabled = true // enabling profile by default
+
+	var configuration model.Configuration
+	configuration.Name = "unit-testing"
+	configuration.Enabled = true
+
+	var unsplash model.Unsplash
+	unsplash.Enabled = true
+
+	var randomPhoto model.UnsplashRandomPhoto
+	randomPhoto.Enabled = true
+
+	var params model.UnsplashRandomPhotoParameters
+	params.Query = "eagle"
+
+	randomPhoto.Parameters = params
+	unsplash.RandomPhoto = randomPhoto
+	configuration.Unsplash = unsplash
+
+	profile.Configurations = append(profile.Configurations, configuration)
+	configurations.Profiles = append(configurations.Profiles, profile)
+	aid.WriteInterfaceToFile(configurations, aid.GetAppInfo().ConfigurationsPath)
+}
+
 func DeleteCredential() {
 	if aid.CredentialsFileExist() {
 		aid.DeleteCredentialFile()

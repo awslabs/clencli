@@ -1,12 +1,12 @@
 package tests
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/controller"
-	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -79,45 +79,20 @@ func TestRenderHLD(t *testing.T) {
 	assert.Contains(t, out, "Template hld.tmpl rendered as HLD.md")
 }
 
-func createUnplashConfiguration() {
-	var configurations model.Configurations
-
-	var profile model.ConfigurationProfile
-	profile.Name = "default"
-	profile.Enabled = true // enabling profile by default
-
-	var configuration model.Configuration
-	configuration.Name = "unit-testing"
-	configuration.Enabled = true
-
-	var unsplash model.Unsplash
-	unsplash.Enabled = true
-
-	var randomPhoto model.UnsplashRandomPhoto
-	randomPhoto.Enabled = true
-
-	var params model.UnsplashRandomPhotoParameters
-	params.Query = "eagle"
-
-	randomPhoto.Parameters = params
-	unsplash.RandomPhoto = randomPhoto
-	configuration.Unsplash = unsplash
-
-	profile.Configurations = append(profile.Configurations, configuration)
-	configurations.Profiles = append(configurations.Profiles, profile)
-	aid.WriteInterfaceToFile(configurations, aid.GetAppInfo().ConfigurationsPath)
-}
-
 func TestRenderUpdateLogo(t *testing.T) {
 	createUnplashCredential()
 	createUnplashConfiguration()
 
 	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
-	executeCommandGetWorkingDirectory(t, controller.InitCmd(), args)
-	// os.Chdir(wd)
+	wd, out, err := executeCommandOnTemporaryDirectory(t, controller.InitCmd(), args)
+	assert.NotEmpty(t, wd)
+	assert.NotEmpty(t, out)
+	assert.Nil(t, err)
+
+	fmt.Println(wd)
 
 	args = []string{"render", "template"}
-	out, err := executeCommandOnly(t, controller.RenderCmd(), args)
+	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
 	assert.Nil(t, err)
 	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
 }
