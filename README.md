@@ -11,7 +11,7 @@
 
 -->
 
-![Logo](https://images.unsplash.com/photo-1585629220785-8039e6b5c009?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=400&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0)
+![Logo](<no value>)
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
 
@@ -114,7 +114,7 @@ Template readme.tmpl rendered as README.md
 The `README.md` you are reading right now was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
 
 
-## Download random photos from [Unsplash][unsplash]
+## Download random photos from [Unsplash][https://unsplash.com]
 ```
 # first you need to inform your unsplash developer API credentials
 
@@ -300,7 +300,7 @@ Gratitude for assistance:
   * [ttystudio](https://github.com/chjj/ttystudio) - A terminal-to-gif recorder minus the headaches.
   * [gihub-super-linter](https://github.com/github/super-linter) - GitHub Super Linter
   * [github-actions](https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions) - GitHub Actions
-  * [Gitignore.io](https://www.toptal.com/developers/gitignore) - Create useful .gitignore files for your project
+  * [gitignore.io](https://www.toptal.com/developers/gitignore) - Create useful .gitignore files for your project
 
 
 </details>

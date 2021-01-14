@@ -20,141 +20,8 @@ import (
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/model"
+	"github.com/awslabs/clencli/helper"
 )
-
-// // AddConfigurationProfile add the given profile name into the configurations file
-// func AddConfigurationProfile(name string) error {
-// 	configurations, err := GetConfigurations()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	configurations.Profiles = append(configurations.Profiles, CreateConfigurationProfile(name))
-// 	saveConfigurations(configurations)
-// 	return err
-// }
-
-// // AddCredentialProfile add the given profile name into the credentials file
-// func AddCredentialProfile(name string) error {
-// 	credentials, err := GetCredentials()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	credentials.Profiles = append(credentials.Profiles, CreateCredentialProfile(name))
-// 	saveCredentials(credentials)
-// 	return err
-// }
-
-// // ConfigurationsProfileExist return `true` if the configuration file exist, `false` if otherwise
-// func ConfigurationsProfileExist(name string) (bool, error) {
-// 	configurations, err := GetConfigurations()
-// 	if err != nil {
-// 		return false, err
-// 	}
-// 	for _, profile := range configurations.Profiles {
-// 		if profile.Name == name {
-// 			return true, err
-// 		}
-// 	}
-// 	return false, err
-
-// }
-
-// // CreateCredentialProfile create the given profile name into the credentials file, return the profile created
-// func CreateCredentialProfile(name string) model.CredentialProfile {
-// 	fmt.Println(">> Profile")
-// 	var profile model.CredentialProfile
-// 	profile.Name = name
-// 	profile.CreatedAt = time.Now().String()
-// 	profile.Enabled = true // enabling profile by default
-
-// 	var credential model.Credential
-// 	credential.CreatedAt = time.Now().String()
-// 	credential.Enabled = true
-// 	credential = view.AskAboutCredential(credential)
-
-// 	profile.Credentials = append(profile.Credentials, credential)
-
-// 	for {
-// 		answer := view.GetUserInputAsBool("Would you like to setup another credential?", false)
-// 		if answer {
-// 			var newCred model.Credential
-// 			newCred = view.AskAboutCredential(newCred)
-// 			profile.Credentials = append(profile.Credentials, newCred)
-// 		} else {
-// 			break
-// 		}
-// 	}
-
-// 	return profile
-// }
-
-// // CreateCredentials create the credentials file with the given profile name
-// func CreateCredentials(name string) {
-// 	fmt.Println("> Credentials")
-// 	var credentials model.Credentials
-// 	profile := CreateCredentialProfile(name)
-// 	credentials.Profiles = append(credentials.Profiles, profile)
-// 	saveCredentials(credentials)
-// }
-
-// // CredentialsProfileExist returns `true` if the profile name given exist in the credentials file
-// func CredentialsProfileExist(name string) (bool, error) {
-// 	credentials, err := GetCredentials()
-// 	if err != nil {
-// 		return false, err
-// 	}
-// 	for _, profile := range credentials.Profiles {
-// 		if profile.Name == name {
-// 			return true, err
-// 		}
-// 	}
-// 	return false, err
-
-// }
-
-// // DeleteConfigurationProfile delete a profile from the configurations file
-// func DeleteConfigurationProfile(name string) error {
-// 	// TODO: return bool if profile was deleted or not
-// 	answer := view.GetUserInputAsBool("Do you want to delete the profile '"+name+"' from "+aid.GetAppInfo().ConfigurationsPath+"?", false)
-// 	if answer {
-// 		allConfigurations, err := GetConfigurations()
-// 		if err != nil {
-// 			return err
-// 		}
-// 		var newConfigurations model.Configurations
-// 		for _, profile := range allConfigurations.Profiles {
-// 			// only append profile that doesn't match
-// 			if profile.Name != name {
-// 				newConfigurations.Profiles = append(newConfigurations.Profiles, profile)
-// 			}
-// 		}
-// 		saveConfigurations(newConfigurations)
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-// // DeleteCredentialProfile delete a profile from the credentials file
-// func DeleteCredentialProfile(name string) error {
-// 	answer := view.GetUserInputAsBool("Do you want to delete the profile '"+name+"' from "+aid.GetAppInfo().CredentialsPath+"?", false)
-// 	if answer {
-// 		allCredentials, err := GetCredentials()
-// 		if err != nil {
-// 			return err
-// 		}
-// 		var newCredentials model.Credentials
-// 		for _, profile := range allCredentials.Profiles {
-// 			if profile.Name != name {
-// 				newCredentials.Profiles = append(newCredentials.Profiles, profile)
-// 			}
-// 		}
-
-// 		saveCredentials(newCredentials)
-// 		return err
-// 	}
-// 	return nil
-// }
 
 // GetConfigurations read the current configurations file and return its model
 func GetConfigurations() (model.Configurations, error) {
@@ -170,6 +37,56 @@ func GetConfigurations() (model.Configurations, error) {
 	}
 
 	return confs, err
+}
+
+// GetReadMe TODO...
+func GetReadMe() (model.ReadMe, error) {
+	var readMe model.ReadMe
+	v, err := aid.ReadConfig(helper.BuildPath("clencli/readme.yaml"))
+	if err != nil {
+		return readMe, fmt.Errorf("unable to read configurations\n%v", err)
+	}
+
+	err = v.Unmarshal(&readMe)
+	if err != nil {
+		return readMe, fmt.Errorf("unable to unmarshall configurations\n%v", err)
+	}
+
+	return readMe, err
+}
+
+// GetConfigurationProfile returns credentials of a profile
+func GetConfigurationProfile(name string) (model.ConfigurationProfile, error) {
+	configurations, err := GetConfigurations()
+
+	if err != nil {
+		return (model.ConfigurationProfile{}), err
+	}
+
+	for _, profile := range configurations.Profiles {
+		if profile.Name == name && profile.Enabled {
+			return profile, err
+		}
+	}
+
+	return (model.ConfigurationProfile{}), err
+}
+
+// GetUnsplashRandomPhotoParameters TODO ...
+func GetUnsplashRandomPhotoParameters(name string) model.UnsplashRandomPhotoParameters {
+	profile, _ := GetConfigurationProfile(name)
+
+	if len(profile.Configurations) > 0 {
+		for _, conf := range profile.Configurations {
+			if conf.Unsplash.Enabled == true {
+				if conf.Unsplash.RandomPhoto.Enabled {
+					return conf.Unsplash.RandomPhoto.Parameters
+				}
+			}
+		}
+	}
+
+	return (model.UnsplashRandomPhotoParameters{})
 }
 
 // GetCredentials read the current credentials file and return its model
@@ -226,86 +143,7 @@ func SaveConfigurations(configurations model.Configurations) error {
 	return aid.WriteInterfaceToFile(configurations, aid.GetAppInfo().ConfigurationsPath)
 }
 
-// func saveConfigurations(configurations model.Configurations) error {
-// 	return aid.WriteInterfaceToFile(configurations, aid.GetAppInfo().ConfigurationsPath)
-// }
-
 // SaveCredentials saves the given credential onto the credentials file
 func SaveCredentials(credentials model.Credentials) error {
 	return aid.WriteInterfaceToFile(credentials, aid.GetAppInfo().CredentialsPath)
 }
-
-// func saveCredentials(credentials model.Credentials) error {
-// 	return aid.WriteInterfaceToFile(credentials, aid.GetAppInfo().CredentialsPath)
-// }
-
-// // UpdateConfigurations updates the given profile name in the configurations file
-// func UpdateConfigurations(name string) error {
-// 	fmt.Println("> Configurations")
-// 	configurations, err := GetConfigurations()
-// 	if err != nil {
-// 		return err
-// 	}
-// 	for i, profile := range configurations.Profiles {
-// 		if profile.Name == name {
-// 			profile = view.AskAboutConfigurationProfile(profile)
-
-// 			for j, conf := range profile.Configurations {
-// 				profile.Configurations[j] = view.AskAboutConfiguration(conf)
-// 			}
-
-// 			for {
-// 				answer := view.GetUserInputAsBool("Would you like to setup another configuration?", false)
-// 				if answer {
-// 					var newConf model.Configuration
-// 					newConf = view.AskAboutConfiguration(newConf)
-// 					profile.Configurations = append(profile.Configurations, newConf)
-// 				} else {
-// 					break
-// 				}
-// 			}
-
-// 			configurations.Profiles[i] = profile
-// 		}
-
-// 	}
-
-// 	saveConfigurations(configurations)
-// 	return err
-// }
-
-// // UpdateCredentials updates the given profile name in the credentials file
-// func UpdateCredentials(name string) error {
-// 	fmt.Println("> Credentials")
-// 	credentials, err := GetCredentials()
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	for i, profile := range credentials.Profiles {
-
-// 		if profile.Name == name {
-// 			profile = view.AskAboutCredentialProfile(profile)
-
-// 			for j, cred := range profile.Credentials {
-// 				profile.Credentials[j] = view.AskAboutCredential(cred)
-// 			}
-
-// 			for {
-// 				answer := view.GetUserInputAsBool("Would you like to setup another credential?", false)
-// 				if answer {
-// 					var newCred model.Credential
-// 					newCred = view.AskAboutCredential(newCred)
-// 					profile.Credentials = append(profile.Credentials, newCred)
-// 				} else {
-// 					break
-// 				}
-// 			}
-
-// 			credentials.Profiles[i] = profile
-// 		}
-// 	}
-
-// 	saveCredentials(credentials)
-// 	return err
-// }

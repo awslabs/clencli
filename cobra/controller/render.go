@@ -22,6 +22,8 @@ import (
 	"strings"
 
 	"github.com/awslabs/clencli/cobra/aid"
+	"github.com/awslabs/clencli/cobra/dao"
+	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -92,7 +94,10 @@ func renderRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to render template "+name+"\n%v", err)
 	}
 
-	// TODO: update readme and logo url based on global configuration
+	if err := updateLogo(profile); err != nil {
+		logrus.Errorf("Unexpected error: %v", err)
+		return fmt.Errorf("unable to update logo url\n%v", err)
+	}
 
 	if err := aid.BuildTemplate(name); err != nil {
 		logrus.Errorf("Unexpected error: %v", err)
@@ -102,5 +107,45 @@ func renderRun(cmd *cobra.Command, args []string) error {
 	cmd.Println("Template " + name + ".tmpl rendered as " + strings.ToUpper(name) + ".md.")
 
 	logrus.Traceln("end: command render run")
+	return nil
+}
+
+func updateLogo(profile string) error {
+	if aid.ConfigurationsDirectoryExist() {
+		if aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
+
+			// ignore error, as credentials doesn't exist
+			cred, err := dao.GetCredentialByProvider(profile, "unsplash")
+			if err != nil {
+				logrus.Warnf("no unsplash credential found\n%v", err)
+				return nil
+			}
+
+			if cred.AccessKey != "" && cred.SecretKey != "" {
+				params := dao.GetUnsplashRandomPhotoParameters(profile)
+				if (model.UnsplashRandomPhotoParameters{}) == params {
+					logrus.Warnf("no unsplash random photo parameters configuration found or enabled\n%v", err)
+					return nil
+				}
+
+				response, err := aid.RequestRandomPhoto(params, cred)
+				if err != nil {
+					logrus.Warnf("unable to fetch response from unsplash during render command\n%v", err)
+					return err
+				}
+
+				readMe, err := dao.GetReadMe()
+				if err != nil {
+					return fmt.Errorf("Unable to get local readme config\n%v", err)
+				}
+
+				err = aid.UpdateReadMeLogoURL(readMe, response)
+				if err != nil {
+					return fmt.Errorf("unable to update logo URL\n%s", err)
+				}
+			}
+		}
+	}
+
 	return nil
 }

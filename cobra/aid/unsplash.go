@@ -75,7 +75,7 @@ func buildURL(params model.UnsplashRandomPhotoParameters, cred model.Credential)
 // DownloadPhoto downloads a photo and saves into downloads/unsplash/ folder
 // It creates the downloads/ folder if it doesn't exists
 func DownloadPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential, photoSizes []string) error {
-	response, err := requestRandomPhoto(params, cred)
+	response, err := RequestRandomPhoto(params, cred)
 	if err != nil {
 		return err
 	}
@@ -122,8 +122,8 @@ func getPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRa
 	}
 }
 
-// requestRandomPhoto retrieves a single random photo, given optional filters.
-func requestRandomPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential) (model.UnsplashRandomPhotoResponse, error) {
+// RequestRandomPhoto retrieves a single random photo, given optional filters.
+func RequestRandomPhoto(params model.UnsplashRandomPhotoParameters, cred model.Credential) (model.UnsplashRandomPhotoResponse, error) {
 	var response model.UnsplashRandomPhotoResponse
 	url := buildURL(params, cred)
 

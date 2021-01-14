@@ -66,7 +66,22 @@ func ReadConfig(name string) (*viper.Viper, error) {
 		return v, fmt.Errorf("unable to read configuration:%s\n%v", name, err)
 	}
 	return v, err
+}
 
+// ReadTemplate read the given template under clencli/*.yaml
+func ReadTemplate(fileName string) (*viper.Viper, error) {
+	c := viper.New()
+	c.AddConfigPath("clencli")
+	c.SetConfigName(fileName)
+	c.SetConfigType("yaml")
+	c.SetConfigPermissions(os.ModePerm)
+
+	err := c.ReadInConfig() // Find and read the c file
+	if err != nil {         // Handle errors reading the c file
+		return c, fmt.Errorf("Unable to read "+fileName+" via Viper"+"\n%v", err)
+	}
+
+	return c, nil
 }
 
 // WriteInterfaceToFile write the given interface into a file

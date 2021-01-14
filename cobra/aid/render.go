@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
 	gomplateV3 "github.com/hairyhenderson/gomplate/v3"
 	"github.com/sirupsen/logrus"
@@ -202,4 +203,15 @@ func writeOutputs() error {
 
 	}
 	return err
+}
+
+// UpdateReadMeLogoURL TODO ...
+func UpdateReadMeLogoURL(readme model.ReadMe, response model.UnsplashRandomPhotoResponse) error {
+	readme.Logo.URL = response.Urls.Regular
+	err := WriteInterfaceToFile(readme, helper.BuildPath("clencli/readme.yaml"))
+	if err != nil {
+		return fmt.Errorf("unable to save new readme template\n%v", err)
+	}
+
+	return nil
 }

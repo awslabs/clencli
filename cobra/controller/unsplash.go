@@ -76,6 +76,7 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 	params := aid.GetModelFromFlags(cmd)
 	cred, err := dao.GetCredentialByProvider(profile, "unsplash")
 	if err != nil {
+		logrus.Errorf("Unexpected error: %v", err)
 		return err
 	}
 
