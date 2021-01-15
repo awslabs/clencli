@@ -47,7 +47,7 @@ usage: "CLENCLI enables you to quickly and predictably create, change, and impro
   are reading right now was generated and it's maintained by `CLENCLI` itself. You
   can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md`
   is updated, a new photo is chosen for the project automatically.\n\n## Download
-  random photos from [Unsplash][https://unsplash.com]\n```\n# first you need to inform
+  random photos from [Unsplash](https://unsplash.com)\n```\n# first you need to inform
   your unsplash developer API credentials\n\n$ clencli configure\nclencli configuration
   directory created at /home/valter/.clencli\nWould you like to setup credentials?
   [false]: true\n> Credentials\n>> Profile: default\n>>>> Credential\n>>>>> Name:

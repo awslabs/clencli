@@ -109,7 +109,7 @@ Template readme.tmpl rendered as README.md
 
 The `README.md` you are reading right now was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
 
-## Download random photos from [Unsplash][https://unsplash.com]
+## Download random photos from [Unsplash](https://unsplash.com)
 ```
 # first you need to inform your unsplash developer API credentials
 
