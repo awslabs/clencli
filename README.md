@@ -11,7 +11,7 @@
 
 -->
 
-![Logo](<no value>)
+![Logo](https://images.unsplash.com/photo-1607451845255-2f7de5e407e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxOTEyNTB8MHwxfHJhbmRvbXx8fHx8fHx8&ixlib=rb-1.2.1&q=80&w=1080)
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
 
@@ -45,7 +45,6 @@ A CLI built to assist Cloud Engineers.
   <summary>Expand</summary>
 
 CLENCLI enables you to quickly and predictably create, change, and improve your cloud projects by automating common tasks such as creating a new project, or updating its documentation.
-
 Modern software projects are composed of many repositories, and often worked upon by many development teams. Keeping consistency across the project is key to enable productivity and efficiency.
 In a polyglot world where a team can choose it's programming language, often this flexibility can spill into chaos as every repo looks different. CLENCLI solves this issue by giving developers a quick and easy way to create a standardised repo structure and easily rendering documentation via a YAML file.
 
@@ -58,11 +57,9 @@ In a polyglot world where a team can choose it's programming language, often thi
   │   ├── readme.tmpl
   │   └── readme.yaml
   └── .gitignore
-
 ```
 
 ### Create a new CloudFormation project
-
 ```
 $ clencli init project --project-name foo --project-type cloudformation
 $ tree -a sun/
@@ -81,7 +78,6 @@ $ tree -a sun/
 ```
 
 ### Create a new Terraform project
-
 ```
 $ clencli init project --project-name foo --project-type terraform
 $ tree -a foo/
@@ -112,7 +108,6 @@ Template readme.tmpl rendered as README.md
 ```
 
 The `README.md` you are reading right now was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
-
 
 ## Download random photos from [Unsplash][https://unsplash.com]
 ```
@@ -202,8 +197,8 @@ override.tf.json
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform,vscode
-
 ```
+
 </details>
 
 
