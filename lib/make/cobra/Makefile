@@ -4,7 +4,7 @@
 .PHONY: cobra/add
 cobra/add: ## Add a Cobra command
 ifdef command
-	cobra add $(command)
+	cd cobra && cobra add $(command)
 else
 	@echo "command not defined"
 endif
@@ -16,3 +16,9 @@ ifdef command
 else
 	@echo "command not defined"
 endif
+
+
+.PHONY: cobra/install
+cobra/install:
+	go get github.com/spf13/cobra/cobra
+

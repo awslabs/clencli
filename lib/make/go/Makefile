@@ -1,6 +1,7 @@
 .PHONY: go/build
 go/build: ## Compile packages and dependencies
-	go build -o $(GOPATH)/bin/clencli
+	mkdir -p build
+	go build -o build/clencli
 
 .PHONY: go/install
 go/install: ## Compile and install packages and dependencies
@@ -16,8 +17,9 @@ endif
 
 .PHONY: go/fmt
 go/fmt: ## gofmt (reformat) package sources
-	go fmt main.go
-	go fmt cmd/*.go
+	go fmt github.com/awslabs/clencli/...
+	go fmt ./...
+	gofmt -s -w .
 
 .PHONY: go/generate
 go/generate: ## Generate Go files by processing source
@@ -47,8 +49,8 @@ go/version: ## Print Go version
 go/env: ## Print Go environment information
 	go env
 
+# GitHub actions doesn't allow egress internet connectivity
+# Therefore integration tests that needs to download/pull data from the internet can't be executed
 .PHONY: go/test
 go/test:
-	@echo "=== Testing commands"
-	@rm -rf test
-	@cd cmd && go test -v
+	@cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go cmd_gitignore_test.go

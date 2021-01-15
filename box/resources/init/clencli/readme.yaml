@@ -1,6 +1,5 @@
 logo:
-  label: Logo
-  theme: mountains
+  label: logo
   url: https://via.placeholder.com/512x90.png
 app:
   name: Application
