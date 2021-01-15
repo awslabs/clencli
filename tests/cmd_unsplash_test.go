@@ -1,7 +1,6 @@
 package tests
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -129,7 +128,6 @@ func TestRenderUpdateLogoFromUnsplashFile(t *testing.T) {
 	assert.NotEmpty(t, out)
 	assert.Nil(t, err)
 
-	fmt.Println(wd)
 	os.Chdir("foo")
 
 	wd, _ = os.Getwd()
@@ -159,7 +157,6 @@ func TestRenderUpdateLogoFromConfigurations(t *testing.T) {
 	os.Chdir("foo")
 
 	wd, _ = os.Getwd()
-	fmt.Println(wd)
 
 	args = []string{"render", "template"}
 	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
