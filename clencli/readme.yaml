@@ -1,7 +1,6 @@
 logo:
+  url: https://images.unsplash.com/photo-1607451845255-2f7de5e407e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxOTEyNTB8MHwxfHJhbmRvbXx8fHx8fHx8&ixlib=rb-1.2.1&q=80&w=1080
   label: Logo
-  theme: work
-  url: https://images.unsplash.com/photo-1492551557933-34265f7af79e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjE1MjY5OH0
 shields:
   badges:
   - description: GitHub issues
@@ -23,72 +22,57 @@ app:
   name: Cloud Engineer CLI
   function: A CLI built to assist Cloud Engineers.
   id: clencli
-usage: |-
-  CLENCLI enables you to quickly and predictably create, change, and improve your cloud projects by automating common tasks such as creating a new project, or updating its documentation.
-
-  ### Create a new project
-  ```
-    $ clencli init project --name moon
-    $ tree -a moon/
-    moon/
-    ├── .gitignore
-    └── clencli
-        ├── readme.tmpl
-        └── readme.yaml
-  ```
-
-  ### Create a new CloudFormation project
-
-  ```
-  $ clencli init project --name sun --type cloudformation
-  $ tree -a sun/
-    sun/
-    ├── README.md
-    ├── clencli
-    │   ├── hld.tmpl
-    │   ├── hld.yaml
-    │   ├── readme.tmpl
-    │   └── readme.yaml
-    ├── environments
-    │   ├── dev
-    │   └── prod
-    ├── nested.yaml
-    └── stack.yaml
-  ```
-  You can see a CloudFormation stack generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-cloudformation-project/examples/a-cloudformation-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-cloudformation-project/examples/a-cloudformation-project/HLD.md).
-
-  ### Create a new Terraform project
-
-  ```
-  $ clencli init project --name mars --type terraform
-  $ tree -a mars/
-  mars/
-  ├── .gitignore
-  ├── LICENSE
-  ├── Makefile
-  ├── clencli
-  │   ├── hld.tmpl
-  │   ├── hld.yaml
-  │   ├── readme.tmpl
-  │   └── readme.yaml
-  ├── environments
-  │   ├── dev.tf
-  │   └── prod.tf
-  ├── main.tf
-  ├── outputs.tf
-  └── variables.tf
-  ```
-  You can see a Terraform project/module generated as an example [here](https://github.com/awslabs/clencli/tree/examples/a-terraform-project/examples/a-terraform-project). Optionally, you may want to generate its High Level Design document, you can find an example for this project [here](https://github.com/awslabs/clencli/blob/examples/a-terraform-project/examples/a-terraform-project/HLD.md).
-
-  ## Renders a template
-  ```
-  clencli init project --name jupiter
-  cd jupiter/
-  clencli render template
-  Template readme.tmpl rendered as README.md.
-  ```
-
-  This `README.md` was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
+usage: "CLENCLI enables you to quickly and predictably create, change, and improve
+  your cloud projects by automating common tasks such as creating a new project, or
+  updating its documentation.\nModern software projects are composed of many repositories,
+  and often worked upon by many development teams. Keeping consistency across the
+  project is key to enable productivity and efficiency.\nIn a polyglot world where
+  a team can choose it's programming language, often this flexibility can spill into
+  chaos as every repo looks different. CLENCLI solves this issue by giving developers
+  a quick and easy way to create a standardised repo structure and easily rendering
+  documentation via a YAML file.\n\n### Create a new project\n```\n  $ clencli init
+  project --project-name foo\n  $ tree -a moon/\n  foo/\n  ├── clencli\n  │   ├──
+  readme.tmpl\n  │   └── readme.yaml\n  └── .gitignore\n```\n\n### Create a new CloudFormation
+  project\n```\n$ clencli init project --project-name foo --project-type cloudformation\n$
+  tree -a sun/\n  foo/\n  ├── clencli\n  │   ├── hld.tmpl\n  │   ├── hld.yaml\n  │  
+  ├── readme.tmpl\n  │   └── readme.yaml\n  ├── environments\n  │   ├── dev\n  │  
+  └── prod\n  ├── .gitignore\n  ├── skeleton.json\n  └── skeleton.yaml\n```\n\n###
+  Create a new Terraform project\n```\n$ clencli init project --project-name foo --project-type
+  terraform\n$ tree -a foo/\nfoo/\n├── clencli\n│   ├── hld.tmpl\n│   ├── hld.yaml\n│  
+  ├── readme.tmpl\n│   └── readme.yaml\n├── environments\n│   ├── dev.tf\n│   └──
+  prod.tf\n├── .gitignore\n├── LICENSE\n├── main.tf\n├── Makefile\n├── outputs.tf\n└──
+  variables.tf\n```\n\n## Render a template\n```\n$ clencli init project --project-name
+  foo\nfoo was successfully initialized as a basic project\n$ cd foo/\n$ clencli render
+  template\nTemplate readme.tmpl rendered as README.md\n```\n\nThe `README.md` you
+  are reading right now was generated and it's maintained by `CLENCLI` itself. You
+  can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md`
+  is updated, a new photo is chosen for the project automatically.\n\n## Download
+  random photos from [Unsplash](https://unsplash.com)\n```\n# first you need to inform
+  your unsplash developer API credentials\n\n$ clencli configure\nclencli configuration
+  directory created at /home/valter/.clencli\nWould you like to setup credentials?
+  [false]: true\n> Credentials\n>> Profile: default\n>>>> Credential\n>>>>> Name:
+  default\n>>>>> Description:   \n>>>>> Enabled [true]: \n>>>>> Provider: unsplash\n>>>>>
+  Access Key []: XXX\n>>>>> Secret Key []: XXX\n>>>>> Session Token []: \nWould you
+  like to setup another credential? [false]: \nWould you like to setup configurations?
+  [false]:\n\n$ clencli unsplash\ntree -a downloads/\ndownloads/\n└── unsplash\n    └──
+  mountains\n        ├── 3gz2hsA1T3s-full.jpeg\n        ├── 3gz2hsA1T3s-raw.jpeg\n
+  \       ├── 3gz2hsA1T3s-regular.jpeg\n        ├── 3gz2hsA1T3s-small.jpeg\n        └──
+  3gz2hsA1T3s-thumb.jpeg\n\n$ clencli unplash --query dog\nclencli unsplash --query
+  dog --size full\ntree -a downloads/\ndownloads/\n└── unsplash\n    └── dog\n        └──
+  bbjSWtDtHbM.jpeg\n```\n\n## Download a .gitignore for your project\n```\n$ clencli
+  gitignore --input terraform,vscode\n.gitignore created successfully\n$ less .gitignore\n\n#
+  Created by https://www.toptal.com/developers/gitignore/api/terraform,vscode\n# Edit
+  at https://www.toptal.com/developers/gitignore?templates=terraform,vscode\n\n###
+  Terraform ###\n# Local .terraform directories\n**/.terraform/*\n\n# .tfstate files\n*.tfstate\n*.tfstate.*\n\n#
+  Crash log files\ncrash.log\n\n# Ignore any .tfvars files that are generated automatically
+  for each Terraform run. Most\n# .tfvars files are managed as part of configuration
+  and so should be included in\n# version control.\n#\n# example.tfvars\n\n# Ignore
+  override files as they are usually used to override resources locally and so\n#
+  are not checked in\noverride.tf\noverride.tf.json\n*_override.tf\n*_override.tf.json\n\n#
+  Include override files you do wish to add to version control using negated pattern\n#
+  !example_override.tf\n\n# Include tfplan files to ignore the plan output of command:
+  terraform plan -out=tfplan\n# example: *tfplan*\n\n### vscode ###\n.vscode/*\n!.vscode/settings.json\n!.vscode/tasks.json\n!.vscode/launch.json\n!.vscode/extensions.json\n*.code-workspace\n\n#
+  End of https://www.toptal.com/developers/gitignore/api/terraform,vscode\n```\n"
 installing: Download the latest version [released](https://github.com/awslabs/clencli/releases)
   according to your platform and execute it directly. I recommend placing the binary
   into your `$PATH`, so it's easily accessible.
@@ -141,5 +125,8 @@ references:
 - description: GitHub Actions
   name: github-actions
   url: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/introduction-to-github-actions
+- description: Create useful .gitignore files for your project
+  name: gitignore.io
+  url: https://www.toptal.com/developers/gitignore
 license: This project is licensed under the Apache License 2.0.
 copyright: Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.

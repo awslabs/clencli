@@ -1,0 +1,5 @@
+use: version [options]
+short: Displays the version of CLENCLI and all installed plugins
+long: |
+  Displays the version of Terraform and all installed plugins in the following format:
+  clencli/{git-tag} {golang-version} {architecture} {source}

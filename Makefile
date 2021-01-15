@@ -1,10 +1,13 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
 include lib/make/*/Makefile
-include lib/make/test/*/Makefile
+
+.PHONY: clencli/test
+clencli/test:
+	@cd tests && go test -v
 
 .PHONY: clencli/build
-clencli/build: go/version go/get go/fmt go/generate go/build ## Builds the app
+clencli/build: go/mod/tidy go/version go/get go/fmt go/generate go/build ## Builds the app
 
 .PHONY: clencli/install
 clencli/install: go/get go/fmt go/generate go/install ## Builds the app and install all dependencies
@@ -52,6 +55,7 @@ clencli/clean: ## Removes unnecessary files and directories
 	rm -rf downloads/
 	rm -rf generated-*/
 	rm -rf dist/
+	rm -rf build/
 
 .PHONY: clencli/update-readme
 clencli/update-readme: ## Renders template readme.tmpl with additional documents
@@ -65,9 +69,6 @@ clencli/update-readme: ## Renders template readme.tmpl with additional documents
 	@echo "COMMANDS.md generated successfully"
 	@clencli render template --name readme
 
-.PHONY: clencli/release
-clencli/release: go/mod
-
 .PHONY: clencli/test
 clencli/test: go/test
 
@@ -76,3 +77,41 @@ clencli/test: go/test
 .PHONY: clencli/help
 clencli/help: ## This HELP message
 	@fgrep -h ": ##" $(MAKEFILE_LIST) | sed -e 's/\(\:.*\#\#\)/\:\ /' | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+
+split = $(word $2,$(subst $3, ,$1))
+word-slash = $(word $2,$(subst /, ,$1))
+word-dot = $(word $2,$(subst ., ,$1))
+
+CURRENT_BRANCH := $(shell git branch --show-current)
+CURRENT_COMMIT := $(shell git rev-parse --short HEAD)
+LATEST_TAG := $(shell git describe --tags --abbrev=0)
+# LATEST_TAG := $(shell git describe --tags `git rev-list --tags --max-count=1`)  # gets tags across all branches, not just the current branch
+LATEST_CANDIDATE_TAG := $(shell git describe --tags --abbrev=0 --match "*-rc.*")
+
+RELEASE_VERSION=v$(call word-slash,$(CURRENT_BRANCH),2)
+CANDIDATE_VERSION=$(LATEST_TAG)-rc
+
+
+.PHONY: clencli/release
+clencli/release: go/mod/tidy
+	@echo CURRENT BRANCH IS: $(CURRENT_BRANCH)
+	@echo CURRENT COMMIT IS: $(CURRENT_COMMIT)
+	@echo LATEST TAG IS: $(LATEST_TAG)
+	@echo LATEST_CANDIDATE_TAG IS : $(LATEST_CANDIDATE_TAG)
+ifneq (,$(findstring release,$(CURRENT_BRANCH)))
+	@echo RELEASE FINAL VERSION
+	git tag $(RELEASE_VERSION)
+else ifneq (,$(findstring develop,$(CURRENT_BRANCH)))
+	@echo RELEASE CANDIDATE VERSION
+ifeq ($(strip $(LATEST_CANDIDATE_TAG)),) # not found
+	git tag $(CANDIDATE_VERSION).1
+else
+	$(eval major=$(call word-dot,$(LATEST_CANDIDATE_TAG),1))
+	$(eval minor=$(call word-dot,$(LATEST_CANDIDATE_TAG),2))
+	$(eval patch=$(call word-dot,$(LATEST_CANDIDATE_TAG),3))
+
+	$(eval n_release_candidates=$(call word-dot,$(LATEST_CANDIDATE_TAG),4))
+	$(eval n_release_candidates=$(shell echo $$(($(n_release_candidates)+1))))
+	git tag $(major).$(minor).$(patch).$(n_release_candidates)
+endif
+endif
