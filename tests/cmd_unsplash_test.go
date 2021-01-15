@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -117,4 +118,52 @@ func TestUnsplashQuery(t *testing.T) {
 
 	files := helper.ListFiles(dir + sep + "downloads" + sep + "unsplash" + sep + "horse")
 	assert.GreaterOrEqual(t, len(files), 5)
+}
+
+func TestRenderUpdateLogoFromUnsplashFile(t *testing.T) {
+	createUnplashCredential()
+
+	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
+	wd, out, err := executeCommandOnTemporaryDirectory(t, controller.InitCmd(), args)
+	assert.NotEmpty(t, wd)
+	assert.NotEmpty(t, out)
+	assert.Nil(t, err)
+
+	fmt.Println(wd)
+	os.Chdir("foo")
+
+	wd, _ = os.Getwd()
+
+	args = []string{"unsplash", "--query", "horse", "--size", "regular"}
+	out, err = executeCommandOnly(t, controller.UnsplashCmd(), args)
+	assert.Empty(t, out)
+	assert.Nil(t, err)
+
+	args = []string{"render", "template"}
+	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
+	assert.Nil(t, err)
+	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
+
+}
+
+func TestRenderUpdateLogoFromConfigurations(t *testing.T) {
+	createUnplashCredential()
+	createUnplashConfiguration()
+
+	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
+	wd, out, err := executeCommandOnTemporaryDirectory(t, controller.InitCmd(), args)
+	assert.NotEmpty(t, wd)
+	assert.NotEmpty(t, out)
+	assert.Nil(t, err)
+
+	os.Chdir("foo")
+
+	wd, _ = os.Getwd()
+	fmt.Println(wd)
+
+	args = []string{"render", "template"}
+	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
+	assert.Nil(t, err)
+	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
+
 }
