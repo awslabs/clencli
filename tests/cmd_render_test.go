@@ -23,7 +23,7 @@ func TestRenderCmd(t *testing.T) {
 		"empty arg":                   {args: []string{"render", ""}, out: "", err: "invalid argument"},
 		"wrong arg":                   {args: []string{"render", "foo"}, out: "", err: "invalid argument"},
 		"unknown flag":                {args: []string{"render", "--foo"}, out: "", err: "unknown flag: --foo"},
-		"missing database":            {args: []string{"render", "template"}, out: "", err: "missing database at clencli/readme.yaml"},
+		"missing database":            {args: []string{"render", "template"}, out: "", err: "missing database"},
 		"flag needs an argument name": {args: []string{"render", "template", "--name"}, out: "", err: "flag needs an argument: --name"},
 	}
 
@@ -79,7 +79,33 @@ func TestRenderHLD(t *testing.T) {
 	assert.Contains(t, out, "Template hld.tmpl rendered as HLD.md")
 }
 
-func TestRenderUpdateLogo(t *testing.T) {
+func TestRenderUpdateLogoFromUnsplashFile(t *testing.T) {
+	createUnplashCredential()
+
+	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
+	wd, out, err := executeCommandOnTemporaryDirectory(t, controller.InitCmd(), args)
+	assert.NotEmpty(t, wd)
+	assert.NotEmpty(t, out)
+	assert.Nil(t, err)
+
+	fmt.Println(wd)
+	os.Chdir("foo")
+
+	wd, _ = os.Getwd()
+
+	args = []string{"unsplash", "--query", "horse", "--size", "regular"}
+	out, err = executeCommandOnly(t, controller.UnsplashCmd(), args)
+	assert.NotEmpty(t, out)
+	assert.Nil(t, err)
+
+	args = []string{"render", "template"}
+	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
+	assert.Nil(t, err)
+	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
+
+}
+
+func TestRenderUpdateLogoFromConfigurations(t *testing.T) {
 	createUnplashCredential()
 	createUnplashConfiguration()
 
@@ -99,5 +125,5 @@ func TestRenderUpdateLogo(t *testing.T) {
 	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
 	assert.Nil(t, err)
 	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
-	
+
 }

@@ -71,14 +71,16 @@ func renderPreRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to access flag name\n%v", err)
 	}
 
-	if !helper.FileExists("clencli/" + name + ".yaml") {
-		logrus.Errorf("missing database at clencli/" + name + ".yaml")
-		return errors.New("missing database at clencli/" + name + ".yaml")
+	path := helper.BuildPath("clencli/" + name + ".yaml")
+	if !helper.FileExists(path) {
+		logrus.Errorf("missing database " + path)
+		return errors.New("missing database " + path)
 	}
 
-	if !helper.FileExists("clencli/" + name + ".tmpl") {
-		logrus.Errorf("missing template at clencli/" + name + ".tmpl")
-		return errors.New("missing template at clencli/" + name + ".tmpl")
+	path = helper.BuildPath("clencli/" + name + ".tmpl")
+	if !helper.FileExists(path) {
+		logrus.Errorf("missing template " + path)
+		return errors.New("missing template " + path)
 	}
 
 	logrus.Traceln("end: command render pre-run")
@@ -111,6 +113,53 @@ func renderRun(cmd *cobra.Command, args []string) error {
 }
 
 func updateLogo(profile string) error {
+
+	if !updateLogoFromUnsplashFile() {
+		return updateLogoFromConfigurations(profile)
+	}
+
+	return nil
+}
+
+func updateLogoFromUnsplashFile() bool {
+	if helper.FileExists("unsplash.yaml") {
+		configPath, _ := os.Getwd()
+		configName := "unsplash"
+		configType := "yaml"
+
+		var response model.UnsplashRandomPhotoResponse
+
+		v, err := aid.ReadConfigAsViper(configPath, configName, configType)
+		if err != nil {
+			logrus.Errorf("unable to read unsplash.yaml as viper object\n%v", err)
+			return false
+		}
+
+		err = v.Unmarshal(&response)
+		if err != nil {
+			logrus.Errorf("unable to unmarshall unsplash.yaml as unsplash response\n%v", err)
+			return false
+		}
+
+		readMe, err := dao.GetReadMe()
+		if err != nil {
+			logrus.Errorf("Unable to get local readme config\n%v", err)
+			return false
+		}
+
+		err = aid.UpdateReadMeLogoURL(readMe, response)
+		if err != nil {
+			logrus.Errorf("unable to update logo URL\n%s", err)
+			return false
+		}
+
+		return true
+	}
+
+	return false
+}
+
+func updateLogoFromConfigurations(profile string) error {
 	if aid.ConfigurationsDirectoryExist() {
 		if aid.CredentialsFileExist() && aid.ConfigurationsFileExist() {
 

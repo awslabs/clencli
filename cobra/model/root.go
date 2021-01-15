@@ -43,7 +43,8 @@ type App struct {
 // ReadMe struct of the readme.yaml
 type ReadMe struct {
 	Logo struct {
-		URL string `yaml:"url"`
+		URL   string `yaml:"url"`
+		Label string `yaml:"label"`
 	} `yaml:"logo,omitempty"`
 	Shields struct {
 		Badges []struct {
