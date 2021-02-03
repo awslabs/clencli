@@ -104,6 +104,52 @@ func DownloadPhoto(params model.UnsplashRandomPhotoParameters, cred model.Creden
 	return err
 }
 
+// DownloadPhotoByID TODO ...
+func DownloadPhotoByID(r model.UnsplashGetPhotoResponse, size string) error {
+	dirPath, err := helper.CreateDirectoryNamedPath("downloads/unsplash/" + r.ID)
+	if err != nil {
+		return err
+	}
+
+	if size == "raw" || size == "all" {
+		err = helper.DownloadFile(r.Urls.Raw, dirPath, r.ID+"-raw.jpeg")
+		if err != nil {
+			return fmt.Errorf("unable to download photo\n%v", err)
+		}
+	}
+
+	if size == "full" || size == "all" {
+		err = helper.DownloadFile(r.Urls.Full, dirPath, r.ID+"-full.jpeg")
+		if err != nil {
+			return fmt.Errorf("unable to download photo\n%v", err)
+		}
+	}
+
+	if size == "regular" || size == "all" {
+		err = helper.DownloadFile(r.Urls.Regular, dirPath, r.ID+"-regular.jpeg")
+		if err != nil {
+			return fmt.Errorf("unable to download photo\n%v", err)
+		}
+	}
+
+	if size == "small" || size == "all" {
+		err = helper.DownloadFile(r.Urls.Small, dirPath, r.ID+"-small.jpeg")
+		if err != nil {
+			return fmt.Errorf("unable to download photo\n%v", err)
+		}
+	}
+
+	if size == "thumb" || size == "all" {
+		err = helper.DownloadFile(r.Urls.Thumb, dirPath, r.ID+"-thumb.jpeg")
+		if err != nil {
+			return fmt.Errorf("unable to download photo\n%v", err)
+		}
+	}
+
+	return err
+
+}
+
 // GetPhotoURLBySize return the photo URL based on the given size
 func getPhotoURLBySize(p model.UnsplashRandomPhotoParameters, r model.UnsplashRandomPhotoResponse) string {
 	switch p.Size {
@@ -144,6 +190,41 @@ func RequestRandomPhoto(params model.UnsplashRandomPhotoParameters, cred model.C
 	}
 
 	return response, err
+}
+
+// GetPhoto TODO..
+func GetPhoto(id string, cred model.Credential) (model.UnsplashGetPhotoResponse, error) {
+	var response model.UnsplashGetPhotoResponse
+
+	clientID := cred.AccessKey
+	url := fmt.Sprintf("https://api.unsplash.com/photos/%s?client_id=%s", id, clientID)
+
+	var client http.Client
+	resp, err := client.Get(url)
+	if err != nil {
+		return response, fmt.Errorf("unexpected error while performing GET on Unsplash API \n%v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return response, fmt.Errorf("unexpected error while reading Unsplash response \n%v", err)
+		}
+
+		json.Unmarshal(bodyBytes, &response)
+	}
+
+	return response, err
+}
+
+// SaveGetPhotoResult TODO ...
+func SaveGetPhotoResult(r model.UnsplashGetPhotoResponse) {
+	d, err := yaml.Marshal(r)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
+	helper.WriteFile("unsplash.yaml", d)
 }
 
 func dumpUnsplashRandomPhotoResponse(r model.UnsplashRandomPhotoResponse) {

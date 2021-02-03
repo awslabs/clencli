@@ -46,6 +46,7 @@ func UnsplashCmd() *cobra.Command {
 		RunE:    unsplashRun,
 	}
 
+	cmd.Flags().String("id", "", "The photo’s ID. Leave it empty if you want to download a random photo instead")
 	cmd.Flags().String("collections", "", "Public collection ID(‘s) to filter selection. If multiple, comma-separated")
 	cmd.Flags().Bool("featured", false, "Limit selection to featured photos. Valid values: false, true.")
 	cmd.Flags().String("filter", "low", "Limit results by content safety. Default: low. Valid values are low and high.")
@@ -73,7 +74,6 @@ func unsplashPreRun(cmd *cobra.Command, args []string) error {
 func unsplashRun(cmd *cobra.Command, args []string) error {
 	logrus.Traceln("start: command unsplash run")
 
-	params := aid.GetModelFromFlags(cmd)
 	cred, err := dao.GetCredentialByProvider(profile, "unsplash")
 	if err != nil {
 		logrus.Errorf("Unexpected error: %v", err)
@@ -84,10 +84,37 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("no unsplash credential found or no profile enabled")
 	}
 
-	err = aid.DownloadPhoto(params, cred, unsplashPhotoSizes)
+	id, err := cmd.Flags().GetString("id")
 	if err != nil {
-		logrus.Errorf("unable to download photo\n%v", err)
-		return err
+		return fmt.Errorf("unable to get flag id\n%v", err)
+	}
+
+	if id != "" {
+		// get photo
+		response, err := aid.GetPhoto(id, cred)
+		if err != nil || response.ID == "" {
+			return fmt.Errorf("unablet to get photo\n%v", err)
+		}
+
+		size, err := cmd.Flags().GetString("size")
+		if err != nil {
+			return fmt.Errorf("unable to get flag id\n%v", err)
+		}
+
+		if response.ID != "" {
+			aid.SaveGetPhotoResult(response)
+			aid.DownloadPhotoByID(response, size)
+		}
+
+	} else {
+		// random photo
+		params := aid.GetModelFromFlags(cmd)
+		err = aid.DownloadPhoto(params, cred, unsplashPhotoSizes)
+		if err != nil {
+			logrus.Errorf("unable to download photo\n%v", err)
+			return err
+		}
+
 	}
 
 	logrus.Traceln("end: command unsplash run")
