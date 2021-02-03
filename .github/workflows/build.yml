@@ -13,6 +13,6 @@ jobs:
       - run: go env
       - run: go generate ./...
       - name: Run go test
-        run: make go/test
+        run: make github/test
       - name: Run go build
-        run: mkdir bin/ && go build -o bin/clencli
+        run: make github/build
