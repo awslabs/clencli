@@ -19,20 +19,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/helper"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
 var profile string
-
-//The verbose flag value
-var verbosity string
-
-var log string
-
-var logFilePath string
 
 // RootCmd represents the base command when called without any subcommands
 func RootCmd() *cobra.Command {
@@ -43,10 +34,9 @@ func RootCmd() *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:               man.Use,
-		Short:             man.Short,
-		Long:              man.Long,
-		PersistentPreRunE: rootPersistentPreRun,
+		Use:   man.Use,
+		Short: man.Short,
+		Long:  man.Long,
 	}
 
 	// Here you will define your flags and configuration settings.
@@ -55,26 +45,5 @@ func RootCmd() *cobra.Command {
 
 	// TODO: allow users to pass their prefer location for clencli's configurations directory
 
-	cmd.PersistentFlags().StringVarP(&verbosity, "verbosity", "v", logrus.ErrorLevel.String(), "Valid log level:panic,fatal,error,warn,info,debug,trace).")
-	cmd.PersistentFlags().StringVarP(&log, "log", "l", "disable", "Enable or disable logs (found at $HOME/.clencli/logs.json). Log outputs will be shown on default output.")
-	cmd.PersistentFlags().StringVar(&logFilePath, "log-file-path", aid.GetAppInfo().LogsPath, "Log file path.")
-
-	// Cobra also supports local flags, which will only run when this action is called directly.
-	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
 	return cmd
-}
-
-func rootPersistentPreRun(cmd *cobra.Command, args []string) error {
-	if err := aid.SetupLoggingLevel(verbosity); err != nil {
-		return err
-	}
-
-	if log == "enable" && logFilePath != "" {
-		if err := aid.SetupLoggingOutput(logFilePath); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
