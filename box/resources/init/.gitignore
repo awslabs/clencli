@@ -413,3 +413,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/go,java,linux,macos,python,windows,virtualenv,visualstudiocode,terraform,intellij
+
+# CLENCLI Files
+clencli/log.json

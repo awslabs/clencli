@@ -11,7 +11,7 @@
 
 -->
 
-![Logo](https://images.unsplash.com/photo-1607451845255-2f7de5e407e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxOTEyNTB8MHwxfHJhbmRvbXx8fHx8fHx8&ixlib=rb-1.2.1&q=80&w=1080)
+![Logo](https://images.unsplash.com/photo-1611965581519-1f5a5ee98178?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxOTEyNTB8MHwxfHJhbmRvbXx8fHx8fHx8&ixlib=rb-1.2.1&q=80&w=1080)
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
 
@@ -239,14 +239,12 @@ Available Commands:
 
 Flags:
   -h, --help                   help for clencli
-  -l, --log string             Enable or disable logs (found at $HOME/.clencli/logs.json). Log outputs will be shown on default output. (default "disable")
-      --log-file-path string   Log file path. (default "/home/valter/.clencli/logs.json")
+      --log                    Enable or disable logs (can be found at ./clencli/log.json). Log outputs will be redirected default output if disabled. (default true)
+      --log-file-path string   Log file path. Requires log=true, ignored otherwise. (default "clencli/log.json")
   -p, --profile string         Use a specific profile from your credentials and configurations file. (default "default")
-  -t, --toggle                 Help message for toggle
   -v, --verbosity string       Valid log level:panic,fatal,error,warn,info,debug,trace). (default "error")
 
 Use "clencli [command] --help" for more information about a command.
-
 ```
 
 
