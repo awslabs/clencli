@@ -44,9 +44,8 @@ A CLI built to assist Cloud Engineers.
 <details open>
   <summary>Expand</summary>
 
-CLENCLI enables you to quickly and predictably create, change, and improve your cloud projects by automating common tasks such as creating a new project, or updating its documentation.
-Modern software projects are composed of many repositories, and often worked upon by many development teams. Keeping consistency across the project is key to enable productivity and efficiency.
-In a polyglot world where a team can choose it's programming language, often this flexibility can spill into chaos as every repo looks different. CLENCLI solves this issue by giving developers a quick and easy way to create a standardised repo structure and easily rendering documentation via a YAML file.
+In a polyglot world where a team can choose it's programming language, often this flexibility can spill into chaos as every repo looks different.
+CLENCLI solves this issue by giving developers a quick and easy way to create a standardised repo structure and easily rendering documentation via a YAML file.
 
 ### Create a new project
 ```
@@ -107,7 +106,8 @@ $ clencli render template
 Template readme.tmpl rendered as README.md
 ```
 
-The `README.md` you are reading right now was generated and it's maintained by `CLENCLI` itself. You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
+The `README.md` you are reading right now was generated and it's maintained by `CLENCLI` itself.
+You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
 
 ## Download random photos from [Unsplash](https://unsplash.com)
 ```
@@ -120,13 +120,13 @@ Would you like to setup credentials? [false]: true
 >> Profile: default
 >>>> Credential
 >>>>> Name: default
->>>>> Description:   
->>>>> Enabled [true]: 
+>>>>> Description:
+>>>>> Enabled [true]:
 >>>>> Provider: unsplash
 >>>>> Access Key []: XXX
 >>>>> Secret Key []: XXX
->>>>> Session Token []: 
-Would you like to setup another credential? [false]: 
+>>>>> Session Token []:
+Would you like to setup another credential? [false]:
 Would you like to setup configurations? [false]:
 
 $ clencli unsplash
@@ -198,7 +198,6 @@ override.tf.json
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform,vscode
 ```
-
 </details>
 
 
