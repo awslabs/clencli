@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "debug-configure",
+            "name": "d-configure",
             "type": "go",
             "request": "launch",
             "mode": "debug",
@@ -13,7 +13,7 @@
             "args": ["configure"]
         },
         {
-            "name": "debug-configure-delete-profile",
+            "name": "d-configure-delete-profile",
             "type": "go",
             "request": "launch",
             "mode": "debug",
@@ -21,7 +21,7 @@
             "args": ["configure", "delete", "--profile", "dylan"]
         },
         {
-            "name": "debug-init-help",
+            "name": "d-init-help",
             "type": "go",
             "request": "launch",
             "mode": "debug",
@@ -29,7 +29,7 @@
             "args": ["init", "--help"]
         },
         {
-            "name": "debug-init-project-basic",
+            "name": "d-init-project-basic",
             "type": "go",
             "request": "launch",
             "mode": "debug",
@@ -37,7 +37,7 @@
             "args": ["init", "project", "--name", "generated-basic-project"]
         },
         {
-            "name": "debug-init-project-terraform",
+            "name": "d-init-project-terraform",
             "type": "go",
             "request": "launch",
             "mode": "debug",
@@ -45,7 +45,7 @@
             "args": ["init", "project", "--name", "generated-terraform-project", "--type", "terraform"],
         },
         {
-            "name": "debug-init-project-terraform-with-only-customized-structure",
+            "name": "d-init-project-terraform-with-only-customized-structure",
             "type": "go",
             "request": "launch",
             "mode": "debug",
@@ -53,7 +53,7 @@
             "args": ["init", "project", "--name", "generated-terraform-project-only-customized-structure", "--type", "terraform", "-o"],
         },
         {
-            "name": "debug-render-template",
+            "name": "d-render-template",
             "type": "go",
             "request": "launch",
             "mode": "debug",
