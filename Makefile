@@ -38,8 +38,8 @@ clencli/compile: ## Compile to multiple architectures
 	GOOS=linux GOARCH=amd64 go build -o dist/clencli-linux-amd64 main.go
 	GOOS=linux GOARCH=arm go build -o dist/clencli-linux-arm main.go
 
-	GOOS=windows GOARCH=386 go build -o dist/clencli-windows-386 main.go
-	GOOS=windows GOARCH=amd64 go build -o dist/clencli-windows-amd64 main.go
+	GOOS=windows GOARCH=386 go build -o dist/clencli-windows-386.exe main.go
+	GOOS=windows GOARCH=amd64 go build -o dist/clencli-windows-amd64.exe main.go
 
 .PHONY: clencli/clean
 clencli/clean: ## Removes unnecessary files and directories
