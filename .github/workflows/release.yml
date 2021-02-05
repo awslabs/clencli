@@ -145,7 +145,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist/clencli-windows-386.exe
-          asset_name: clencli-windows-386
+          asset_name: clencli-windows-386.exe
           asset_content_type: application/x-clencli
       - name: Upload Release Asset (clencli-windows-amd64)
         id: upload-release-asset-clencli-windows-amd64
@@ -155,5 +155,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist/clencli-windows-amd64.exe
-          asset_name: clencli-windows-amd64
+          asset_name: clencli-windows-amd64.exe
           asset_content_type: application/x-clencli
