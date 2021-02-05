@@ -96,6 +96,13 @@ func renderRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to render template "+name+"\n%v", err)
 	}
 
+	// remove any trailing whitespaces
+	path := helper.BuildPath("./clencli/" + name + ".yaml")
+	if err := helper.TrimRightFile(path, true); err != nil {
+		logrus.Errorf("unexpected err: %v", err)
+		return fmt.Errorf("unable to remove white spaces from %s.yaml\n%v", name, err)
+	}
+
 	if err := updateLogo(profile); err != nil {
 		logrus.Errorf("Unexpected error: %v", err)
 		return fmt.Errorf("unable to update logo url\n%v", err)

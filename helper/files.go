@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -108,7 +109,6 @@ func DirOrFileExists(path string) bool {
 }
 
 // CopyFile copies a file from source into a given destination path
-// https://github.com/mactsouk/opensource.com/blob/master/cp2.go
 func CopyFile(sourceFile string, destinationFile string) {
 	input, err := ioutil.ReadFile(sourceFile)
 	if err != nil {
@@ -124,15 +124,15 @@ func CopyFile(sourceFile string, destinationFile string) {
 	}
 }
 
-// CopyFileTo TODO...
-func CopyFileTo(sourceFile string, destinationFile string) error {
-	input, err := ioutil.ReadFile(sourceFile)
+// CopyFileTo copy a file from source to destination
+func CopyFileTo(source string, dest string) error {
+	input, err := ioutil.ReadFile(source)
 	if err != nil {
-		logrus.Errorf("unable to copy file\n%v", err)
+		logrus.Errorf("unable to read file\n%v", err)
 		return err
 	}
 
-	err = ioutil.WriteFile(destinationFile, input, 0644)
+	err = ioutil.WriteFile(dest, input, os.ModePerm)
 	if err != nil {
 		logrus.Errorf("unable to write file\n%v", err)
 		return err
@@ -175,4 +175,45 @@ func ListFiles(dir string) []os.FileInfo {
 // If there is an error, it will be of type *PathError.
 func DeleteFile(name string) error {
 	return os.Remove(name)
+}
+
+// TrimRightFile open file in `path`, read line by line removing all trailing characters.
+// Overwrite original file in `path` if `true`, it creates a new file `path`.tmp otherwise.
+func TrimRightFile(path string, overwrite bool) error {
+	f, err := os.Open(path)
+	if err != nil {
+		logrus.Errorf("unable to open file %s\n%v", f, err)
+	}
+	defer f.Close()
+
+	tPath := path + ".tmp"
+	tf, err := os.OpenFile(tPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	if err != nil {
+		logrus.Error(err)
+	}
+	defer tf.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		tr := strings.TrimRight(scanner.Text(), " ")
+		if _, err := tf.WriteString(tr + "\n"); err != nil {
+			logrus.Errorf("unable write trimmed string to temporary file\n%v", err)
+			return err
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		logrus.Errorf("unable to use scanner\n%v", err)
+		return err
+	}
+
+	if overwrite {
+		if err := CopyFileTo(tPath, path); err != nil {
+			logrus.Errorf("unable to replace original file with temporary\n%v", err)
+			return err
+		}
+		defer os.Remove(tPath)
+	}
+
+	return nil
 }

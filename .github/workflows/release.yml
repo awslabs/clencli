@@ -13,7 +13,8 @@ jobs:
         with:
           go-version: '^1.15.2' # The Go version to download (if necessary) and use.
       - run: go version
-      - run: go get ./...
+      - run: go get ./... 
+      - run: go generate ./...
       - run: make clencli/compile
       - name: Create Release
         id: create_release
@@ -143,7 +144,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/clencli-windows-386
+          asset_path: ./dist/clencli-windows-386.exe
           asset_name: clencli-windows-386
           asset_content_type: application/x-clencli
       - name: Upload Release Asset (clencli-windows-amd64)
@@ -153,6 +154,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/clencli-windows-amd64
+          asset_path: ./dist/clencli-windows-amd64.exe
           asset_name: clencli-windows-amd64
           asset_content_type: application/x-clencli

@@ -256,3 +256,4 @@ examples/*
 test/*
 *debug_bin*
 clencli/log.json
+*.tmp*

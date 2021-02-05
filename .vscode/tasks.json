@@ -6,12 +6,25 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "make clencli/build"
+            "command": "make clencli/build",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
-            "label": "teste",
+            "label": "render-template",
             "type": "shell",
-            "command": "make clencli/test"
+            "command": [
+                "go",
+                "run",
+                "${workspaceFolder}/main.go",
+                "render",
+                "template"
+            ],
+            "problemMatcher": [],
+            "group": "build"
         }
     ]
 }
