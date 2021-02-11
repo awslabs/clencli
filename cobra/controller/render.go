@@ -148,6 +148,14 @@ func updateLogoFromUnsplashFile() bool {
 			return false
 		}
 
+		err = helper.DownloadFile(response.Urls.Regular, "clencli", "logo.jpeg")
+		if err != nil {
+			logrus.Errorf("unable to download photo\n%v", err)
+			return false
+		}
+
+		response.Urls.Regular = "clencli/logo.jpeg"
+
 		readMe, err := dao.GetReadMe()
 		if err != nil {
 			logrus.Errorf("Unable to get local readme config\n%v", err)

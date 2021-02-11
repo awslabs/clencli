@@ -207,6 +207,7 @@ func writeOutputs() error {
 
 // UpdateReadMeLogoURL TODO ...
 func UpdateReadMeLogoURL(readme model.ReadMe, response model.UnsplashRandomPhotoResponse) error {
+	readme.Logo.Label = "Photo by [" + response.User.Name + "](https://unsplash.com/" + response.User.Username + ") on [Unsplash](https://unsplash.com)"
 	readme.Logo.URL = response.Urls.Regular
 	err := WriteInterfaceToFile(readme, helper.BuildPath("clencli/readme.yaml"))
 	if err != nil {
