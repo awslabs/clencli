@@ -31,4 +31,4 @@ jobs:
       - name: go test
         run: cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go
       - name: go build
-        run: New-Item -Path "." -Name "build" -ItemType "directory" && cd build && go build -o bin/clencli
+        run: New-Item -Path "." -Name "bin" -ItemType "directory" && go build -o bin/clencli
