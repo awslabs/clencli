@@ -11,11 +11,11 @@ jobs:
       - run: sudo apt-get install -y git 
       - run: go version 
       - run: go env
+      - run: go get ./...
       - run: go generate ./...
-      - name: Run go test
-        run: make github/test
-      - name: Run go build
-        run: make github/build
+      - name: go test
+        run: cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go
+      - run: go build .
   windows-build:
     runs-on: windows-latest
     steps: 
@@ -25,5 +25,8 @@ jobs:
           go-version: '^1.16.4'
       - run: go version 
       - run: go env
+      - run: go get ./...
       - run: go generate ./...
-      - run: cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go
+      - name: go test
+        run: cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go
+      - run: go build .
