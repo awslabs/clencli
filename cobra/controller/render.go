@@ -71,13 +71,13 @@ func renderPreRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to access flag name\n%v", err)
 	}
 
-	path := helper.BuildPath("clencli/" + name + ".yaml")
+	path := "clencli/" + name + ".yaml"
 	if !helper.FileExists(path) {
 		logrus.Errorf("missing database " + path)
 		return errors.New("missing database " + path)
 	}
 
-	path = helper.BuildPath("clencli/" + name + ".tmpl")
+	path = "clencli/" + name + ".tmpl"
 	if !helper.FileExists(path) {
 		logrus.Errorf("missing template " + path)
 		return errors.New("missing template " + path)
@@ -97,7 +97,7 @@ func renderRun(cmd *cobra.Command, args []string) error {
 	}
 
 	// remove any trailing whitespaces
-	path := helper.BuildPath("./clencli/" + name + ".yaml")
+	path := "./clencli/" + name + ".yaml"
 	if err := helper.TrimRightFile(path, true); err != nil {
 		logrus.Errorf("unexpected err: %v", err)
 		return fmt.Errorf("unable to remove white spaces from %s.yaml\n%v", name, err)
