@@ -15,7 +15,8 @@ jobs:
       - run: go generate ./...
       - name: go test
         run: cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go
-      - run: go build .
+      - name: go build
+        run: mkdir bin && go build -o bin/clencli
   windows-build:
     runs-on: windows-latest
     steps: 
@@ -29,4 +30,5 @@ jobs:
       - run: go generate ./...
       - name: go test
         run: cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go
-      - run: go build .
+      - name: go build
+        run: New-Item -Path "." -Name "build" -ItemType "directory" && cd build && go build -o bin/clencli
