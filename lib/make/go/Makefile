@@ -2,6 +2,7 @@
 go/build: ## Compile packages and dependencies
 	mkdir -p build
 	go build -o build/clencli
+	rm -rf build
 
 .PHONY: go/install
 go/install: ## Compile and install packages and dependencies
