@@ -21,7 +21,6 @@ import (
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/model"
-	"github.com/awslabs/clencli/helper"
 )
 
 // GetConfigurations read the current configurations file and return its model
@@ -48,7 +47,7 @@ func GetReadMe() (model.ReadMe, error) {
 		return readMe, fmt.Errorf("unable to get the current working directory:\n%v", err)
 	}
 
-	configPath := helper.BuildPath(wd + "/clencli")
+	configPath := wd + "/clencli"
 	configName := "readme"
 	configType := "yaml"
 

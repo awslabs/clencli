@@ -16,12 +16,6 @@ import (
 	"github.com/awslabs/clencli/box"
 )
 
-// BuildPath changes the given path to a more cross platform friendly format
-func BuildPath(path string) string {
-	sep := string(os.PathSeparator)
-	return strings.ReplaceAll(path, "/", sep)
-}
-
 // WriteFile writes a file and return true if successful
 func WriteFile(filename string, data []byte) bool {
 	err := ioutil.WriteFile(filename, data, os.ModePerm)
@@ -36,14 +30,14 @@ func WriteFile(filename string, data []byte) bool {
 
 // WriteFileFromBox get the file from box's resources and write into the given destination, returns false if not able to.
 func WriteFileFromBox(source string, dest string) bool {
-	bytes, found := box.Get(BuildPath(source))
+	bytes, found := box.Get(source)
 
 	if !found {
-		log.Errorf("file \"%s\" not found under box/resources", BuildPath(source))
+		log.Errorf("file \"%s\" not found under box/resources", source)
 		return false
 	}
 
-	return WriteFile(BuildPath(dest), bytes)
+	return WriteFile(dest, bytes)
 }
 
 // DownloadFileTo downloads a file and saves into the given directory with the given file name
@@ -56,7 +50,7 @@ func DownloadFileTo(url string, destination string) error {
 	defer resp.Body.Close()
 
 	// Create the file
-	out, err := os.Create(BuildPath(destination))
+	out, err := os.Create(destination)
 	if err != nil {
 		return err
 	}
@@ -91,7 +85,7 @@ func DownloadFile(url string, dirPath string, filename string) error {
 // FileExists checks if a file exists and is not a directory before we
 // try using it to prevent further errors.
 func FileExists(path string) bool {
-	info, err := os.Stat(BuildPath(path))
+	info, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		return false
 	}

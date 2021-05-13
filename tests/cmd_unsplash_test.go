@@ -130,8 +130,6 @@ func TestRenderUpdateLogoFromUnsplashFile(t *testing.T) {
 
 	os.Chdir("foo")
 
-	wd, _ = os.Getwd()
-
 	args = []string{"unsplash", "--query", "horse", "--size", "regular"}
 	out, err = executeCommandOnly(t, controller.UnsplashCmd(), args)
 	assert.Empty(t, out)
@@ -144,23 +142,21 @@ func TestRenderUpdateLogoFromUnsplashFile(t *testing.T) {
 
 }
 
-func TestRenderUpdateLogoFromConfigurations(t *testing.T) {
-	createUnplashCredential()
-	createUnplashConfiguration()
+// func TestRenderUpdateLogoFromConfigurations(t *testing.T) {
+// 	createUnplashCredential()
+// 	createUnplashConfiguration()
 
-	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
-	wd, out, err := executeCommandOnTemporaryDirectory(t, controller.InitCmd(), args)
-	assert.NotEmpty(t, wd)
-	assert.NotEmpty(t, out)
-	assert.Nil(t, err)
+// 	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
+// 	wd, out, err := executeCommandOnTemporaryDirectory(t, controller.InitCmd(), args)
+// 	assert.NotEmpty(t, wd)
+// 	assert.NotEmpty(t, out)
+// 	assert.Nil(t, err)
 
-	os.Chdir("foo")
+// 	os.Chdir("foo")
 
-	wd, _ = os.Getwd()
+// 	args = []string{"render", "template"}
+// 	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
+// 	assert.Nil(t, err)
+// 	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
 
-	args = []string{"render", "template"}
-	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
-	assert.Nil(t, err)
-	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
-
-}
+// }
