@@ -13,6 +13,7 @@ jobs:
         with:
           go-version: '^1.15.2' # The Go version to download (if necessary) and use.
       - run: go version
+      - run: go env
       - run: go get ./... 
       - run: go generate ./...
       - run: make clencli/compile
@@ -25,8 +26,8 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
           body_path: CHANGELOG.md
-          draft: true # true to create a draft (unpublished) release, false to create a published one. Default: false
-          prerelease: true # true to identify the release as a prerelease. false to identify the release as a full release. Default: false
+          draft: false # true to create a draft (unpublished) release, false to create a published one. Default: false
+          prerelease: false # true to identify the release as a prerelease. false to identify the release as a full release. Default: false
       - name: Upload Release Asset (clencli-darwin-amd64)
         id: upload-release-asset-clencli-darwin-amd64
         uses: actions/upload-release-asset@v1
