@@ -6,7 +6,7 @@ include lib/make/*/Makefile
 clencli/test: clencli/build go/test
 
 .PHONY: clencli/build
-clencli/build: clencli/clean go/mod/tidy go/version go/get go/fmt go/generate go/build clencli/update-readme ## Builds the app
+clencli/build: clencli/clean go/mod/tidy go/version go/fmt go/generate go/install clencli/update-readme ## Builds the app
 
 .PHONY: clencli/install
 clencli/install: go/get go/fmt go/generate go/install ## Builds the app and install all dependencies
@@ -47,6 +47,9 @@ clencli/clean: ## Removes unnecessary files and directories
 	rm -rf generated-*/
 	rm -rf dist/
 	rm -rf build/
+	rm -f box/blob.go
+
+#rm -f $$GOPATH/bin/clencli
 
 .PHONY: clencli/update-readme
 clencli/update-readme: ## Renders template readme.tmpl with additional documents
