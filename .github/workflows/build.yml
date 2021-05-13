@@ -11,6 +11,7 @@ jobs:
       - run: sudo apt-get install -y git 
       - run: go version 
       - run: go env
+      - run: go get ./... 
       - run: go generate ./...
       - name: Run go test
         run: make github/test
