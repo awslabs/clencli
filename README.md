@@ -12,9 +12,9 @@
 -->
 
 
-![Photo by [Joylynn Goh](https://unsplash.com/joylynn_goh) on [Unsplash](https://unsplash.com)](clencli/logo.jpeg)
+![Photo by [Felipe Dias](https://unsplash.com/fdiascreator) on [Unsplash](https://unsplash.com)](clencli/logo.jpeg)
 
-> Photo by [Joylynn Goh](https://unsplash.com/joylynn_goh) on [Unsplash](https://unsplash.com)
+> Photo by [Felipe Dias](https://unsplash.com/fdiascreator) on [Unsplash](https://unsplash.com)
 
 
 [![GitHub issues](https://img.shields.io/github/issues/awslabs/clencli)](https://github.com/awslabs/clencli/issues)[![GitHub forks](https://img.shields.io/github/forks/awslabs/clencli)](https://github.com/awslabs/clencli/network)[![GitHub stars](https://img.shields.io/github/stars/awslabs/clencli)](https://github.com/awslabs/clencli/stargazers)[![GitHub license](https://img.shields.io/github/license/awslabs/clencli)](https://github.com/awslabs/clencli/blob/master/LICENSE)[![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fawslabs%2Fclencli)
@@ -111,47 +111,7 @@ Template readme.tmpl rendered as README.md
 ```
 
 The `README.md` you are reading right now was generated and it's maintained by `CLENCLI` itself.
-You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
-
-## Download random photos from [Unsplash](https://unsplash.com)
-```
-# first you need to inform your unsplash developer API credentials
-
-$ clencli configure
-clencli configuration directory created at /home/valter/.clencli
-Would you like to setup credentials? [false]: true
-> Credentials
->> Profile: default
->>>> Credential
->>>>> Name: default
->>>>> Description:
->>>>> Enabled [true]:
->>>>> Provider: unsplash
->>>>> Access Key []: XXX
->>>>> Secret Key []: XXX
->>>>> Session Token []:
-Would you like to setup another credential? [false]:
-Would you like to setup configurations? [false]:
-
-$ clencli unsplash
-tree -a downloads/
-downloads/
-└── unsplash
-    └── mountains
-        ├── 3gz2hsA1T3s-full.jpeg
-        ├── 3gz2hsA1T3s-raw.jpeg
-        ├── 3gz2hsA1T3s-regular.jpeg
-        ├── 3gz2hsA1T3s-small.jpeg
-        └── 3gz2hsA1T3s-thumb.jpeg
-
-$ clencli unplash --query dog
-clencli unsplash --query dog --size full
-tree -a downloads/
-downloads/
-└── unsplash
-    └── dog
-        └── bbjSWtDtHbM.jpeg
-```
+Please check [readme.yaml](clencli/readme.yaml) for more details.
 
 ## Download a .gitignore for your project
 ```
@@ -260,7 +220,7 @@ Use "clencli [command] --help" for more information about a command.
 
 |     Name     |         Email        |       Role      |
 |:------------:|:--------------------:|:---------------:|
-|  Silva, Valter  |  -  |  AWS Professional Services - Cloud Architect  |
+|  Silva, Valter  |  valterh@amazon.com  |  AWS Professional Services - Cloud Architect  |
 
 </details>
 
