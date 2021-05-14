@@ -26,7 +26,6 @@ require (
 	github.com/hashicorp/vault/sdk v0.2.0 // indirect
 	github.com/kevinburke/ssh_config v1.1.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
-	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/pelletier/go-toml v1.9.1 // indirect
 	github.com/pierrec/lz4 v2.6.0+incompatible // indirect
