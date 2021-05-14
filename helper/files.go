@@ -10,10 +10,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/sirupsen/logrus"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/awslabs/clencli/box"
+	"github.com/sirupsen/logrus"
 )
 
 // WriteFile writes a file and return true if successful
@@ -21,7 +19,7 @@ func WriteFile(filename string, data []byte) bool {
 	err := ioutil.WriteFile(filename, data, os.ModePerm)
 
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 		return false
 	}
 
@@ -33,7 +31,7 @@ func WriteFileFromBox(source string, dest string) bool {
 	bytes, found := box.Get(source)
 
 	if !found {
-		log.Errorf("file \"%s\" not found under box/resources", source)
+		logrus.Errorf("file \"%s\" not found under box/resources", source)
 		return false
 	}
 
@@ -71,7 +69,8 @@ func DownloadFile(url string, dirPath string, filename string) error {
 	defer resp.Body.Close()
 
 	// Create the file
-	out, err := os.Create(dirPath + "/" + filename)
+	sep := string(os.PathSeparator)
+	out, err := os.Create(dirPath + sep + filename)
 	if err != nil {
 		return err
 	}
@@ -159,7 +158,7 @@ func ListFiles(dir string) []os.FileInfo {
 	files, err := ioutil.ReadDir(dir)
 
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	return files
