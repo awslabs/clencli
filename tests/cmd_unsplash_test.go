@@ -19,11 +19,9 @@ func createUnplashCredential() {
 
 	var profile model.CredentialProfile
 	profile.Name = "default"
-	profile.Enabled = true // enabling profile by default
 
 	var credential model.Credential
 	credential.Name = "unit-testing"
-	credential.Enabled = true
 	credential.AccessKey = os.Getenv("UNSPLASH_ACCESS_KEY")
 	credential.SecretKey = os.Getenv("UNSPLASH_SECRET_KEY")
 	credential.Provider = "unsplash"
@@ -38,17 +36,13 @@ func createUnplashConfiguration() {
 
 	var profile model.ConfigurationProfile
 	profile.Name = "default"
-	profile.Enabled = true // enabling profile by default
 
 	var configuration model.Configuration
 	configuration.Name = "unit-testing"
-	configuration.Enabled = true
 
 	var unsplash model.Unsplash
-	unsplash.Enabled = true
 
 	var randomPhoto model.UnsplashRandomPhoto
-	randomPhoto.Enabled = true
 
 	var params model.UnsplashRandomPhotoParameters
 	params.Query = "eagle"
@@ -130,8 +124,6 @@ func TestRenderUpdateLogoFromUnsplashFile(t *testing.T) {
 
 	os.Chdir("foo")
 
-	wd, _ = os.Getwd()
-
 	args = []string{"unsplash", "--query", "horse", "--size", "regular"}
 	out, err = executeCommandOnly(t, controller.UnsplashCmd(), args)
 	assert.Empty(t, out)
@@ -144,23 +136,21 @@ func TestRenderUpdateLogoFromUnsplashFile(t *testing.T) {
 
 }
 
-func TestRenderUpdateLogoFromConfigurations(t *testing.T) {
-	createUnplashCredential()
-	createUnplashConfiguration()
+// func TestRenderUpdateLogoFromConfigurations(t *testing.T) {
+// 	createUnplashCredential()
+// 	createUnplashConfiguration()
 
-	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
-	wd, out, err := executeCommandOnTemporaryDirectory(t, controller.InitCmd(), args)
-	assert.NotEmpty(t, wd)
-	assert.NotEmpty(t, out)
-	assert.Nil(t, err)
+// 	args := []string{"init", "project", "--project-name", "foo", "--project-type", "basic"}
+// 	wd, out, err := executeCommandOnTemporaryDirectory(t, controller.InitCmd(), args)
+// 	assert.NotEmpty(t, wd)
+// 	assert.NotEmpty(t, out)
+// 	assert.Nil(t, err)
 
-	os.Chdir("foo")
+// 	os.Chdir("foo")
 
-	wd, _ = os.Getwd()
+// 	args = []string{"render", "template"}
+// 	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
+// 	assert.Nil(t, err)
+// 	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
 
-	args = []string{"render", "template"}
-	out, err = executeCommandOnly(t, controller.RenderCmd(), args)
-	assert.Nil(t, err)
-	assert.Contains(t, out, "Template readme.tmpl rendered as README.md")
-
-}
+// }

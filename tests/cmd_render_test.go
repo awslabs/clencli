@@ -6,7 +6,6 @@ import (
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/controller"
-	"github.com/awslabs/clencli/helper"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -45,7 +44,8 @@ func initProject(t *testing.T, pType string) {
 	assert.Nil(t, err)
 	assert.Contains(t, out, "was successfully initialized")
 
-	if err := os.Chdir(helper.BuildPath(wd + "/" + t.Name() + "/" + "foo")); err != nil {
+	sep := string(os.PathSeparator)
+	if err := os.Chdir(wd + sep + t.Name() + sep + "foo"); err != nil {
 		logrus.Fatal("unable to change current working directory")
 	}
 

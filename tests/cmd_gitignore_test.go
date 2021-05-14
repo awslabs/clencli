@@ -40,3 +40,10 @@ func TestGitIgnoreList(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotEmpty(t, out)
 }
+
+func TestGitIgnoreInput(t *testing.T) {
+	args := []string{"gitignore", "--input", "terraform"}
+	out, err := executeCommand(t, controller.GitIgnoreCmd(), args)
+	assert.Nil(t, err)
+	assert.NotEmpty(t, out)
+}

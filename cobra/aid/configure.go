@@ -20,12 +20,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 
 	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -150,7 +151,7 @@ func maskString(s string, showLastChars int) string {
 func GetSensitiveUserInputAsString(cmd *cobra.Command, text string, info string) string {
 	answer, err := GetSensitiveUserInput(cmd, text, info)
 	if err != nil {
-		log.Fatalf("unable to get user input about profile's name\n%v", err)
+		logrus.Fatalf("unable to get user input about profile's name\n%v", err)
 	}
 
 	// if user typed ENTER, keep the current value
@@ -161,21 +162,34 @@ func GetSensitiveUserInputAsString(cmd *cobra.Command, text string, info string)
 	return info
 }
 
-func getUserInput(cmd *cobra.Command, text string, info string) (string, error) {
+func getInput() (string, error) {
+
 	reader := bufio.NewReader(os.Stdin)
 
+	text, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+
+	if runtime.GOOS == "windows" {
+		// convert LF to CRLF
+		text = strings.Replace(text, "\r\n", "", -1)
+	} else {
+		// convert CRLF to LF
+		text = strings.Replace(text, "\n", "", -1)
+	}
+
+	return text, nil
+}
+
+func getUserInput(cmd *cobra.Command, text string, info string) (string, error) {
 	if info == "" {
 		cmd.Print(text + ": ")
 	} else {
 		cmd.Print(text + " [" + info + "]: ")
 	}
 
-	input, err := reader.ReadString('\n')
-	// convert CRLF to LF
-	input = strings.Replace(input, "\n", "", -1)
-	if err != nil {
-		return input, fmt.Errorf("unable to read user input\n%v", err)
-	}
+	input, err := getInput()
 
 	return input, err
 }
@@ -184,7 +198,7 @@ func getUserInput(cmd *cobra.Command, text string, info string) (string, error) 
 func GetUserInputAsBool(cmd *cobra.Command, text string, info bool) bool {
 	answer, err := getUserInput(cmd, text, strconv.FormatBool(info))
 	if err != nil {
-		log.Fatalf("unable to get user input as boolean\n%s", err)
+		logrus.Fatalf("unable to get user input as boolean\n%s", err)
 	}
 
 	if answer == "true" {
@@ -200,7 +214,7 @@ func GetUserInputAsBool(cmd *cobra.Command, text string, info bool) bool {
 func GetUserInputAsString(cmd *cobra.Command, text string, info string) string {
 	answer, err := getUserInput(cmd, text, info)
 	if err != nil {
-		log.Fatalf("unable to get user input about profile's name\n%v", err)
+		logrus.Fatalf("unable to get user input about profile's name\n%v", err)
 	}
 
 	// if user typed ENTER, keep the current value

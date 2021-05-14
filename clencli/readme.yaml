@@ -1,6 +1,6 @@
 logo:
-  url: https://images.unsplash.com/photo-1611965581519-1f5a5ee98178?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxOTEyNTB8MHwxfHJhbmRvbXx8fHx8fHx8&ixlib=rb-1.2.1&q=80&w=1080
-  label: Logo
+  url: clencli/logo.jpeg
+  label: Photo by [Felipe Dias](https://unsplash.com/fdiascreator) on [Unsplash](https://unsplash.com)
 shields:
   badges:
   - description: GitHub issues
@@ -86,56 +86,16 @@ usage: |-
   ```
 
   The `README.md` you are reading right now was generated and it's maintained by `CLENCLI` itself.
-  You can check [readme.yaml](clencli/readme.yaml) for more details. Every time the `README.md` is updated, a new photo is chosen for the project automatically.
-
-  ## Download random photos from [Unsplash](https://unsplash.com)
-  ```
-  # first you need to inform your unsplash developer API credentials
-
-  $ clencli configure
-  clencli configuration directory created at /home/valter/.clencli
-  Would you like to setup credentials? [false]: true
-  > Credentials
-  >> Profile: default
-  >>>> Credential
-  >>>>> Name: default
-  >>>>> Description:
-  >>>>> Enabled [true]:
-  >>>>> Provider: unsplash
-  >>>>> Access Key []: XXX
-  >>>>> Secret Key []: XXX
-  >>>>> Session Token []:
-  Would you like to setup another credential? [false]:
-  Would you like to setup configurations? [false]:
-
-  $ clencli unsplash
-  tree -a downloads/
-  downloads/
-  └── unsplash
-      └── mountains
-          ├── 3gz2hsA1T3s-full.jpeg
-          ├── 3gz2hsA1T3s-raw.jpeg
-          ├── 3gz2hsA1T3s-regular.jpeg
-          ├── 3gz2hsA1T3s-small.jpeg
-          └── 3gz2hsA1T3s-thumb.jpeg
-
-  $ clencli unplash --query dog
-  clencli unsplash --query dog --size full
-  tree -a downloads/
-  downloads/
-  └── unsplash
-      └── dog
-          └── bbjSWtDtHbM.jpeg
-  ```
+  Please check [readme.yaml](clencli/readme.yaml) for more details.
 
   ## Download a .gitignore for your project
   ```
-  $ clencli gitignore --input terraform,vscode
+  $ clencli gitignore --input="terraform,visualstudiocode"
   .gitignore created successfully
   $ less .gitignore
 
-  # Created by https://www.toptal.com/developers/gitignore/api/terraform,vscode
-  # Edit at https://www.toptal.com/developers/gitignore?templates=terraform,vscode
+  # Created by https://www.toptal.com/developers/gitignore/api/terraform,visualstudiocode
+  # Edit at https://www.toptal.com/developers/gitignore?templates=terraform,visualstudiocode
 
   ### Terraform ###
   # Local .terraform directories
@@ -167,7 +127,7 @@ usage: |-
   # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
   # example: *tfplan*
 
-  ### vscode ###
+  ### VisualStudioCode ###
   .vscode/*
   !.vscode/settings.json
   !.vscode/tasks.json
@@ -175,7 +135,13 @@ usage: |-
   !.vscode/extensions.json
   *.code-workspace
 
-  # End of https://www.toptal.com/developers/gitignore/api/terraform,vscode
+  ### VisualStudioCode Patch ###
+  # Ignore all local history of files
+  .history
+  .ionide
+
+  # End of https://www.toptal.com/developers/gitignore/api/terraform,visualstudiocode
+
   ```
 installing: Download the latest version [released](https://github.com/awslabs/clencli/releases)
   according to your platform and execute it directly. I recommend placing the binary
@@ -185,7 +151,7 @@ include:
 contributors:
 - name: Silva, Valter
   role: AWS Professional Services - Cloud Architect
-  email: '-'
+  email: valterh@amazon.com
 acknowledgments:
 - name: Sia, William
   role: AWS Professional Service - Senior Cloud Architect

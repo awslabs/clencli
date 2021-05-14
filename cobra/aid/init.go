@@ -64,26 +64,24 @@ func initProject() bool {
 func InitCustomized(profile string, config model.Configurations) bool {
 
 	for _, p := range config.Profiles {
-		if p.Name == profile && p.Enabled {
+		if p.Name == profile {
 			for _, c := range p.Configurations {
-				if c.Enabled && c.Initialization.Enabled {
-					for _, f := range c.Initialization.Files {
-						if f.State == "directory" {
-							if !helper.MkDirsIfNotExist(f.Path) {
-								logrus.Errorf("unable to create directory based on configuration")
+				for _, f := range c.Initialization.Files {
+					if f.State == "directory" {
+						if !helper.MkDirsIfNotExist(f.Path) {
+							logrus.Errorf("unable to create directory based on configuration")
+							return false
+						}
+					} else if f.State == "file" {
+						if strings.Contains(f.Src, "http") {
+							if err := helper.DownloadFileTo(f.Src, f.Dest); err != nil {
+								logrus.Errorf("unable to download file based on configuration")
 								return false
 							}
-						} else if f.State == "file" {
-							if strings.Contains(f.Src, "http") {
-								if err := helper.DownloadFileTo(f.Src, f.Dest); err != nil {
-									logrus.Errorf("unable to download file based on configuration")
-									return false
-								}
-							} else {
-								if err := helper.CopyFileTo(f.Src, f.Dest); err != nil {
-									logrus.Errorf("unable to copy file based on configuration")
-									return false
-								}
+						} else {
+							if err := helper.CopyFileTo(f.Src, f.Dest); err != nil {
+								logrus.Errorf("unable to copy file based on configuration")
+								return false
 							}
 						}
 					}

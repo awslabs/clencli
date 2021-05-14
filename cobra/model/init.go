@@ -17,19 +17,13 @@ package model
 
 // Initialization struct to initalize things: projects, etc
 type Initialization struct {
-	Name        string `yaml:"name,omitempty"`
-	Description string `yaml:"description,omitempty"`
-	Enabled     bool   `yaml:"enabled"`
-	CreatedAt   string `yaml:"createdAt"`
-	UpdatedAt   string `yaml:"updatedAt"`
-	Type        string `yaml:"type"`
-	Files       []File `yaml:"files"`
+	Files []File `yaml:"files"`
 }
 
 // File ...
 type File struct {
-	Path  string `yaml:"path"`
-	Src   string `yaml:"src"`
-	Dest  string `yaml:"dest"`
+	Path  string `yaml:"path,omitempty"`
+	Src   string `yaml:"src,omitempty"`
+	Dest  string `yaml:"dest,omitempty"`
 	State string `yaml:"state"`
 }

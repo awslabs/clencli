@@ -2,6 +2,7 @@
 go/build: ## Compile packages and dependencies
 	mkdir -p build
 	go build -o build/clencli
+	rm -rf build
 
 .PHONY: go/install
 go/install: ## Compile and install packages and dependencies
@@ -32,6 +33,10 @@ go/mod/tidy: ## Add missing and remove unused modules
 .PHONY: go/get
 go/get: ## Add dependencies to current module and install them
 	go get ./...
+
+.PHONY: go/get/debug
+go/get/debug:
+	GOPROXY=direct go get -x ./...
 
 .PHONY: go/clean
 go/clean: ## Remove object files and cached files

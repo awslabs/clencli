@@ -21,7 +21,6 @@ import (
 
 	"github.com/awslabs/clencli/cobra/aid"
 	"github.com/awslabs/clencli/cobra/model"
-	"github.com/awslabs/clencli/helper"
 )
 
 // GetConfigurations read the current configurations file and return its model
@@ -48,7 +47,7 @@ func GetReadMe() (model.ReadMe, error) {
 		return readMe, fmt.Errorf("unable to get the current working directory:\n%v", err)
 	}
 
-	configPath := helper.BuildPath(wd + "/clencli")
+	configPath := wd + "/clencli"
 	configName := "readme"
 	configType := "yaml"
 
@@ -74,7 +73,7 @@ func GetConfigurationProfile(name string) (model.ConfigurationProfile, error) {
 	}
 
 	for _, profile := range configurations.Profiles {
-		if profile.Name == name && profile.Enabled {
+		if profile.Name == name {
 			return profile, err
 		}
 	}
@@ -87,12 +86,9 @@ func GetUnsplashRandomPhotoParameters(name string) model.UnsplashRandomPhotoPara
 	profile, _ := GetConfigurationProfile(name)
 
 	if len(profile.Configurations) > 0 {
+		// TODO: improve this logic
 		for _, conf := range profile.Configurations {
-			if conf.Unsplash.Enabled == true {
-				if conf.Unsplash.RandomPhoto.Enabled {
-					return conf.Unsplash.RandomPhoto.Parameters
-				}
-			}
+			return conf.Unsplash.RandomPhoto.Parameters
 		}
 	}
 
@@ -124,7 +120,7 @@ func GetCredentialProfile(name string) (model.CredentialProfile, error) {
 	}
 
 	for _, profile := range credentials.Profiles {
-		if profile.Name == name && profile.Enabled {
+		if profile.Name == name {
 			return profile, err
 		}
 	}

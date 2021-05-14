@@ -21,7 +21,6 @@ import "os"
 type App struct {
 	// Name of file to look for inside the path
 	Name                      string
-	HomeDir                   string
 	ConfigurationsDir         string
 	ConfigurationsName        string
 	ConfigurationsType        string

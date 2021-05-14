@@ -7,12 +7,28 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
-          go-version: '^1.15.6'
+          go-version: '^1.16.4'
       - run: sudo apt-get install -y git 
       - run: go version 
       - run: go env
+      - run: go get ./...
       - run: go generate ./...
-      - name: Run go test
-        run: make github/test
-      - name: Run go build
-        run: make github/build
+      - name: go test
+        run: cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go
+      - name: go build
+        run: mkdir bin && go build -o bin/clencli
+  windows-build:
+    runs-on: windows-latest
+    steps: 
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.4'
+      - run: go version 
+      - run: go env
+      - run: go get ./...
+      - run: go generate ./...
+      - name: go test
+        run: cd tests && go test pkg_test.go cmd_root_test.go cmd_init_test.go cmd_render_test.go cmd_version_test.go
+      - name: go build
+        run: New-Item -Path "." -Name "bin" -ItemType "directory" && go build -o bin/clencli

@@ -19,11 +19,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/awslabs/clencli/cobra/model"
 	"github.com/awslabs/clencli/helper"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )
@@ -222,7 +222,7 @@ func GetPhoto(id string, cred model.Credential) (model.UnsplashGetPhotoResponse,
 func SaveGetPhotoResult(r model.UnsplashGetPhotoResponse) {
 	d, err := yaml.Marshal(r)
 	if err != nil {
-		log.Fatalf("error: %v", err)
+		logrus.Fatalf("error: %v", err)
 	}
 	helper.WriteFile("unsplash.yaml", d)
 }
@@ -230,7 +230,7 @@ func SaveGetPhotoResult(r model.UnsplashGetPhotoResponse) {
 func dumpUnsplashRandomPhotoResponse(r model.UnsplashRandomPhotoResponse) {
 	d, err := yaml.Marshal(r)
 	if err != nil {
-		log.Fatalf("error: %v", err)
+		logrus.Fatalf("error: %v", err)
 	}
 	helper.WriteFile("unsplash.yaml", d)
 }
