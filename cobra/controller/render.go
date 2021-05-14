@@ -97,11 +97,11 @@ func renderRun(cmd *cobra.Command, args []string) error {
 	}
 
 	// remove any trailing whitespaces
-	path := "./clencli/" + name + ".yaml"
-	if err := helper.TrimRightFile(path, true); err != nil {
-		logrus.Errorf("unexpected err: %v", err)
-		return fmt.Errorf("unable to remove white spaces from %s.yaml\n%v", name, err)
-	}
+	// path := "./clencli/" + name + ".yaml"
+	// if err := helper.TrimRightFile(path, true); err != nil {
+	// 	logrus.Errorf("unexpected err: %v", err)
+	// 	return fmt.Errorf("unable to remove white spaces from %s.yaml\n%v", name, err)
+	// }
 
 	if err := updateLogo(profile); err != nil {
 		logrus.Errorf("Unexpected error: %v", err)

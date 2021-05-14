@@ -17,8 +17,10 @@ func BuildTemplate(name string) error {
 	var inputFiles = []string{}
 	var outputFiles = []string{}
 
-	if helper.FileExists("clencli/" + name + ".tmpl") {
-		inputFiles = append(inputFiles, "clencli/"+name+".tmpl")
+	sep := string(os.PathSeparator)
+
+	if helper.FileExists("clencli" + sep + name + ".tmpl") {
+		inputFiles = append(inputFiles, "clencli"+sep+name+".tmpl")
 		outputFiles = append(outputFiles, strings.ToUpper(name)+".md")
 	}
 
@@ -27,8 +29,8 @@ func BuildTemplate(name string) error {
 	config.OutputFiles = outputFiles
 
 	dataSources := []string{}
-	if helper.FileExists("clencli/" + name + ".yaml") {
-		dataSources = append(dataSources, "db=./clencli/"+name+".yaml")
+	if helper.FileExists("clencli" + sep + name + ".yaml") {
+		dataSources = append(dataSources, "db=."+sep+"clencli"+sep+name+".yaml")
 	}
 
 	config.DataSources = dataSources

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io/ioutil"
+	"runtime"
 	"strings"
 
 	"io"
@@ -189,10 +190,21 @@ func TrimRightFile(path string, overwrite bool) error {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		tr := strings.TrimRight(scanner.Text(), " ")
-		if _, err := tf.WriteString(tr + "\n"); err != nil {
-			logrus.Errorf("unable write trimmed string to temporary file\n%v", err)
-			return err
+
+		if runtime.GOOS == "windows" {
+			// convert LF to CRLF
+			if _, err := tf.WriteString(tr + "\r\n"); err != nil {
+				logrus.Errorf("unable write trimmed string to temporary file\n%v", err)
+				return err
+			}
+		} else {
+			// convert CRLF to LF
+			if _, err := tf.WriteString(tr + "\n"); err != nil {
+				logrus.Errorf("unable write trimmed string to temporary file\n%v", err)
+				return err
+			}
 		}
+
 	}
 
 	if err := scanner.Err(); err != nil {
