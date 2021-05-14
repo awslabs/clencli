@@ -17,13 +17,7 @@ package model
 
 // Initialization struct to initalize things: projects, etc
 type Initialization struct {
-	Name        string `yaml:"name,omitempty"`
-	Description string `yaml:"description,omitempty"`
-	Enabled     bool   `yaml:"enabled"`
-	CreatedAt   string `yaml:"createdAt"`
-	UpdatedAt   string `yaml:"updatedAt"`
-	Type        string `yaml:"type"`
-	Files       []File `yaml:"files"`
+	Files []File `yaml:"files"`
 }
 
 // File ...

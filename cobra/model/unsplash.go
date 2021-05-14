@@ -17,23 +17,13 @@ package model
 
 // Unsplash does ...
 type Unsplash struct {
-	Name        string              `yaml:"name,omitempty"`
-	Description string              `yaml:"description,omitempty"`
-	Enabled     bool                `yaml:"enabled"`
-	CreatedAt   string              `yaml:"createdAt"`
-	UpdatedAt   string              `yaml:"updatedAt"`
 	RandomPhoto UnsplashRandomPhoto `yaml:"randomPhoto"`
 }
 
 // UnsplashRandomPhoto ...
 type UnsplashRandomPhoto struct {
-	Name        string                        `yaml:"name,omitempty"`
-	Description string                        `yaml:"description,omitempty"`
-	Enabled     bool                          `yaml:"enabled"`
-	CreatedAt   string                        `yaml:"createdAt"`
-	UpdatedAt   string                        `yaml:"updatedAt"`
-	Parameters  UnsplashRandomPhotoParameters `yaml:"parameters"`
-	Response    UnsplashRandomPhotoResponse   `yaml:"response,omitempty"`
+	Parameters UnsplashRandomPhotoParameters `yaml:"parameters"`
+	Response   UnsplashRandomPhotoResponse   `yaml:"response,omitempty"`
 }
 
 // UnsplashRandomPhotoParameters struct from Unsplash command

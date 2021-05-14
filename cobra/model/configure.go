@@ -24,19 +24,12 @@ type Credentials struct {
 type CredentialProfile struct {
 	Name        string       `yaml:"name"`
 	Description string       `yaml:"description,omitempty"`
-	Enabled     bool         `yaml:"enabled"`
-	CreatedAt   string       `yaml:"createdAt"`
-	UpdatedAt   string       `yaml:"updatedAt"`
 	Credentials []Credential `yaml:"credentials"`
 }
 
 // Credential model
 type Credential struct {
 	Name         string `yaml:"name,omitempty"`
-	Description  string `yaml:"description,omitempty"`
-	Enabled      bool   `yaml:"enabled"`
-	CreatedAt    string `yaml:"createdAt"`
-	UpdatedAt    string `yaml:"updatedAt"`
 	Provider     string `yaml:"provider"`
 	AccessKey    string `yaml:"accessKey"`
 	SecretKey    string `yaml:"secretKey"`
@@ -52,19 +45,12 @@ type Configurations struct {
 type ConfigurationProfile struct {
 	Name           string          `yaml:"name"`
 	Description    string          `yaml:"description,omitempty"`
-	Enabled        bool            `yaml:"enabled"`
-	CreatedAt      string          `yaml:"createdAt"`
-	UpdatedAt      string          `yaml:"updatedAt"`
 	Configurations []Configuration `yaml:"configurations"`
 }
 
 // Configuration model
 type Configuration struct {
 	Name           string `yaml:"name,omitempty"`
-	Description    string `yaml:"description,omitempty"`
-	Enabled        bool   `yaml:"enabled"`
-	CreatedAt      string `yaml:"createdAt"`
-	UpdatedAt      string `yaml:"updatedAt"`
 	Initialization `yaml:"initialization,omitempty"`
 	Unsplash       `yaml:"unsplash,omitempty"`
 }
