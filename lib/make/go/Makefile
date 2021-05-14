@@ -34,6 +34,10 @@ go/mod/tidy: ## Add missing and remove unused modules
 go/get: ## Add dependencies to current module and install them
 	go get ./...
 
+.PHONY: go/get/debug
+go/get/debug:
+	GOPROXY=direct go get -x ./...
+
 .PHONY: go/clean
 go/clean: ## Remove object files and cached files
 	go clean -cache -modcache -i -r
