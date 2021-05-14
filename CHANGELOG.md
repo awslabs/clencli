@@ -1,6 +1,5 @@
 # CHANGELOG
 
-## v0.3.5
+## v0.3.6
 
-* Fixed customization of projects during initialization of a project.
-* Updated documentation.
+* Fixed render template command on Windows
