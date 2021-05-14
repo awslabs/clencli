@@ -22,8 +22,8 @@ type Initialization struct {
 
 // File ...
 type File struct {
-	Path  string `yaml:"path"`
-	Src   string `yaml:"src"`
-	Dest  string `yaml:"dest"`
+	Path  string `yaml:"path,omitempty"`
+	Src   string `yaml:"src,omitempty"`
+	Dest  string `yaml:"dest,omitempty"`
 	State string `yaml:"state"`
 }
