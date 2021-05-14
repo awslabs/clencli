@@ -115,12 +115,12 @@ Please check [readme.yaml](clencli/readme.yaml) for more details.
 
 ## Download a .gitignore for your project
 ```
-$ clencli gitignore --input terraform,vscode
+$ clencli gitignore --input="terraform,visualstudiocode"
 .gitignore created successfully
 $ less .gitignore
 
-# Created by https://www.toptal.com/developers/gitignore/api/terraform,vscode
-# Edit at https://www.toptal.com/developers/gitignore?templates=terraform,vscode
+# Created by https://www.toptal.com/developers/gitignore/api/terraform,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=terraform,visualstudiocode
 
 ### Terraform ###
 # Local .terraform directories
@@ -152,7 +152,7 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 
-### vscode ###
+### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -160,7 +160,13 @@ override.tf.json
 !.vscode/extensions.json
 *.code-workspace
 
-# End of https://www.toptal.com/developers/gitignore/api/terraform,vscode
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
+
+# End of https://www.toptal.com/developers/gitignore/api/terraform,visualstudiocode
+
 ```
 </details>
 
