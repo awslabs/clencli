@@ -96,6 +96,8 @@ func renderRun(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to render template "+name+"\n%v", err)
 	}
 
+	// TODO: fix this, causing issues on Windows
+
 	// remove any trailing whitespaces
 	// path := "./clencli/" + name + ".yaml"
 	// if err := helper.TrimRightFile(path, true); err != nil {
