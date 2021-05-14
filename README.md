@@ -168,6 +168,7 @@ override.tf.json
 # End of https://www.toptal.com/developers/gitignore/api/terraform,visualstudiocode
 
 ```
+Additionally, you can also *customize the initialization* of your projects (scaffolding) and download photos for your projects from [unsplash](https://unsplash.com), please read more [here](https://github.com/awslabs/clencli/wiki/Configuration).
 </details>
 
 
