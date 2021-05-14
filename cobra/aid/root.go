@@ -20,30 +20,37 @@ import (
 	"os"
 
 	"github.com/awslabs/clencli/cobra/model"
-	"github.com/mitchellh/go-homedir"
 	"github.com/sirupsen/logrus"
 )
 
 // GetAppInfo return information about clencli settings
 func GetAppInfo() model.App {
 	var err error
+
+	configDir, err := os.UserConfigDir()
+	if err != nil {
+		logrus.Fatalln("unable to read user configuration directory\n%v", err)
+	}
+
+	sep := string(os.PathSeparator)
+
 	var app model.App
 	app.Name = "clencli"
-	app.HomeDir = getHomeDir()
-	app.ConfigurationsDir = app.HomeDir + "/" + "." + app.Name
+	app.ConfigurationsDir = configDir + sep + app.Name
 	app.ConfigurationsName = "configurations"
 	app.ConfigurationsType = "yaml"
-	app.ConfigurationsPath = app.ConfigurationsDir + "/" + app.ConfigurationsName + "." + app.ConfigurationsType
+	app.ConfigurationsPath = app.ConfigurationsDir + sep + app.ConfigurationsName + "." + app.ConfigurationsType
 	app.ConfigurationsPermissions = os.ModePerm
 	app.CredentialsName = "credentials"
 	app.CredentialsType = "yaml"
-	app.CredentialsPath = app.ConfigurationsDir + "/" + app.CredentialsName + "." + app.CredentialsType
+	app.CredentialsPath = app.ConfigurationsDir + sep + app.CredentialsName + "." + app.CredentialsType
 	app.CredentialsPermissions = os.ModePerm
 	app.LogsDir = app.ConfigurationsDir
 	app.LogsName = "logs"
 	app.LogsType = "json"
-	app.LogsPath = app.LogsDir + "/" + app.LogsName + "." + app.LogsType
+	app.LogsPath = app.LogsDir + sep + app.LogsName + "." + app.LogsType
 	app.LogsPermissions = os.ModePerm
+
 	app.WorkingDir, err = os.Getwd()
 	if err != nil {
 		fmt.Printf("Unable to detect the current directory\n%v", err)
@@ -51,15 +58,6 @@ func GetAppInfo() model.App {
 	}
 
 	return app
-}
-
-func getHomeDir() string {
-	home, err := homedir.Dir()
-	if err != nil {
-		fmt.Printf("Unable to detect the home directory\n%v", err)
-		os.Exit(1)
-	}
-	return home
 }
 
 // SetupLoggingOutput set logrun output file
