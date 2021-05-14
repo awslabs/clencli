@@ -19,11 +19,9 @@ func createUnplashCredential() {
 
 	var profile model.CredentialProfile
 	profile.Name = "default"
-	profile.Enabled = true // enabling profile by default
 
 	var credential model.Credential
 	credential.Name = "unit-testing"
-	credential.Enabled = true
 	credential.AccessKey = os.Getenv("UNSPLASH_ACCESS_KEY")
 	credential.SecretKey = os.Getenv("UNSPLASH_SECRET_KEY")
 	credential.Provider = "unsplash"
@@ -38,17 +36,13 @@ func createUnplashConfiguration() {
 
 	var profile model.ConfigurationProfile
 	profile.Name = "default"
-	profile.Enabled = true // enabling profile by default
 
 	var configuration model.Configuration
 	configuration.Name = "unit-testing"
-	configuration.Enabled = true
 
 	var unsplash model.Unsplash
-	unsplash.Enabled = true
 
 	var randomPhoto model.UnsplashRandomPhoto
-	randomPhoto.Enabled = true
 
 	var params model.UnsplashRandomPhotoParameters
 	params.Query = "eagle"
