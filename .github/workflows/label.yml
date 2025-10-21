@@ -1,6 +1,9 @@
 name: Labeler
 on: [pull_request]
 
+permissions:
+  pull-requests: write
+
 jobs:
   label:
     runs-on: ubuntu-latest
