@@ -188,6 +188,50 @@ Global flags apply to every command:
 
 clencli reads a YAML data file (`clencli/<name>.yaml`) and a matching Go template (`clencli/<name>.tmpl`), then uses [gomplate](https://github.com/hairyhenderson/gomplate) to render the template into a Markdown file named `<NAME>.md`. Template resources for project scaffolding are embedded into the binary at build time. The CLI itself is built with [Cobra](https://github.com/spf13/cobra) and [Viper](https://github.com/spf13/viper).
 
+The following diagram shows the clencli commands and the resources they read or write.
+
+```mermaid
+flowchart LR
+    user([You]) --> cli[clencli]
+
+    cli --> init[init project]
+    cli --> render[render template]
+    cli --> configure[configure]
+    cli --> gitignore[gitignore]
+    cli --> unsplash[unsplash]
+
+    box[(Embedded templates)] --> init
+    init --> scaffold[Scaffolded project<br/>clencli/*.yaml + *.tmpl]
+
+    scaffold --> render
+    render --> output[Rendered NAME.md]
+
+    configure --> creds[(credentials.yaml<br/>configurations.yaml)]
+    creds -.-> render
+    gitignore --> gi[.gitignore]
+    unsplash --> photo[clencli/logo.jpeg]
+```
+
+The next diagram shows the `render template` flow, from validation through gomplate output.
+
+```mermaid
+flowchart TD
+    start([clencli render template --name NAME]) --> check{clencli/NAME.yaml<br/>and NAME.tmpl exist?}
+    check -->|No| err[Report missing database or template]
+    check -->|Yes| logo[Update README logo]
+
+    logo --> source{Logo source?}
+    source -->|unsplash.yaml present| dl[Download photo, set as logo]
+    source -->|profile has unsplash credential| api[Request random photo from Unsplash]
+    source -->|Neither| skip[Skip logo update]
+
+    dl --> build
+    api --> build
+    skip --> build
+
+    build[gomplate renders NAME.tmpl<br/>with NAME.yaml as data source] --> write([Write NAME.md])
+```
+
 ## Troubleshooting
 
 **The build fails with `invalid version: unknown revision` for a gomplate dependency.**
