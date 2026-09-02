@@ -104,7 +104,7 @@ func initRun(cmd *cobra.Command, args []string) error {
 		case "terraform":
 			err = aid.CreateTerraformProject(cmd, pName)
 		default:
-			return errors.New("unknow project type")
+			return errors.New("unknown project type")
 		}
 
 		if aid.ConfigurationsDirectoryExist() && aid.ConfigurationsFileExist() {
@@ -122,7 +122,7 @@ func initRun(cmd *cobra.Command, args []string) error {
 		}
 
 		if err != nil {
-			return fmt.Errorf("unable to initialize project sucessfully \n%s", err)
+			return fmt.Errorf("unable to initialize project successfully \n%s", err)
 		}
 
 		cmd.Printf("%s was successfully initialized as a %s project\n", pName, pType)

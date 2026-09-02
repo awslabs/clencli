@@ -33,7 +33,7 @@ func GetConfigurations() (model.Configurations, error) {
 
 	err = v.Unmarshal(&confs)
 	if err != nil {
-		return confs, fmt.Errorf("unable to unmarshall configurations\n%v", err)
+		return confs, fmt.Errorf("unable to unmarshal configurations\n%v", err)
 	}
 
 	return confs, err
@@ -58,7 +58,7 @@ func GetReadMe() (model.ReadMe, error) {
 
 	err = v.Unmarshal(&readMe)
 	if err != nil {
-		return readMe, fmt.Errorf("unable to unmarshall configurations\n%v", err)
+		return readMe, fmt.Errorf("unable to unmarshal configurations\n%v", err)
 	}
 
 	return readMe, err
@@ -105,7 +105,7 @@ func GetCredentials() (model.Credentials, error) {
 
 	err = v.Unmarshal(&creds)
 	if err != nil {
-		return creds, fmt.Errorf("unable to unmarshall credentials\n%v", err)
+		return creds, fmt.Errorf("unable to unmarshal credentials\n%v", err)
 	}
 
 	return creds, err

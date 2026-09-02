@@ -32,23 +32,23 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ConfigurationsDirectoryExist returns `true` if the configuration directory exist, `false` otherwise
+// ConfigurationsDirectoryExist returns `true` if the configuration directory exists, `false` otherwise
 func ConfigurationsDirectoryExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().ConfigurationsDir)
 }
 
-// ConfigurationsFileExist returns `true` if the configuration file exist, `false` otherwise
+// ConfigurationsFileExist returns `true` if the configuration file exists, `false` otherwise
 func ConfigurationsFileExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().ConfigurationsPath)
 }
 
-// CreateConfigurationsDirectory creates the configuration directory, returns `true` if the configuration directory exist, `false` otherwise
+// CreateConfigurationsDirectory creates the configuration directory, returns `true` if the configuration directory exists, `false` otherwise
 func CreateConfigurationsDirectory() (bool, string) {
 	dir := GetAppInfo().ConfigurationsDir
 	return helper.MkDirsIfNotExist(dir), dir
 }
 
-// CredentialsFileExist returns `true` if the credentials file exist, `false` otherwise
+// CredentialsFileExist returns `true` if the credentials file exists, `false` otherwise
 func CredentialsFileExist() bool {
 	return helper.DirOrFileExists(GetAppInfo().CredentialsPath)
 }
@@ -123,7 +123,7 @@ func DeleteCredentialFile() error {
 	return helper.DeleteFile(GetAppInfo().CredentialsPath)
 }
 
-// DeleteConfigurationFile delete the credentials file
+// DeleteConfigurationFile deletes the configuration file
 func DeleteConfigurationFile() error {
 	return helper.DeleteFile(GetAppInfo().ConfigurationsPath)
 }

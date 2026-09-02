@@ -135,7 +135,7 @@ func CopyFileTo(source string, dest string) error {
 	return nil
 }
 
-// FileSize return the size of the give file path.
+// FileSize return the size of the given file path.
 // Gives an error if files does not exist
 func FileSize(path string) (int64, error) {
 	var size int64 = -1
