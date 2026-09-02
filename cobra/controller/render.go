@@ -146,7 +146,7 @@ func updateLogoFromUnsplashFile() bool {
 
 		err = v.Unmarshal(&response)
 		if err != nil {
-			logrus.Errorf("unable to unmarshall unsplash.yaml as unsplash response\n%v", err)
+			logrus.Errorf("unable to unmarshal unsplash.yaml as unsplash response\n%v", err)
 			return false
 		}
 

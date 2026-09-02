@@ -34,7 +34,7 @@ func TestInitCmd(t *testing.T) {
 
 		// ## --project-name && --project-type
 		"with project name and empty project type":   {args: []string{"init", "project", "--project-name", "foo", "--project-type"}, out: "", err: "flag needs an argument"},
-		"with project name and invalid project type": {args: []string{"init", "project", "--project-name", "foo", "--project-type", "bar"}, out: "", err: "unknow project type"},
+		"with project name and invalid project type": {args: []string{"init", "project", "--project-name", "foo", "--project-type", "bar"}, out: "", err: "unknown project type"},
 	}
 
 	for name, tc := range tests {

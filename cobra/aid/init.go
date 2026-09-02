@@ -22,7 +22,7 @@ func CreateBasicProject(cmd *cobra.Command, name string) error {
 
 	if initalized := initProject(); !initalized {
 		logrus.Errorf("unable to initialize basic project")
-		return fmt.Errorf("unable to initalize project %s", name)
+		return fmt.Errorf("unable to initialize project %s", name)
 	}
 
 	return nil
@@ -103,7 +103,7 @@ func CreateCloudProject(cmd *cobra.Command, name string) error {
 
 	if initialized := initCloudProject(); !initialized {
 		logrus.Errorf("unable to initialize cloud project")
-		return fmt.Errorf("unable to initalize project %s", name)
+		return fmt.Errorf("unable to initialize project %s", name)
 	}
 
 	return nil
@@ -127,12 +127,12 @@ func CreateCloudFormationProject(cmd *cobra.Command, name string) error {
 
 	if initialized := initCloudProject(); !initialized {
 		logrus.Errorf("unable to initialize cloud project")
-		return fmt.Errorf("unable to initalize project %s", name)
+		return fmt.Errorf("unable to initialize project %s", name)
 	}
 
 	if initialized := initCloudFormationProject(); !initialized {
 		logrus.Errorf("unable to initialize cloudformation project")
-		return fmt.Errorf("unable to initalize project %s", name)
+		return fmt.Errorf("unable to initialize project %s", name)
 	}
 
 	return nil
@@ -167,12 +167,12 @@ func CreateTerraformProject(cmd *cobra.Command, name string) error {
 
 	if initialized := initCloudProject(); !initialized {
 		logrus.Errorf("unable to initialize terraform project")
-		return fmt.Errorf("unable to initalize project %s", name)
+		return fmt.Errorf("unable to initialize project %s", name)
 	}
 
 	if initialized := initTerraformProject(); !initialized {
 		logrus.Errorf("unable to initialize cloud project")
-		return fmt.Errorf("unable to initalize project %s", name)
+		return fmt.Errorf("unable to initialize project %s", name)
 	}
 
 	return nil

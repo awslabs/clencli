@@ -93,7 +93,7 @@ func unsplashRun(cmd *cobra.Command, args []string) error {
 		// get photo
 		response, err := aid.GetPhoto(id, cred)
 		if err != nil || response.ID == "" {
-			return fmt.Errorf("unablet to get photo\n%v", err)
+			return fmt.Errorf("unable to get photo\n%v", err)
 		}
 
 		size, err := cmd.Flags().GetString("size")

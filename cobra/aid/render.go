@@ -147,7 +147,7 @@ func writeOutputs() error {
 	}
 	defer outputs.Close()
 
-	// create INPUTS.md
+	// create OUTPUTS.md
 	outs, err := os.OpenFile("OUTPUTS.md", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		logrus.Println(err)
